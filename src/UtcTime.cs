@@ -6,15 +6,16 @@ using System.Text;
 
 namespace CosmosTime
 {
+
 	[TypeConverter(typeof(UtcTimeTypeConverter))]
 	public struct UtcTime : IEquatable<UtcTime>, IComparable<UtcTime>, IComparable
 	{
-		public const string FixedLengthFormatUtcWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'fffffff";
+		public const string FixedLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'fffffff";
 		// this is almost the same as "o" format (roundtrip), except roundtrip uses K (kind) instead of Z (zulu)
-		public const string FixedLengthFormatUtc = FixedLengthFormatUtcWithoutZ + "Z";
+		public const string FixedLengthFormatWithZ = FixedLengthFormatWithoutZ + "Z";
 
-		public const string VariableLengthFormatUtcWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
-		public const string VariableLengthFormatUtc = VariableLengthFormatUtcWithoutZ + "Z";
+		public const string VariableLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
+		public const string VariableLengthFormatWithZ = VariableLengthFormatWithoutZ + "Z";
 
 		public static readonly UtcTime MinValue = new DateTime(0L, DateTimeKind.Utc).ToUtcTime();
 		/// <summary>
@@ -27,9 +28,12 @@ namespace CosmosTime
 
 		DateTime _utc;
 
+		/// <summary>
+		/// Kind is always Utc
+		/// </summary>
 		public DateTime UtcDateTime => _utc;
 
-		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
+		public static UtcTime UtcNow => DateTime.UtcNow.ToUtcTime();
 
 		public UtcTime Date => _utc.Date.ToUtcTime();
 
@@ -39,7 +43,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public string ToCosmosDb()
 		{
-			return _utc.ToString(FixedLengthFormatUtc, CultureInfo.InvariantCulture);
+			return _utc.ToString(FixedLengthFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -53,28 +57,73 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// Variable length
+		/// Variable length utc (Z)
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return _utc.ToString(VariableLengthFormatUtc, CultureInfo.InvariantCulture);
+			return _utc.ToString(VariableLengthFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
+		/// TODO: why not allow Local?? Does now.
 		/// </summary>
 		/// <param name="utcTime"></param>
-		public UtcTime(DateTime utcTime)
+		public UtcTime(DateTime utcOrLocalTime)
 		{
-			if (utcTime.Kind != DateTimeKind.Utc)
-				throw new ArgumentException("not utc");
+			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
+				throw new ArgumentException("unspecified kind not allowed");
 
-			_utc = utcTime;
+			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
+			_utc = utcOrLocalTime.ToUniversalTime();
 		}
 
-		public DateTime ToLocalTime() => _utc.ToLocalTime();
-		
+		/// <summary>
+		/// DateTime can be any Kind, but unspecifiedKind must be set to either Utc or Local and this Kind will be used if anyTime.Kind is unspecified.
+		/// </summary>
+		/// <param name="anyTime"></param>
+		/// <param name="kindIfUnspecified"></param>
+		/// <exception cref="ArgumentException"></exception>
+		public UtcTime(DateTime anyTime, DateTimeKind kindIfUnspecified)
+		{
+			if (kindIfUnspecified == DateTimeKind.Unspecified)
+				throw new ArgumentException("kindIfUnspecified can not be Unspecified");
+
+			if (anyTime.Kind == DateTimeKind.Unspecified)
+			{
+				anyTime = DateTime.SpecifyKind(anyTime, kindIfUnspecified);
+			}
+
+			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
+			_utc = anyTime.ToUniversalTime();
+		}
+
+		public UtcTime(DateTime anyTime, TimeZoneInfo tzIfUnspecified)
+		{
+			if (anyTime.Kind == DateTimeKind.Unspecified)
+			{
+				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tzIfUnspecified); // TODO: test
+			}
+			else
+			{
+				// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
+				_utc = anyTime.ToUniversalTime();
+			}
+		}
+
+		/// <summary>
+		/// ToLocalTime works here since kind is always utc
+		/// </summary>
+		/// <returns></returns>
+		public DateTime ToLocalDateTime() => _utc.ToLocalTime();
+
+
+		public long Ticks => _utc.Ticks;
+
+	//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
+
+		public ZonedTime ToZonedTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
 
 		public UtcTime(int year, int month, int day) : this()
 		{
@@ -142,7 +191,7 @@ namespace CosmosTime
 				throw new FormatException("not 28 chars");
 
 			// does verify the length, but do it outselfs anyways to be sure
-			var dt = DateTime.ParseExact(utc, FixedLengthFormatUtc, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind /* needed? yes, else kind is wrong*/);
+			var dt = DateTime.ParseExact(utc, FixedLengthFormatWithZ, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind /* needed? yes, else kind is wrong*/);
 			return dt.ToUtcTime();
 		}
 
@@ -223,4 +272,6 @@ namespace CosmosTime
 			return (num * 0x2710L);
 		}
 	}
+
+
 }

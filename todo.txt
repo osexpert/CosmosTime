@@ -1,0 +1,9 @@
+make new projects: 
+CosmosTime.Newtonsoft.Json
+CosmosTime.System.Text.Json (or CosmosTime.Json)
+
+CosmosTime.Dapper
+
+that has converters for the two of them
+
+make tests!

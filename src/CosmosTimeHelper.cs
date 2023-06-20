@@ -9,24 +9,62 @@ namespace CosmosTime
 
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
+		/// not anymore...
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static UtcTime ToUtcTime(this DateTime dt)
+		public static UtcTime ToUtcTime(this DateTime utcOrLocalTime)
 		{
-			return new UtcTime(dt);
+			return new UtcTime(utcOrLocalTime);
 		}
+
+
+		/// <summary>
+		/// DateTime must be Kind.Utc, else will throw
+		/// no...
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <returns></returns>
+		public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
+		{
+			return new ZonedTime(utcOrLocalTime);
+		}
+
+		/// <summary>
+		/// DateTime must be Kind.Utc, else will throw
+		/// no...
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <returns></returns>
+		public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tzIfUnspecified)
+		{
+			return new ZonedTime(anyTime, tzIfUnspecified);
+		}
+
+
+		/// <summary>
+		/// DateTime must be Kind.Utc, else will throw
+		/// no...
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <returns></returns>
+		public static WhatTime ToWhatTime(this DateTime utcOrLocalTime)
+		{
+			return new WhatTime(utcOrLocalTime);
+		}
+
+
 
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static UtcTime? ToUtcTime(this DateTime? dt)
+		public static UtcTime? ToUtcTime(this DateTime? utcOrLocalTime)
 		{
-			if (dt == null)
+			if (utcOrLocalTime == null)
 				return null;
-			return new UtcTime(dt.Value);
+			return new UtcTime(utcOrLocalTime.Value);
 		}
 
 		/// <summary>
@@ -34,22 +72,22 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static UtcTime LocalToUtcTime(this DateTime dt)
-		{
-			return new UtcTime(dt.ToUniversalTime());
-		}
+		//public static UtcTime LocalToUtcTime(this DateTime dt)
+		//{
+		//	return new UtcTime(dt.ToUniversalTime());
+		//}
 
 		/// <summary>
 		/// Will convert from local to Utc. Should ideally only be used on a client.
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static UtcTime? LocalToUtcTime(this DateTime? dt)
-		{
-			if (dt == null)
-				return null;
-			return new UtcTime(dt.Value.ToUniversalTime());
-		}
+		//public static UtcTime? LocalToUtcTime(this DateTime? dt)
+		//{
+		//	if (dt == null)
+		//		return null;
+		//	return new UtcTime(dt.Value.ToUniversalTime());
+		//}
 
 		public static UtcOffsetTime ToUtcOffsetTime(this DateTimeOffset dto)
 		{

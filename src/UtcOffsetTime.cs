@@ -19,6 +19,11 @@ namespace CosmosTime
 		/// </summary>
 		public static UtcOffsetTime LocalNow => DateTimeOffset.Now.ToUtcOffsetTime();
 
+		/// <summary>
+		/// An UtcOffsetTime without offset (no time zone info)
+		/// </summary>
+		public static UtcOffsetTime UtcNow => DateTimeOffset.UtcNow.ToUtcOffsetTime();
+
 		public UtcTime UtcTime => _utc;
 
 		public static readonly UtcOffsetTime MinValue = new UtcOffsetTime(UtcTime.MinValue, 0);
@@ -77,11 +82,21 @@ namespace CosmosTime
 		/// </summary>
 		public UtcOffsetTime(DateTimeOffset dto)
 		{
+			// what about dto.ToUniversalTime? versus  dto.UtcDateTime ???
+			//dto.ToUniversalTime setter offset til 0. men dem er fortsatt lik!!
+
 			//_dto = dto;
 			_utc = dto.UtcDateTime.ToUtcTime();
+			// TODO: create some tests to make sure this roundtrips
 			_offsetMins = (short)dto.Offset.TotalMinutes;
 		}
 
+		/// <summary>
+		/// offsetMinutes: specify it is the offset from local time to utc
+		/// </summary>
+		/// <param name="utcs"></param>
+		/// <param name="offsetMinutes"></param>
+		/// <exception cref="ArgumentException"></exception>
 		public UtcOffsetTime(UtcTime utcs, short offsetMinutes) : this()
 		{
 			_utc = utcs;
@@ -93,7 +108,7 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// Variable length utc[+-]offset
+		/// Variable length local[+-]offset
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
@@ -107,7 +122,7 @@ namespace CosmosTime
 			if (neg)
 				mins *= -1;
 
-			var strNoZ = local.ToString(UtcTime.VariableLengthFormatUtcWithoutZ);
+			var strNoZ = local.ToString(UtcTime.VariableLengthFormatWithoutZ);
 
 			var off = string.Format("{0:00}:{1:00}", mins / 60, mins % 60);
 			var res = $"{strNoZ}{(neg ? '-' : '+')}{off}";
@@ -127,15 +142,22 @@ namespace CosmosTime
 
 			// can not use Local kind as DTO will validate the offset against current local offset...
 			// "DateTimeOffset Error: UTC offset of local dateTime does not match the offset argument"
+			// KE?? but why not use the utc time directly?? Looks ugly.
 			return new DateTimeOffset(DateTime.SpecifyKind(local, DateTimeKind.Unspecified), TimeSpan.FromMinutes(_offsetMins));
 		}
 
-		public DateTime ToLocalTime() => _utc.ToLocalTime();
+		public DateTime ToLocalDateTime() => _utc.ToLocalDateTime();
 
 		public override int GetHashCode() => _utc.GetHashCode();
 		
 		public override bool Equals(object obj) => obj is UtcOffsetTime other && Equals(other);
 
+		/// <summary>
+		/// Equal if the Utc time is equal.
+		/// The offset is ignored, it is only used to make local times.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(UtcOffsetTime other) => this._utc == other._utc;
 		
 		public int CompareTo(UtcOffsetTime other) => this._utc.CompareTo(other._utc);
