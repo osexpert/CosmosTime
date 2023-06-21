@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CosmosTime;
+using CosmosTime.TimeZone;
 
 namespace test
 {
@@ -16,6 +17,9 @@ namespace test
 
 		static void Main(string[] args)
 		{
+			IanaGeneratorTool.Generate(@"d:\timeZoneMap10.cs");
+
+
 			var ss = UtcOffsetTime.LocalNow.ToString();
 
 			var lt = new lol();
