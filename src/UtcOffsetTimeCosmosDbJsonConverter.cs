@@ -21,7 +21,7 @@ namespace CosmosTime.Serialization.JsonNet
 				throw new NotSupportedException("DateParseHandling.None required");
 
 			var obj = JObject.Load(reader);
-			return UtcOffsetTime.ParseCosmosDb(obj["time"].Value<string>(), obj["offsetMins"].Value<short>());
+			return UtcOffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), obj["offsetMins"].Value<short>());
 		}
 
 		public override void WriteJson(JsonWriter writer, UtcOffsetTime value, JsonSerializer serializer)
@@ -33,7 +33,7 @@ namespace CosmosTime.Serialization.JsonNet
 
 			writer.WriteStartObject();
 
-			writer.WritePropertyName("time");
+			writer.WritePropertyName("timeUtc");
 			writer.WriteValue(rr.UtcTime.ToCosmosDb());
 
 			writer.WritePropertyName("offsetMins");

@@ -180,6 +180,9 @@ namespace CosmosTime
 			return CompareTo((UtcTime)obj);
 		}
 
+		/// <summary>
+		/// Parse Utc fixed length format with 28 chars and ending with Z.
+		/// </summary>
 		public static UtcTime ParseCosmosDb(string utc)
 		{
 			// yyyy-MM-ddTHH:mm:ss.fffffffZ

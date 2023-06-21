@@ -19,21 +19,9 @@ namespace CosmosTime
 	//	[TypeConverter(typeof(UtcTimeTypeConverter))]
 	public struct LocalTime : IEquatable<LocalTime>, IComparable<LocalTime>, IComparable
 	{
-		//public const string FixedLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'fffffff";
-		//// this is almost the same as "o" format (roundtrip), except roundtrip uses K (kind) instead of Z (zulu)
-		//public const string FixedLengthFormatWithZ = FixedLengthFormatWithoutZ + "Z";
 
-		//public const string VariableLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
-		//public const string VariableLengthFormatWithZ = VariableLengthFormatWithoutZ + "Z";
-
-		//public static readonly UtcTime MinValue = new DateTime(0L, DateTimeKind.Utc).ToUtcTime();
-		///// <summary>
-		///// Seems like a bug in DateTime: 
-		///// DateTime.MaxValue.ToUniversalTime().Ticks				  -> 3155378939999999999 // no...not UTC max (its lower)
-		///// DateTimeOffset.MaxValue.Ticks							  -> 3155378975999999999 // correct
-		///// new DateTime(0x2bca2875f4373fffL, DateTimeKind.Utc).Ticks -> 3155378975999999999 // correct
-		///// </summary>
-		//public static readonly UtcTime MaxValue = new DateTime(0x2bca2875f4373fffL, DateTimeKind.Utc).ToUtcTime(); // snatched from DateTime
+		public static readonly LocalTime MinValue = DateTime.MinValue.ToLocalTime2();
+		public static readonly LocalTime MaxValue = DateTime.MaxValue.ToLocalTime2();
 
 		DateTime _local;
 

@@ -8,8 +8,8 @@ namespace CosmosTime
 	{
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// not anymore...
+		/// DateTime must be Kind.Utc or Kind.Local.
+		/// If Kind.Unspecified, it will throw (must then use ToUtcTime that take a tz)
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
@@ -20,8 +20,8 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// no...
+		/// DateTime must be Kind.Utc or Kind.Local.
+		/// If Kind.Unspecified, it will throw (must then use ToZonedTime that take a tz)
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
@@ -31,20 +31,20 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// no...
+		/// DateTime can be any kind.
+		/// If Kind.Unspecified then time is adjusted to supplied tz.
+		/// If kind Kind.Utc or Kind.Local, it is simply validated that the tz matches.
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tzIfUnspecified)
+		public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
-			return new ZonedTime(anyTime, tzIfUnspecified);
+			return new ZonedTime(anyTime, tz);
 		}
 
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// no...
+		/// DateTime must be Kind.Utc or Kind.Local, else will throw
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
@@ -56,7 +56,7 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
+		/// DateTime must be Kind.Utc or Kind.Local, else will throw
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>

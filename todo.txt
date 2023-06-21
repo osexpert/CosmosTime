@@ -2,8 +2,11 @@ make new projects:
 CosmosTime.Newtonsoft.Json
 CosmosTime.System.Text.Json (or CosmosTime.Json)
 
-CosmosTime.Dapper
-
 that has converters for the two of them
 
+CosmosTime.Dapper 
+https://stackoverflow.com/questions/12510299/get-datetime-as-utc-with-dapper
+
+
 make tests!
+

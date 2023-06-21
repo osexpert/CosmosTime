@@ -14,7 +14,8 @@ namespace CosmosTime
 		DateTime _zoned;
 		TimeZoneInfo _tz;
 
-	
+		// TODO: min \ max time
+
 		public static ZonedTime ZonedNow(TimeZoneInfo destTz)
 		{
 			if (destTz == null)
@@ -150,11 +151,11 @@ namespace CosmosTime
 		public ZonedTime(int year, int month, int day, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("tz");
 
 			_tz = tz;
 			_zoned = new DateTime(year, month, day, 0, 0, 0, 
-				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......
+				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......correct?
 		}
 
 		public ZonedTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz) : this()
@@ -164,35 +165,28 @@ namespace CosmosTime
 
 			_tz = tz;
 			_zoned = new DateTime(year, month, day, hour, minute, second, 
-				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......
+				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......correct?
 		}
 
 		public ZonedTime Min(ZonedTime other)
 		{
 			if (this._tz != other._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't min in different time zones");
 
-			if (this._zoned < other._zoned)
-				return this;
-			else
-				return other;
+			return this._zoned < other._zoned ? this : other;
 		}
 		public ZonedTime Max(ZonedTime other)
 		{
 			if (this._tz != other._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't max in different time zones");
 
-
-			if (this._zoned > other._zoned)
-				return this;
-			else
-				return other;
+			return this._zoned > other._zoned ? this : other;
 		}
 
 		public static TimeSpan operator -(ZonedTime a, ZonedTime b)
 		{
 			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't diff in different time zones");
 			return a._zoned - b._zoned;
 		}
 		public static ZonedTime operator -(ZonedTime d, TimeSpan t)
@@ -206,39 +200,35 @@ namespace CosmosTime
 
 		public static bool operator ==(ZonedTime a, ZonedTime b)
 		{
-			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
 			return a._zoned == b._zoned && a._tz == b._tz;
 		}
 
 		public static bool operator !=(ZonedTime a, ZonedTime b)
 		{
-			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
 			return a._zoned != b._zoned || a._tz != b._tz;
 		}
 		public static bool operator <(ZonedTime a, ZonedTime b)
 		{
 			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't compare order in different time zones");
 			return a._zoned < b._zoned;
 		}
 		public static bool operator >(ZonedTime a, ZonedTime b)
 		{
 			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't compare order in different time zones");
 			return a._zoned > b._zoned;
 		}
 		public static bool operator <=(ZonedTime a, ZonedTime b)
 		{
 			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't compare order in different time zones");
 			return a._zoned <= b._zoned;
 		}
 		public static bool operator >=(ZonedTime a, ZonedTime b)
 		{
 			if (a._tz != b._tz)
-				throw new InvalidOperationException("Can't compare in different time zones");
+				throw new InvalidOperationException("Can't compare order in different time zones");
 
 			return a._zoned >= b._zoned;
 		}

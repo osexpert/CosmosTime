@@ -10,6 +10,8 @@ namespace CosmosTime.TimeZone
 		{
 			/// https://learn.microsoft.com/en-us/azure/azure-sql/managed-instance/timezones-overview
 			
+			// TODO: faster to use a Dictionary?
+
 			switch (tz)
 			{
 				case "(UTC-12:00) International Date Line West": return "Dateline Standard Time";

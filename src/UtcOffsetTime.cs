@@ -79,12 +79,13 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// Problem: dto may be messed up already, but we cant do anything about that......
+		///
 		/// </summary>
 		public UtcOffsetTime(DateTimeOffset dto)
 		{
 			// what about dto.ToUniversalTime? versus  dto.UtcDateTime ???
-			//dto.ToUniversalTime setter offset til 0. men dem er fortsatt lik!!
+			//dto.ToUniversalTime sets offset to 0. But they are still equal!!
+			// Yes, but so are WE. We only compare _utc too.
 
 			//_dto = dto;
 			_utc = dto.UtcDateTime.ToUtcTime();
@@ -107,17 +108,6 @@ namespace CosmosTime
 
 			_offsetMins = offsetMinutes;
 		}
-
-
-		//public UtcOffsetTime(UtcTime utc, TimeZoneInfo tz) : this()
-		//{
-
-		//}
-
-		//public UtcOffsetTime(DateTime anyTime, TimeZoneInfo tz) : this()
-		//{
-
-		//}
 
 		/// <summary>
 		/// Variable length local[+-]offset
@@ -150,11 +140,11 @@ namespace CosmosTime
 
 		public DateTimeOffset ToDateTimeOffset()
 		{
-			var local = _utc.AddMinutes(_offsetMins).UtcDateTime;
+			var local = _utc.UtcDateTime.AddMinutes(_offsetMins);
 
 			// can not use Local kind as DTO will validate the offset against current local offset...
 			// "DateTimeOffset Error: UTC offset of local dateTime does not match the offset argument"
-			// KE?? but why not use the utc time directly?? Looks ugly.
+			// KE?? but why not use the utc time directly?? It is not possible, must be unspecified time.
 			return new DateTimeOffset(DateTime.SpecifyKind(local, DateTimeKind.Unspecified), TimeSpan.FromMinutes(_offsetMins));
 		}
 
