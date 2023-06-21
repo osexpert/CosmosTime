@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30503.244
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime", "CosmosTime.csproj", "{FD5A3B4D-1C29-451E-B003-989AA08F30E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "..\test\test.csproj", "{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosTime.UnitTests", "..\CosmosTime.UnitTests\CosmosTime.UnitTests.csproj", "{E9918123-6CD3-4794-AAF8-3FF1915C50A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9918123-6CD3-4794-AAF8-3FF1915C50A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9918123-6CD3-4794-AAF8-3FF1915C50A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9918123-6CD3-4794-AAF8-3FF1915C50A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9918123-6CD3-4794-AAF8-3FF1915C50A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

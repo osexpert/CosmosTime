@@ -33,6 +33,7 @@ namespace CosmosTime
 		/// Offset from Utc
 		/// </summary>
 		public int OffsetMins => _offsetMins;
+		public TimeSpan Offset => TimeSpan.FromMinutes(_offsetMins);
 
 		public static UtcOffsetTime Parse(string str)
 		{
@@ -106,6 +107,17 @@ namespace CosmosTime
 
 			_offsetMins = offsetMinutes;
 		}
+
+
+		//public UtcOffsetTime(UtcTime utc, TimeZoneInfo tz) : this()
+		//{
+
+		//}
+
+		//public UtcOffsetTime(DateTime anyTime, TimeZoneInfo tz) : this()
+		//{
+
+		//}
 
 		/// <summary>
 		/// Variable length local[+-]offset

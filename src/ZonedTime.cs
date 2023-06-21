@@ -49,6 +49,7 @@ namespace CosmosTime
 			// Since Kind now is either Utc or Local, its easy
 			if (utcOrLocalTime.Kind == DateTimeKind.Local)
 			{
+				// can Local tz be Utc?
 				_tz = TimeZoneInfo.Local;
 				_zoned = DateTime.SpecifyKind(utcOrLocalTime, DateTimeKind.Unspecified);
 			}
@@ -72,60 +73,42 @@ namespace CosmosTime
 			// _zoned.Kind = unspec, except if tz=utc, then kind = utc...
 		}
 
-		public ZonedTime(DateTime anyTime, DateTimeKind kindIfUnspecified)
+		public ZonedTime(DateTime anyTime, TimeZoneInfo tz)
 		{
-			if (kindIfUnspecified == DateTimeKind.Unspecified)
-				throw new ArgumentException("kindIfUnspecified can not be Unspecified");
+			if (tz == null)
+				throw new ArgumentNullException();
+
+			_tz = tz;
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
-				anyTime = DateTime.SpecifyKind(anyTime, kindIfUnspecified);
+				//_zoned = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
+				_zoned = anyTime;
 			}
-
-			// Since Kind now is either Utc or Local, its easy
-			if (anyTime.Kind == DateTimeKind.Local)
+			else if (anyTime.Kind == DateTimeKind.Local)
 			{
-				_tz = TimeZoneInfo.Local;
-				// Does it matter if the dateTime Kind is Local??
+				if (tz != TimeZoneInfo.Local)
+					throw new ArgumentException("anyTime.Kind is Local with tz is not local");
+
+				// Is this purely theoretical? That Local tz can be Utc?
 				_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
+					//TimeZoneInfo.Local == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 			}
 			else if (anyTime.Kind == DateTimeKind.Utc)
 			{
-				_tz = TimeZoneInfo.Utc;
+				if (tz != TimeZoneInfo.Utc)
+					throw new ArgumentException("anyTime.Kind is Utz while tz is not utc");
+
 				_zoned = anyTime;
 			}
 			else
-				throw new Exception("impossible, still unspec");
-		}
-
-
-		public ZonedTime(DateTime anyTime, TimeZoneInfo tzIfUnspecified)
-		{
-			if (tzIfUnspecified == null)
-				throw new ArgumentNullException("tz");
-
-			if (anyTime.Kind == DateTimeKind.Local)
 			{
-				_tz = TimeZoneInfo.Local;
-				_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
-			}
-			else if (anyTime.Kind == DateTimeKind.Utc)
-			{
-				_tz = TimeZoneInfo.Utc;
-				_zoned = anyTime;
-			}
-			else if (anyTime.Kind == DateTimeKind.Unspecified)
-			{
-				_tz = tzIfUnspecified;
-
-				if (tzIfUnspecified == TimeZoneInfo.Utc)
-					_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Utc);
-				else
-					_zoned = anyTime;
-			}
-			else 
+				// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
 				throw new Exception("impossible");
+			}
 		}
+
+
 
 		public UtcTime ToUtcTime() => new UtcTime(_zoned, _tz);
 
@@ -171,7 +154,7 @@ namespace CosmosTime
 
 			_tz = tz;
 			_zoned = new DateTime(year, month, day, 0, 0, 0, 
-				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
+				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......
 		}
 
 		public ZonedTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz) : this()
@@ -181,7 +164,7 @@ namespace CosmosTime
 
 			_tz = tz;
 			_zoned = new DateTime(year, month, day, hour, minute, second, 
-				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
+				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......
 		}
 
 		public ZonedTime Min(ZonedTime other)

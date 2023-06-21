@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CosmosTime
 {
-	public static class CosmosTimeHelper
+	public static class CosmosTimeExtensions
 	{
 
 		/// <summary>
@@ -48,9 +48,9 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static WhatTime ToWhatTime(this DateTime utcOrLocalTime)
+		public static LocalTime ToLocalTime2(this DateTime utcOrLocalTime)
 		{
-			return new WhatTime(utcOrLocalTime);
+			return new LocalTime(utcOrLocalTime);
 		}
 
 

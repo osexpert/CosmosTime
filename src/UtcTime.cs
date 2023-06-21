@@ -79,36 +79,32 @@ namespace CosmosTime
 			_utc = utcOrLocalTime.ToUniversalTime();
 		}
 
-		/// <summary>
-		/// DateTime can be any Kind, but unspecifiedKind must be set to either Utc or Local and this Kind will be used if anyTime.Kind is unspecified.
-		/// </summary>
-		/// <param name="anyTime"></param>
-		/// <param name="kindIfUnspecified"></param>
-		/// <exception cref="ArgumentException"></exception>
-		public UtcTime(DateTime anyTime, DateTimeKind kindIfUnspecified)
+		public UtcTime(DateTime anyTime, TimeZoneInfo tz)
 		{
-			if (kindIfUnspecified == DateTimeKind.Unspecified)
-				throw new ArgumentException("kindIfUnspecified can not be Unspecified");
+			if (tz == null)
+				throw new ArgumentNullException();
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
-				anyTime = DateTime.SpecifyKind(anyTime, kindIfUnspecified);
+				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 			}
-
-			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
-			_utc = anyTime.ToUniversalTime();
-		}
-
-		public UtcTime(DateTime anyTime, TimeZoneInfo tzIfUnspecified)
-		{
-			if (anyTime.Kind == DateTimeKind.Unspecified)
+			else if (anyTime.Kind == DateTimeKind.Local)
 			{
-				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tzIfUnspecified); // TODO: test
+				if (tz != TimeZoneInfo.Local)
+					throw new ArgumentException("When anyTime.Kind is Local, tz must be TimeZoneInfo.Local");
+
+				_utc = anyTime.ToUniversalTime();
+			}
+			else if (anyTime.Kind == DateTimeKind.Utc)
+			{
+				if (tz != TimeZoneInfo.Utc)
+					throw new ArgumentException("When anyTime.Kind is Utc, tz must be TimeZoneInfo.Utc");
+
+				_utc = anyTime;
 			}
 			else
 			{
-				// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
-				_utc = anyTime.ToUniversalTime();
+				throw new Exception("impossible");
 			}
 		}
 
