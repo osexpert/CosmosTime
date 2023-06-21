@@ -94,5 +94,14 @@ namespace CosmosTime.UnitTests
 			Assert.Equal(new UtcTime(2000, 3, 3, 14, 0, 0), localInAsis.ToUtcTime());
 		}
 
+
+		[Fact]
+		public void TzTest()
+		{
+			var iana = TimeZoneConverter.TZConvert.WindowsToIana(TimeZoneInfo.Local.Id);
+			var iana2 = TimeZoneIana.GetIanaId(TimeZoneInfo.Local.Id);
+			Assert.Equal(iana, iana2);
+
+		}
 	}
 }

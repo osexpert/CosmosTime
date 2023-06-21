@@ -752,23 +752,23 @@ namespace CosmosTime.TimeZone
 
 		public static string LocalIanaId => GetIanaId(TimeZoneInfo.Local.Id);
 
-		public static string GetIanaId(string windowsOrIanaId)
+		public static string GetIanaId(string windows_or_Iana_Id)
 		{
-			if (_windowsToIana.TryGetValue(windowsOrIanaId, out var iana))
+			if (_windowsToIana.TryGetValue(windows_or_Iana_Id, out var iana))
 				return iana;
 
 			// .NET on Linux uses Linux native time zone ids (Iana), so check this too
-			if (_ianaToWindows.ContainsKey(windowsOrIanaId))
-				return windowsOrIanaId;
+			if (_ianaToWindows.ContainsKey(windows_or_Iana_Id))
+				return windows_or_Iana_Id;
 
-			throw new ArgumentException("Time zone not found: " + windowsOrIanaId);
+			throw new TimeZoneNotFoundException("Time zone not found: " + windows_or_Iana_Id);
 		}
 
 		static string GetWindowsId(string ianaId)
 		{
 			if (_ianaToWindows.TryGetValue(ianaId, out var win))
 				return win;
-			throw new ArgumentException("Time zone not found: " + ianaId);
+			throw new TimeZoneNotFoundException("Time zone not found: " + ianaId);
 		}
 
 		/// <summary>
@@ -778,12 +778,11 @@ namespace CosmosTime.TimeZone
 		/// <returns></returns>
 		public static TimeZoneInfo GetTimeZoneInfo(string ianaId)
 		{
+			// This is no longer true. So now always check both:
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return TimeZoneInfo.FindSystemTimeZoneById(GetWindowsId(ianaId));
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			else //if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 				return TimeZoneInfo.FindSystemTimeZoneById(ianaId);
-
-			throw new NotImplementedException();
 		}
 	}
 
