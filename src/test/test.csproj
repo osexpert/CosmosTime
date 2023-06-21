@@ -50,8 +50,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\CosmosTime.csproj">
-      <Project>{fd5a3b4d-1c29-451e-b003-989aa08f30e4}</Project>
+    <ProjectReference Include="..\CosmosTime\CosmosTime.csproj">
+      <Project>{65a52fcc-fc11-4b65-8d4e-da48710d4f59}</Project>
       <Name>CosmosTime</Name>
     </ProjectReference>
   </ItemGroup>
