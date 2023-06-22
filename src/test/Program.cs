@@ -17,7 +17,7 @@ namespace test
 
 		static void Main(string[] args)
 		{
-			IanaGeneratorTool.Generate(@"d:\timeZoneMap10.cs");
+			IanaTimeZoneTool.Generate(@"d:\timeZoneMap10.cs");
 
 
 			var ss = UtcOffsetTime.LocalNow.ToString();

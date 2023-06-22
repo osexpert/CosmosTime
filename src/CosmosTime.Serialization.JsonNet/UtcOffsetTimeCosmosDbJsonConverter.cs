@@ -9,7 +9,7 @@ namespace CosmosTime.Serialization.JsonNet
 	/// <summary>
 	/// Format\parse composite format 
 	/// { 
-	///   "time": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
+	///   "timeUtc": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
 	///   "offsetMins": -30
 	/// }
 	/// </summary>

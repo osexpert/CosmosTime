@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CosmosTime.TimeZone
 {
-    internal class MsSqlTimeZoneMap
+    internal class MsSqlTimeZone
     {
 		public static string TIME_ZONE_ID_from_TIME_ZONE(string tz)
 		{

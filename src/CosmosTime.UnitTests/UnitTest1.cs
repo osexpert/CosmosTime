@@ -83,9 +83,9 @@ namespace CosmosTime.UnitTests
 			Assert.Equal("unspecified kind not allowed", e1.Message);
 
 
-			var localInAsis = new LocalTime(someTime, TimeZoneIana.GetTimeZoneInfo("Asia/Sakhalin"));
+			var localInAsis = new LocalTime(someTime, IanaTimeZone.GetTimeZoneInfo("Asia/Sakhalin"));
 
-			using (new FakeLocalTimeZone(TimeZoneIana.GetTimeZoneInfo("Europe/Oslo")))//.FindSystemTimeZoneById("UTC+12")))
+			using (new FakeLocalTimeZone(IanaTimeZone.GetTimeZoneInfo("Europe/Oslo")))//.FindSystemTimeZoneById("UTC+12")))
 			{
 				Assert.Equal(new LocalTime(2000, 3, 3, 15, 0, 0), localInAsis);
 			}
@@ -99,9 +99,11 @@ namespace CosmosTime.UnitTests
 		public void TzTest()
 		{
 			var iana = TimeZoneConverter.TZConvert.WindowsToIana(TimeZoneInfo.Local.Id);
-			var iana2 = TimeZoneIana.GetIanaId(TimeZoneInfo.Local.Id);
+			var iana2 = IanaTimeZone.GetIanaId(TimeZoneInfo.Local.Id);
 			Assert.Equal(iana, iana2);
 
 		}
+
+
 	}
 }

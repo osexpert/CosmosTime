@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace CosmosTime.TimeZone
 {
-	public class IanaGeneratorTool
+	public class IanaTimeZoneTool
 	{
 		public static void Generate(string timeZoneMapFileToWrite)
 		{

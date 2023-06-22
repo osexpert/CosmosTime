@@ -5,13 +5,14 @@ using System.Text;
 
 namespace CosmosTime.TimeZone
 {
-	internal class MsSqlGenerator
+	internal class MsSqlTimeZoneTool
 	{
-		public static void generator()
+		public static void Generate()
 		{
+			// Copy table from here, paste into sqltimezones
 			// https://learn.microsoft.com/en-us/azure/azure-sql/managed-instance/timezones-overview
 			List<string> newLines = new List<string>();
-			var liness = File.ReadLines(@"e:\sqltimezones", Encoding.UTF8);
+			var liness = File.ReadLines(@"e:\sqltimezones.txt", Encoding.UTF8);
 			foreach (var l in liness)
 			{
 				var parts = Split(l, "(UTC");
