@@ -52,7 +52,7 @@ namespace CosmosTime.UnitTests
 				//Assert.That(TimeZoneInfo.Local.Id, Is.EqualTo("UTC+12")); // ✅ Assertion passes
 				//Assert.That(localDateTime, Is.EqualTo(utcDateTime.AddHours(12))); // ✅ Assertion passes
 
-				var now = LocalTime.LocalNow;
+				var now = LocalTime.Now;
 				Assert.Equal(DateTimeKind.Local, now.LocalDateTime.Kind);
 
 				var dtNow = DateTime.Now;

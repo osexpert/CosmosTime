@@ -20,8 +20,8 @@ namespace CosmosTime
 	public struct LocalTime : IEquatable<LocalTime>, IComparable<LocalTime>, IComparable
 	{
 
-		public static readonly LocalTime MinValue = DateTime.MinValue.ToLocalTime2();
-		public static readonly LocalTime MaxValue = DateTime.MaxValue.ToLocalTime2();
+		public static readonly LocalTime MinValue = new DateTime(0L, DateTimeKind.Local).ToLocalTime2();
+		public static readonly LocalTime MaxValue = new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Local).ToLocalTime2();
 
 		DateTime _local;
 
@@ -32,7 +32,7 @@ namespace CosmosTime
 
 		public UtcTime ToUtcTime() => _local.ToUtcTime();
 
-		public static LocalTime LocalNow => DateTime.Now.ToLocalTime2();
+		public static LocalTime Now => DateTime.Now.ToLocalTime2();
 
 		public LocalTime Date => _local.Date.ToLocalTime2();
 
@@ -75,7 +75,6 @@ namespace CosmosTime
 			}
 			else
 			{
-				// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
 				throw new Exception("impossible");
 			}
 		}
@@ -147,7 +146,7 @@ namespace CosmosTime
 			return CompareTo((LocalTime)obj);
 		}
 
-		public override string ToString() => _local.ToString();
+		public override string ToString() => _local.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture);
 		
 	}
 

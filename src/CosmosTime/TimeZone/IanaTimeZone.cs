@@ -752,23 +752,62 @@ namespace CosmosTime.TimeZone
 
 		public static string LocalIanaId => GetIanaId(TimeZoneInfo.Local.Id);
 
+		public static string GetIanaId(TimeZoneInfo tz) => GetIanaId(tz.Id);
+
+		public static bool TryGetIanaId(TimeZoneInfo tz, out string ianaId)
+		{
+			if (TryGetIanaId(tz.Id, out ianaId))
+				return true;
+
+			ianaId = null;
+			return false;
+		}
+
 		public static string GetIanaId(string windows_or_Iana_Id)
 		{
-			if (_windowsToIana.TryGetValue(windows_or_Iana_Id, out var iana))
+			if (TryGetIanaId(windows_or_Iana_Id, out var iana))
 				return iana;
-
-			// .NET on Linux uses Linux native time zone ids (Iana), so check this too
-			if (_ianaToWindows.ContainsKey(windows_or_Iana_Id))
-				return windows_or_Iana_Id;
 
 			throw new TimeZoneNotFoundException("Time zone not found: " + windows_or_Iana_Id);
 		}
 
+		public static bool TryGetIanaId(string windows_or_Iana_Id, out string ianaId)
+		{
+			if (_windowsToIana.TryGetValue(windows_or_Iana_Id, out var iana))
+			{
+				ianaId = iana;
+				return true;
+			}
+
+			// .NET on Linux uses Linux native time zone ids (Iana), so check this too
+			if (_ianaToWindows.ContainsKey(windows_or_Iana_Id))
+			{
+				ianaId = windows_or_Iana_Id;
+				return true;
+			}
+
+			ianaId = null;
+			return false;
+		}
+
 		static string GetWindowsId(string ianaId)
 		{
-			if (_ianaToWindows.TryGetValue(ianaId, out var win))
-				return win;
+			if (TryGetWindowsId(ianaId, out var winId))
+				return winId;
+
 			throw new TimeZoneNotFoundException("Time zone not found: " + ianaId);
+		}
+
+		static bool TryGetWindowsId(string ianaId, out string winId)
+		{
+			if (_ianaToWindows.TryGetValue(ianaId, out var win))
+			{
+				winId = win;
+				return true;
+			}
+
+			winId = null;
+			return false;
 		}
 
 		/// <summary>

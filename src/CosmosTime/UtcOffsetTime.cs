@@ -124,7 +124,7 @@ namespace CosmosTime
 			if (neg)
 				mins *= -1;
 
-			var strNoZ = local.ToString(UtcTime.VariableLengthFormatWithoutZ);
+			var strNoZ = local.ToString(Constants.VariableLengthIsoFormatWithoutZ);
 
 			var off = string.Format("{0:00}:{1:00}", mins / 60, mins % 60);
 			var res = $"{strNoZ}{(neg ? '-' : '+')}{off}";

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CosmosTime.TimeZone;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace CosmosTime
@@ -16,23 +18,23 @@ namespace CosmosTime
 
 		// TODO: min \ max time
 
-		public static ZonedTime ZonedNow(TimeZoneInfo destTz)
+		public static ZonedTime Now(TimeZoneInfo tz)
 		{
-			if (destTz == null)
+			if (tz == null)
 				throw new ArgumentNullException("tz");
 
-			if (destTz == TimeZoneInfo.Local)
+			if (tz == TimeZoneInfo.Local)
 				return DateTime.Now.ToZonedTime();
-			else if (destTz == TimeZoneInfo.Utc)
+			else if (tz == TimeZoneInfo.Utc)
 				return DateTime.UtcNow.ToZonedTime();
 			else // convert to time in the zone
-				return new ZonedTime(TimeZoneInfo.ConvertTime(DateTime.UtcNow, destTz), destTz);
+				return new ZonedTime(TimeZoneInfo.ConvertTime(DateTime.UtcNow, tz), tz);
 		}
 		
 
-		public ZonedTime ZonedNow()
+		public ZonedTime Now()
 		{
-			return ZonedNow(_tz);
+			return Now(_tz);
 		}
 
 		public TimeZoneInfo Zone => _tz;
@@ -244,5 +246,13 @@ namespace CosmosTime
 		public override bool Equals(object obj) => obj is ZonedTime other && Equals(other);
 
 		public override int GetHashCode() => (_zoned, _tz).GetHashCode(); // verify
+
+		public override string ToString()
+		{
+			if (IanaTimeZone.TryGetIanaId(_tz, out var ianaId))
+				return $"{_zoned.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture)} [{ianaId}]";
+			else
+				return _zoned.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture);
+		}
 	}
 }

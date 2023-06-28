@@ -10,12 +10,7 @@ namespace CosmosTime
 	[TypeConverter(typeof(UtcTimeTypeConverter))]
 	public struct UtcTime : IEquatable<UtcTime>, IComparable<UtcTime>, IComparable
 	{
-		public const string FixedLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'fffffff";
-		// this is almost the same as "o" format (roundtrip), except roundtrip uses K (kind) instead of Z (zulu)
-		public const string FixedLengthFormatWithZ = FixedLengthFormatWithoutZ + "Z";
 
-		public const string VariableLengthFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
-		public const string VariableLengthFormatWithZ = VariableLengthFormatWithoutZ + "Z";
 
 		public static readonly UtcTime MinValue = new DateTime(0L, DateTimeKind.Utc).ToUtcTime();
 		/// <summary>
@@ -33,7 +28,7 @@ namespace CosmosTime
 		/// </summary>
 		public DateTime UtcDateTime => _utc;
 
-		public static UtcTime UtcNow => DateTime.UtcNow.ToUtcTime();
+		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
 
 		public UtcTime Date => _utc.Date.ToUtcTime();
 
@@ -43,7 +38,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public string ToCosmosDb()
 		{
-			return _utc.ToString(FixedLengthFormatWithZ, CultureInfo.InvariantCulture);
+			return _utc.ToString(Constants.FixedLengthIsoFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -62,7 +57,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return _utc.ToString(VariableLengthFormatWithZ, CultureInfo.InvariantCulture);
+			return _utc.ToString(Constants.VariableLengthIsoFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -190,7 +185,7 @@ namespace CosmosTime
 				throw new FormatException("not 28 chars");
 
 			// does verify the length, but do it outselfs anyways to be sure
-			var dt = DateTime.ParseExact(utc, FixedLengthFormatWithZ, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind /* needed? yes, else kind is wrong*/);
+			var dt = DateTime.ParseExact(utc, Constants.FixedLengthIsoFormatWithZ, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind /* needed? yes, else kind is wrong*/);
 			return dt.ToUtcTime();
 		}
 
