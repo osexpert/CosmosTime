@@ -294,20 +294,44 @@ namespace CosmosTime.TimeZone
 			{"Dateline Standard Time", "(UTC-12:00) International Date Line West"},
 		};
 
-		public static string IdFromName(string msSqlTzName)
+		public static string GetIdFromName(string msSqlTzName)
 		{
-			if (_nameToId.TryGetValue(msSqlTzName, out var id))
+			if (TryGetIdFromName(msSqlTzName, out var id))
 				return id;
 			
 			throw new TimeZoneNotFoundException("TimeZone not found: " + msSqlTzName);
 		}
 
-		public static string NameFromId(string msSqlTzId)
+		public static bool TryGetIdFromName(string msSqlTzName, out string msSqlId)
 		{
-			if (_IdToName.TryGetValue(msSqlTzId, out var name))
+			if (_nameToId.TryGetValue(msSqlTzName, out var id))
+			{
+				msSqlId = id;
+				return true;
+			}
+
+			msSqlId = null;
+			return false;
+		}
+
+		public static string GetNameFromId(string msSqlTzId)
+		{
+			if (TryGetNameFromId(msSqlTzId, out var name))
 				return name;
 
 			throw new TimeZoneNotFoundException("TimeZone not found: " + msSqlTzId);
+		}
+
+		public static bool TryGetNameFromId(string msSqlTzId, out string msSqlName)
+		{
+			if (_IdToName.TryGetValue(msSqlTzId, out var name))
+			{
+				msSqlName = name;
+				return true;
+			}
+
+			msSqlName = null;
+			return false;
 		}
 	}
 }
