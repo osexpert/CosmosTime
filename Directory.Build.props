@@ -1,0 +1,46 @@
+<Project>
+  <PropertyGroup>
+
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    
+<!--
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\keypair.key</AssemblyOriginatorKeyFile>
+    -->
+    <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
+    <PackageOutputPath>$(RepoRootPath)bin\Packages\$(Configuration)\NuGet\</PackageOutputPath>
+
+    <PackageProjectUrl>https://github.com/osexpert/CosmosTime</PackageProjectUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/osexpert/CosmosTime.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Company>osexpert</Company>      
+    
+ 	  <Authors>osexpert</Authors>
+	  <Copyright>2022 osexpert</Copyright>
+    
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <PackageTags>time iso8601 utc cosmosdb iana</PackageTags>
+    <Description>Yet another time library born when working with Cosmos DB. Focus on Utc and ISO8601.</Description>        
+		        
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+		              
+<!--
+
+
+    
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols Condition=" '$(DebugType)' != 'embedded' ">true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
+    -->
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(RepoRootPath)README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+    
+</Project>

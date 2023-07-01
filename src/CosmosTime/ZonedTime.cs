@@ -250,9 +250,9 @@ namespace CosmosTime
 		public override string ToString()
 		{
 			if (IanaTimeZone.TryGetIanaId(_tz, out var ianaId))
-				return $"{_zoned.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture)} [{ianaId}]";
+				return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}[{ianaId}]";
 			else
-				return _zoned.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture);
+				return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}";
 		}
 	}
 }

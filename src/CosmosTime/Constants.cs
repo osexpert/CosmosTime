@@ -10,7 +10,8 @@ namespace CosmosTime
 		// this is almost the same as "o" format (roundtrip), except roundtrip uses K (kind) instead of Z (zulu)
 		internal const string FixedLengthIsoFormatWithZ = FixedLengthIsoFormatWithoutZ + "Z";
 
-		internal const string VariableLengthIsoFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
-		internal const string VariableLengthIsoFormatWithZ = VariableLengthIsoFormatWithoutZ + "Z";
+		internal const string VariableLengthMicrosIsoFormatWithoutZ = "yyyy'-'MM'-'ddTHH':'mm':'ss'.'FFFFFFF";
+		internal const string VariableLengthMicrosIsoFormatWithZ = VariableLengthMicrosIsoFormatWithoutZ + "Z";
+		//internal const string VariableLengthMicrosIsoFormatWithTZ = VariableLengthMicrosIsoFormatWithoutZ + "K";
 	}
 }

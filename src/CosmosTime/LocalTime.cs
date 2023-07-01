@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -146,9 +147,10 @@ namespace CosmosTime
 			return CompareTo((LocalTime)obj);
 		}
 
-		public override string ToString() => _local.ToString(Constants.VariableLengthIsoFormatWithoutZ, CultureInfo.InvariantCulture);
+		public override string ToString() => _local.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture);
 		
 	}
 
 
 }
+#endif

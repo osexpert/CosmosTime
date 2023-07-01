@@ -23,7 +23,7 @@ Formats with local+UtcOffset does not work in CosmosDB because of lexical search
 you must use UtcOffsetTimeCosmosDbJsonConverter that will format like this:  
 "myTime":
 {  
- "time": "2009-06-15T13:45:30.0000000Z",  
+ "timeUtc": "2009-06-15T13:45:30.0000000Z",  
  "offsetMins": 30
 }  
 

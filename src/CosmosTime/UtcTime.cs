@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace CosmosTime
@@ -57,7 +58,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return _utc.ToString(Constants.VariableLengthIsoFormatWithZ, CultureInfo.InvariantCulture);
+			return _utc.ToString(Constants.VariableLengthMicrosIsoFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -124,6 +125,11 @@ namespace CosmosTime
 		public UtcTime(int year, int month, int day, int hour, int minute, int second) : this()
 		{
 			_utc = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
+		}
+
+		public UtcTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
+		{
+			_utc = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Utc);
 		}
 
 		public UtcTime Min(UtcTime other)
@@ -203,10 +209,10 @@ namespace CosmosTime
 
 		/// <summary>
 		/// Parse any Iso time in utc or local[+-]offset. Example:
-		/// 2020-01-01Z
-		/// 2020-01-01T12:12:12Z
-		/// 2020-01-01T12:12:12.123Z
-		/// 2020-01-01T12:12:12.123+00:30
+		/// <para>2020-01-01Z</para>
+		/// <para>2020-01-01T12:12:12Z</para>
+		/// <para>2020-01-01T12:12:12.123Z</para>
+		/// <para>2020-01-01T12:12:12.123+00:30</para>
 		/// </summary>
 		/// <param name="str"></param>
 		/// <param name="utc"></param>
@@ -225,14 +231,21 @@ namespace CosmosTime
  * 
  * DateTimeStyles.AdjustToUniversal and DateTimeStyles.RoundtripKind are very similar in a way, and mutually exlusive (cannot be used together)
  * */
-			if (DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out var dt)
-				&& dt.Kind == DateTimeKind.Utc)
+			//if (DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out var dt)
+			//	&& dt.Kind == DateTimeKind.Utc)
+			//{
+			//	utc = dt.ToUtcTime();
+			//	return true;
+			//}
+
+			utc = UtcTime.MinValue;
+
+			if (IsoTimeParser.TryParseAsIso(str, allowLocal: false, out DateTime dt))
 			{
 				utc = dt.ToUtcTime();
 				return true;
 			}
 
-			utc = UtcTime.MinValue;
 			return false;
 		}
 

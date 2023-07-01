@@ -53,10 +53,10 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static LocalTime ToLocalTime2(this DateTime utcOrLocalTime)
-		{
-			return new LocalTime(utcOrLocalTime);
-		}
+		//public static LocalTime ToLocalTime2(this DateTime utcOrLocalTime)
+		//{
+		//	return new LocalTime(utcOrLocalTime);
+		//}
 
 
 
