@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace CosmosTime
 {
-	public static class IsoTimeParser // JsonHelpers
+	internal static class IsoTimeParser // JsonHelpers
 	{
 		[StructLayout(LayoutKind.Auto)]
 		private struct DateTimeParseData
@@ -51,11 +51,11 @@ namespace CosmosTime
 		//	return IsInRangeInclusive(length, JsonConstants.MinimumDateTimeParseLength, JsonConstants.MaximumDateTimeOffsetParseLength);
 		//}
 
-		public static bool TryParseAsIso(string source, bool allowLocal, out DateTime value)
-			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), allowLocal, out value);
+		public static bool TryParseAsIso(string source, out DateTime value, out TimeZoneKind tzk)
+			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out tzk);
 
-		public static bool TryParseAsIso(string source, bool allowLocal, out DateTimeOffset value)
-			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), allowLocal, out value);
+		public static bool TryParseAsIso(string source, out DateTimeOffset value, out DateTime dtValue, out TimeZoneKind tzk)
+			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out dtValue, out tzk );
 
 		/// <summary>
 		/// Parse the given UTF-8 <paramref name="source"/> as extended ISO 8601 format.
@@ -63,8 +63,10 @@ namespace CosmosTime
 		/// <param name="source">UTF-8 source to parse.</param>
 		/// <param name="value">The parsed <see cref="DateTime"/> if successful.</param>
 		/// <returns>"true" if successfully parsed.</returns>
-		public static bool TryParseAsIso(ReadOnlySpan<byte> source, bool allowLocal, out DateTime value)
+		public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateTime value, out TimeZoneKind tzk)
 		{
+			tzk = TimeZoneKind.None;
+
 			if (!TryParseDateTimeOffset(source, out DateTimeParseData parseData))
 			{
 				value = default;
@@ -73,6 +75,7 @@ namespace CosmosTime
 
 			if (parseData.OffsetToken == JsonConstants.UtcOffsetToken)
 			{
+				tzk = TimeZoneKind.Utc;
 				return TryCreateDateTime(parseData, DateTimeKind.Utc, out value);
 			}
 			else if (parseData.OffsetToken == JsonConstants.Plus || parseData.OffsetToken == JsonConstants.Hyphen)
@@ -83,47 +86,47 @@ namespace CosmosTime
 					return false;
 				}
 
+				tzk = TimeZoneKind.Offset;
 				value = dateTimeOffset.LocalDateTime;
 				return true;
 			}
 
-			if (allowLocal)
-			{
-				return TryCreateDateTime(parseData, DateTimeKind.Unspecified, out value);
-			}
-
-			value = default;
-			return false; 
+			return TryCreateDateTime(parseData, DateTimeKind.Unspecified, out value);
 		}
 
 		/// <summary>
 		/// Parse the given UTF-8 <paramref name="source"/> as extended ISO 8601 format.
+		/// 
+		/// value is set if tzk is Utc or Offset.
+		/// dtValue is set if tzk is None
+		/// 
 		/// </summary>
 		/// <param name="source">UTF-8 source to parse.</param>
-		/// <param name="value">The parsed <see cref="DateTimeOffset"/> if successful.</param>
+		/// <param name="dtoValue">The parsed <see cref="DateTimeOffset"/> if successful.</param>
 		/// <returns>"true" if successfully parsed.</returns>
-		public static bool TryParseAsIso(ReadOnlySpan<byte> source, bool allowLocal, out DateTimeOffset value)
+		public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateTimeOffset dtoValue, out DateTime dtValue, out TimeZoneKind tzk)
 		{
+			dtValue = default;
+
+			tzk = TimeZoneKind.None;
+
 			if (!TryParseDateTimeOffset(source, out DateTimeParseData parseData))
 			{
-				value = default;
+				dtoValue = default;
 				return false;
 			}
 
 			if (parseData.OffsetToken == JsonConstants.UtcOffsetToken || // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
 				parseData.OffsetToken == JsonConstants.Plus || parseData.OffsetToken == JsonConstants.Hyphen)
 			{
-				return TryCreateDateTimeOffset(ref parseData, out value);
+				tzk = parseData.OffsetToken == JsonConstants.UtcOffsetToken ? TimeZoneKind.Utc : TimeZoneKind.Offset;
+				return TryCreateDateTimeOffset(ref parseData, out dtoValue);
 			}
 
 			// No offset, attempt to read as local time.
-			if (allowLocal)
-			{
-				return TryCreateDateTimeOffsetInterpretingDataAsLocalTime(parseData, out value);
-			}
-
-			value = default;
-			return false;
+			// NO...keep local time out of this, dammit...
+			//return TryCreateDateTimeOffsetInterpretingDataAsLocalTime(parseData, out value);
+			return TryCreateDateTime(parseData, DateTimeKind.Unspecified, out dtValue);
 		}
 
 #if NETCOREAPP
@@ -705,5 +708,21 @@ namespace CosmosTime
 		// The maximum number of parameters a constructor can have where it can be considered
 		// for a path on deserialization where we don't box the constructor arguments.
 		public const int UnboxedParameterCountThreshold = 4;
+	}
+
+	internal enum TimeZoneKind
+	{
+		/// <summary>
+		/// {time}
+		/// </summary>
+		None,
+		/// <summary>
+		/// {time}Z
+		/// </summary>
+		Utc,
+		/// <summary>
+		/// {time}+|-hh[:mm]
+		/// </summary>
+		Offset,
 	}
 }

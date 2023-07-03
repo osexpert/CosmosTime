@@ -110,12 +110,12 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void UtcTime_Parse()
 		{
-			var r1= UtcTime.TryParse("2020-01-20", out var v1);
+			var r1 = UtcTime.TryParse("2020-01-20", out var v1);
 			Assert.False(r1);
 			var r2 = UtcTime.TryParse("2020-01-20Z", out var v2);
 			Assert.False(r2); // not iso
-//			Assert.Equal(new UtcTime(2020, 01, 20), v2);
-	//		Assert.Equal("2020-01-20T00:00:00Z", v2.ToString());
+							  //			Assert.Equal(new UtcTime(2020, 01, 20), v2);
+							  //		Assert.Equal("2020-01-20T00:00:00Z", v2.ToString());
 
 			var r3 = UtcTime.TryParse("2020-01-20T12:13:14", out var v3);
 			Assert.False(r3);
@@ -144,7 +144,7 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void UtcOffsetTime_Parse()
 		{
-		
+
 			//t.i
 
 			var r1 = UtcOffsetTime.TryParse("2020-01-20", out var v1);
@@ -152,8 +152,8 @@ namespace CosmosTime.UnitTests
 			var r2 = UtcOffsetTime.TryParse("2020-01-20Z", out var v2);
 			//Assert.True(r2);
 			Assert.False(r2); // not really ISO
-//			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20), 0), v2);
-	//		Assert.Equal("2020-01-20T00:00:00+00:00", v2.ToString());
+							  //			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20), 0), v2);
+							  //		Assert.Equal("2020-01-20T00:00:00+00:00", v2.ToString());
 
 			var r3 = UtcOffsetTime.TryParse("2020-01-20T12:13:14", out var v3);
 			Assert.False(r3);
@@ -183,9 +183,9 @@ namespace CosmosTime.UnitTests
 
 			var r9 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123+0030", out var v9);
 			Assert.False(r9);
-//			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 11, 43, 14, 123), 30), v9);
+			//			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 11, 43, 14, 123), 30), v9);
 			// read as: local time and you get it by adding offset to utc, so take utc + 00:30 = local time
-	//		Assert.Equal("2020-01-20T12:13:14.123+00:30", v9.ToString());
+			//		Assert.Equal("2020-01-20T12:13:14.123+00:30", v9.ToString());
 			var r10 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123-0030", out var v10);
 			Assert.False(r10);
 			//Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 12, 43, 14, 123), -30), v10);
@@ -195,7 +195,7 @@ namespace CosmosTime.UnitTests
 			var r11 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123+01", out var v11);
 			Assert.True(r11);
 			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 11, 13, 14, 123), 30), v11); // offset does not matter...
-			// read as: local time and you get it by adding offset to utc, so take utc + 00:30 = local time
+																								  // read as: local time and you get it by adding offset to utc, so take utc + 00:30 = local time
 			Assert.Equal("2020-01-20T12:13:14.123+01:00", v11.ToString());
 			var r12 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123-01", out var v12);
 			Assert.True(r12);
@@ -203,6 +203,30 @@ namespace CosmosTime.UnitTests
 			Assert.Equal("2020-01-20T12:13:14.123-01:00", v12.ToString());
 
 
+		}
+
+		[Fact]
+		public void UtcOffsetTime_Parse_Unspec()
+		{
+			var r1 = UtcOffsetTime.TryParse("2020-01-20", out var v1, dt => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin"));
+			Assert.True(r1);
+			Assert.Equal("2020-01-20T00:00:00+01:00", v1.ToString());
+
+			var r2 = UtcOffsetTime.TryParse("2020-01-20", out var v2, dt => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+			Assert.True(r2);
+			Assert.Equal("2020-01-20T00:00:00+03:00", v2.ToString());
+		}
+
+		[Fact]
+		public void UtcTime_Parse_Unspec()
+		{
+			var r1 = UtcTime.TryParse("2020-01-20", out var v1, dt => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin"));
+			Assert.True(r1);
+			Assert.Equal("2020-01-19T23:00:00Z", v1.ToString());
+
+			var r2 = UtcTime.TryParse("2020-01-20", out var v2, dt => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+			Assert.True(r2);
+			Assert.Equal("2020-01-19T21:00:00Z", v2.ToString());
 		}
 	}
 }

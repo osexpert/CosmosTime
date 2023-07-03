@@ -75,6 +75,11 @@ namespace CosmosTime
 			_utc = utcOrLocalTime.ToUniversalTime();
 		}
 
+		/// <summary>
+		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
+		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
+		/// If anyTime.Kind is Unspecified, then tz can be anything
+		/// </summary>
 		public UtcTime(DateTime anyTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -204,8 +209,17 @@ namespace CosmosTime
 		{
 			if (TryParse(str, out var ut))
 				return ut;
-			throw new FormatException("not utc or local[+-]offset");
+			throw new FormatException();// "not utc or local[+-]offset");
 		}
+
+		public static UtcTime Parse(string str, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
+		{
+			if (TryParse(str, out var ut, tzIfUnspecified))
+				return ut;
+			throw new FormatException();// "not utc or local[+-]offset");
+		}
+
+
 
 		/// <summary>
 		/// Parse any Iso time in utc or local[+-]offset. Example:
@@ -219,28 +233,9 @@ namespace CosmosTime
 		/// <returns></returns>
 		public static bool TryParse(string str, out UtcTime utc)
 		{
-			/* 2020-10-27T10:59:54Z -> Kind.Utc
- * 2020-10-27T10:59:54 -> Kind.Unspec
- * 2020-10-27T10:59:54+00:10  -> Kind.Utc
- * This is becase of DateTimeStyles.AdjustToUniversal (and we require UTc here)
- * 
- * If using DateTimeStyles.RoundtripKind we would get
- * Kind.Utc
- * Kind.Unspec
- * Kind.Local
- * 
- * DateTimeStyles.AdjustToUniversal and DateTimeStyles.RoundtripKind are very similar in a way, and mutually exlusive (cannot be used together)
- * */
-			//if (DateTime.TryParse(str, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out var dt)
-			//	&& dt.Kind == DateTimeKind.Utc)
-			//{
-			//	utc = dt.ToUtcTime();
-			//	return true;
-			//}
+			utc = default;
 
-			utc = UtcTime.MinValue;
-
-			if (IsoTimeParser.TryParseAsIso(str, allowLocal: false, out DateTime dt))
+			if (IsoTimeParser.TryParseAsIso(str, out DateTime dt, out var tzk) && tzk != TimeZoneKind.None)
 			{
 				utc = dt.ToUtcTime();
 				return true;
@@ -249,35 +244,63 @@ namespace CosmosTime
 			return false;
 		}
 
-		public double ToOADate()
+
+		public static bool TryParse(string str, out UtcTime utc, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
 		{
-			return _utc.ToOADate();
+			if (tzIfUnspecified == null)
+				throw new ArgumentNullException(nameof(tzIfUnspecified));
+
+			utc = default;
+
+			if (IsoTimeParser.TryParseAsIso(str, out DateTime dt, out var tzk))
+			{
+				if (tzk != TimeZoneKind.None)
+				{
+					utc = dt.ToUtcTime();
+					return true;
+				}
+				else
+				{
+					var tz = tzIfUnspecified(dt);
+					utc = dt.ToUtcTime(tz);
+					return true;
+				}
+			}
+
+			return false;
 		}
 
-		public static UtcTime FromOADate(double d)
-		{
-			return new DateTime(DoubleDateToTicks(d), DateTimeKind.Utc).ToUtcTime();
-		}
 
-		// snatched from DateTime
-		internal static long DoubleDateToTicks(double value)
-		{
-			if ((value >= 2958466.0) || (value <= -657435.0))
-			{
-				throw new ArgumentException(("Arg_OleAutDateInvalid"));
-			}
-			long num = (long)((value * 86400000.0) + ((value >= 0.0) ? 0.5 : -0.5));
-			if (num < 0L)
-			{
-				num -= (num % 0x5265c00L) * 2L;
-			}
-			num += 0x3680b5e1fc00L;
-			if ((num < 0L) || (num >= 0x11efae44cb400L))
-			{
-				throw new ArgumentException(("Arg_OleAutDateScale"));
-			}
-			return (num * 0x2710L);
-		}
+
+		//public double ToOADate()
+		//{
+		//	return _utc.ToOADate();
+		//}
+
+		//public static UtcTime FromOADate(double d)
+		//{
+		//	return new DateTime(DoubleDateToTicks(d), DateTimeKind.Utc).ToUtcTime();
+		//}
+
+		//// snatched from DateTime
+		//internal static long DoubleDateToTicks(double value)
+		//{
+		//	if ((value >= 2958466.0) || (value <= -657435.0))
+		//	{
+		//		throw new ArgumentException(("Arg_OleAutDateInvalid"));
+		//	}
+		//	long num = (long)((value * 86400000.0) + ((value >= 0.0) ? 0.5 : -0.5));
+		//	if (num < 0L)
+		//	{
+		//		num -= (num % 0x5265c00L) * 2L;
+		//	}
+		//	num += 0x3680b5e1fc00L;
+		//	if ((num < 0L) || (num >= 0x11efae44cb400L))
+		//	{
+		//		throw new ArgumentException(("Arg_OleAutDateScale"));
+		//	}
+		//	return (num * 0x2710L);
+		//}
 	}
 
 

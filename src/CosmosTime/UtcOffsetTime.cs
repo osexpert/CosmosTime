@@ -36,177 +36,58 @@ namespace CosmosTime
 		public int OffsetMins => _offsetMins;
 		public TimeSpan Offset => TimeSpan.FromMinutes(_offsetMins);
 
+		/// <summary>
+		/// TODO: option to parse local time, but then specify what the tz is.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		/// <exception cref="FormatException"></exception>
 		public static UtcOffsetTime Parse(string str)
 		{
 			if (TryParse(str, out var ut))
 				return ut;
-			throw new FormatException("not utc or local[+-]offset");
+			throw new FormatException();
 		}
-
-//		delegate Boolean dHello(ReadOnlySpan<char> a, DateTimeFormatInfo b, DateTimeStyles c, out DateTime d, out TimeSpan e);
 
 		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo)
 		{
-			uo = UtcOffsetTime.MinValue;
+			uo = default;
 
-			if (IsoTimeParser.TryParseAsIso(utcOffsetString, allowLocal: false, out DateTimeOffset dto))
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out DateTime dt, out var tzk) && tzk != TimeZoneKind.None)
 			{
 				uo = dto.ToUtcOffsetTime();
 				return true;
 			}
 
-//			var t = Type.GetType("System.DateTimeParse");
+			return false;
+		}
 
-//			TimeSpan offset;// = TimeSpan.Zero;
-//			DateTime dateResult;// = DateTime.MinValue;
+		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
+		{
+			if (tzIfUnspecified == null)
+				throw new ArgumentNullException(nameof(tzIfUnspecified));
 
-//			var sp = new ReadOnlySpan<char>(utcOffsetString.ToArray());
-//			//object oo = (object)sp;
-//			//			object off;
-//			//		object dr;
+			uo = default;
 
-//			var m = t.GetMethod("TryParse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, 
-//				null, System.Reflection.CallingConventions.Standard,
-//				new Type[] { typeof(ReadOnlySpan<char>), typeof(DateTimeFormatInfo), typeof(DateTimeStyles), typeof(DateTime).MakeByRefType(), typeof(TimeSpan).MakeByRefType() }, null);
-				
-//			var dele = (dHello)m.CreateDelegate(typeof(dHello), null);
-//			var res = dele(sp, DateTimeFormatInfo.GetInstance(CultureInfo.InvariantCulture), DateTimeStyles.RoundtripKind, out dateResult, out offset);
-
-//			if (!res)
-//				return false;
-
-//			if (dateResult.Kind == DateTimeKind.Unspecified)
-//				return false;
-
-////			bool b = (bool)t.InvokeMember("TryParse", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.InvokeMethod | System.Reflection.BindingFlags.Static, null,
-//	//			null, new object[] { oo, DateTimeFormatInfo.GetInstance(CultureInfo.InvariantCulture), DateTimeStyles.None, dateResult, offset });
-//			//Boolean parsed = DateTimeParse.TryParse(input,
-//			//										DateTimeFormatInfo.CurrentInfo,
-//			//										DateTimeStyles.None,
-//			//										out dateResult,
-//			//										out offset);
-
-
-//			//public static Boolean TryParse(String input, IFormatProvider formatProvider, DateTimeStyles styles, out DateTimeOffset result)
-//			//{
-//			//	styles = ValidateStyles(styles, "styles");
-//			//	TimeSpan offset;
-//			//	DateTime dateResult;
-//			//	Boolean parsed = DateTimeParse.TryParse(input,
-//			//											DateTimeFormatInfo.GetInstance(formatProvider),
-//			//											styles,
-//			//											out dateResult,
-//			//											out offset);
-//			//	result = new DateTimeOffset(dateResult.Ticks, offset);
-//			//	return parsed;
-//			//}
-
-
-
-//			/* 2020-10-27T10:59:54Z -> offset 0
-//			 * 2020-10-27T10:59:54 -> local time (BAD) Will not allow this... must check manually
-//			 * Only support 2 tiem zone formats: [+-]nn:nn and [+-]nnnn
-//			 * 2020-10-27T10:59:54+00:10  -> offset 10min
-//		 	 * 2020-10-27T10:59:54+0010  -> offset 10min
-
-//			 * 
-//			 * DateTimeStyles.AdjustToUniversal and DateTimeStyles.RoundtripKind are very similar in a way, and mutually exlusive (cannot be used together)
-//			 * */
-
-//			// offset local time(BAD) Will not allow this... must check manually
-//			Func<string, bool> endsWithZ = (str) => str.Length > 0 && str[str.Length - 1] == 'Z';
-//			// This is not reliable. It is really hard to detect\extract the offset, because there are so many allowed formats!
-//			// And there is no way to tell DateTimeOffset to not allow parsing local times.
-//			// So we need to fake it, for now:
-//			//Func<string, bool> hasOffset = (str) =>
-//			//{
-//			//	for (int i = 2; i <= 5 && i <= str.Length; i++)
-//			//	{
-//			//		var c = str[str.Length - i];
-//			//		if (c == '-' || c == '+')
-//			//			return true;
-//			//	}
-//			//	return false;
-//			//};
-
-//			//if (DateTimeOffset.TryParseExact(utcOffsetString, new[]{
-//			//	Constants.VariableLengthMicrosIsoFormatWithZ, Constants.VariableLengthMicrosIsoFormatWithTZ}, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto))
-//			//{
-//			//	uo = dto.ToUtcOffsetTime();
-//			//	return true;
-//			//}
-
-//			// DateTimeStyles.RoundtripKind seem to have no effect on DateTimeOffset. but set it anyways
-//			//			if (endsWithZ(utcOffsetString) || hasOffset(utcOffsetString))
-//			//if (DateTimeOffset.TryParse(utcOffsetString, CultureInfo.InvariantCulture, DateTimeStyles., out var dto))
-//			//{
-//			//	uo = dto.ToUtcOffsetTime();
-//			//	return true;
-//			//}
-
-//			uo = UtcOffsetTime.MinValue;
-//			if (!utcOffsetString.Any())
-//				return false;
-
-//			// fast path for ending witn Z
-//			if (utcOffsetString.Last() == 'Z')
-//			{
-//				if (DateTimeOffset.TryParse(utcOffsetString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dto1))
-//				{
-//					uo = dto1.ToUtcOffsetTime();
-//					return true;
-//				}
-//				// slow path
-//				else
-//				{
-//					return false;
-//				}
-//			}
-
-//			// todo: fast path for ending with TZ?
-//			//-0400 or -00:30
-//			else if (utcOffsetString.Length > 6)
-//			{
-//				if ((Char.IsDigit(utcOffsetString[utcOffsetString.Length - 1]) && Char.IsDigit(utcOffsetString[utcOffsetString.Length - 2])
-//					&& utcOffsetString[utcOffsetString.Length - 3] == ':'
-//					&& Char.IsDigit(utcOffsetString[utcOffsetString.Length - 4]) && Char.IsDigit(utcOffsetString[utcOffsetString.Length - 5])
-//					&& (utcOffsetString[utcOffsetString.Length - 6] == '-' || utcOffsetString[utcOffsetString.Length - 6] == '+')
-//					)
-//					||
-//					(Char.IsDigit(utcOffsetString[utcOffsetString.Length - 1]) && Char.IsDigit(utcOffsetString[utcOffsetString.Length - 2])
-//					&& Char.IsDigit(utcOffsetString[utcOffsetString.Length - 3]) && Char.IsDigit(utcOffsetString[utcOffsetString.Length - 4])
-//					&& (utcOffsetString[utcOffsetString.Length - 5] == '-' || utcOffsetString[utcOffsetString.Length - 5] == '+')
-//					)
-//					)
-//				{
-//					if (DateTimeOffset.TryParse(utcOffsetString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dto2))
-//					{
-//						uo = dto2.ToUtcOffsetTime();
-//						return true;
-//					}
-//					// slow path
-//					else
-//					{
-//						return false;
-//					}
-
-//				}
-//			}
-
-			//if (DateTimeOffset.TryParse(utcOffsetString + "Z", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var _))
-			//{
-			//	// it must have been local time, since it could be parsed with an extra Z
-			//	return false;
-			//}
-
-			//// else it must be a time with zone
-
-
-			//if (DateTimeOffset.TryParse(utcOffsetString, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var dto))
-			//{
-			//	uo = dto.ToUtcOffsetTime();
-			//	return true;
-			//}
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out DateTime dt, out var tzk))
+			{
+				if (tzk != TimeZoneKind.None)
+				{
+					uo = dto.ToUtcOffsetTime();
+					return true;
+				}
+				else
+				{
+					var tz = tzIfUnspecified(dt);
+					var utc = dt.ToUtcTime(tz);
+					var offsetMinsDbl = (dt - utc.UtcDateTime).TotalMinutes;
+					var offsetMins = (short)offsetMinsDbl;
+					if (offsetMins != offsetMinsDbl)
+						throw new Exception("fractions lost in offset");
+					uo = new UtcOffsetTime(utc, offsetMins);
+					return true;
+				}
+			}
 
 			return false;
 		}

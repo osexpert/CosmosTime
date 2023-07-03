@@ -10,6 +10,13 @@ namespace CosmosTime
 	// It all depend on how TimeZoneInfo work. If it, when convert to utz tz give kind Utc, and when convert to same tz as the local, produce Local kind..
 	// Must test
 
+	/// <summary>
+	/// time + tz
+	/// eg. 2021-12-27T22:00:00.000[Europe/Berlin]
+	/// eg. time_in_tz[tz]
+	/// but what if time has Z or offset? I Guess we can parse it, but then some info is lost? Yes...the Z or offset is ignored? I guess so...Just stripped away...
+	/// Kind of destructive
+	/// </summary>
 	public struct ZonedTime : IEquatable<ZonedTime>, IComparable<ZonedTime>, IComparable
 	{
 
@@ -52,7 +59,7 @@ namespace CosmosTime
 			// Since Kind now is either Utc or Local, its easy
 			if (utcOrLocalTime.Kind == DateTimeKind.Local)
 			{
-				// can Local tz be Utc?
+				// can Local tz be Utc? Yes.
 				_tz = TimeZoneInfo.Local;
 				_zoned = DateTime.SpecifyKind(utcOrLocalTime, DateTimeKind.Unspecified);
 			}
@@ -76,6 +83,11 @@ namespace CosmosTime
 			// _zoned.Kind = unspec, except if tz=utc, then kind = utc...
 		}
 
+		/// <summary>
+		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
+		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
+		/// If anyTime.Kind is Unspecified, then tz can be anything
+		/// </summary>
 		public ZonedTime(DateTime anyTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -85,17 +97,14 @@ namespace CosmosTime
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
-				//_zoned = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 				_zoned = anyTime;
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
 			{
 				if (tz != TimeZoneInfo.Local)
-					throw new ArgumentException("anyTime.Kind is Local with tz is not local");
+					throw new ArgumentException("anyTime.Kind is Local while tz is not local");
 
-				// Is this purely theoretical? That Local tz can be Utc?
 				_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
-					//TimeZoneInfo.Local == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 			}
 			else if (anyTime.Kind == DateTimeKind.Utc)
 			{
@@ -106,7 +115,6 @@ namespace CosmosTime
 			}
 			else
 			{
-				// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
 				throw new Exception("impossible");
 			}
 		}
@@ -148,25 +156,24 @@ namespace CosmosTime
 
 		//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
 
-		
+		// TODO: parse? In case, we strip the tz {before}[{tz}] and send {before} to normal parsing.
 
-		public ZonedTime(int year, int month, int day, TimeZoneInfo tz) : this()
+		public ZonedTime(int year, int month, int day, TimeZoneInfo tz) :
+			this(year, month, day, 0, 0, 0, 0, tz)
+		{ }
+
+		public ZonedTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz) :
+			this(year, month, day, hour, minute, second, 0, tz)
 		{
-			if (tz == null)
-				throw new ArgumentNullException("tz");
-
-			_tz = tz;
-			_zoned = new DateTime(year, month, day, 0, 0, 0, 
-				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......correct?
 		}
 
-		public ZonedTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz) : this()
+		public ZonedTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException();
 
 			_tz = tz;
-			_zoned = new DateTime(year, month, day, hour, minute, second, 
+			_zoned = new DateTime(year, month, day, hour, minute, second, millis,
 				tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified); // HMM.......correct?
 		}
 
