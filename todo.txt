@@ -1,5 +1,0 @@
-CosmosTime.Dapper 
-https://stackoverflow.com/questions/12510299/get-datetime-as-utc-with-dapper
-
-make tests!
-
