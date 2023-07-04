@@ -194,12 +194,12 @@ namespace CosmosTime.UnitTests
 
 			var r11 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123+01", out var v11);
 			Assert.True(r11);
-			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 11, 13, 14, 123), 30), v11); // offset does not matter...
+			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 11, 13, 14, 123), 42), v11); // offset does not matter for equality.
 																								  // read as: local time and you get it by adding offset to utc, so take utc + 00:30 = local time
 			Assert.Equal("2020-01-20T12:13:14.123+01:00", v11.ToString());
 			var r12 = UtcOffsetTime.TryParse("2020-01-20T12:13:14.123-01", out var v12);
 			Assert.True(r12);
-			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 13, 13, 14, 123), -30), v12);  // offset does not matter...
+			Assert.Equal(new UtcOffsetTime(new UtcTime(2020, 01, 20, 13, 13, 14, 123), -42), v12);  // offset does not matter for equality.
 			Assert.Equal("2020-01-20T12:13:14.123-01:00", v12.ToString());
 
 
@@ -227,6 +227,48 @@ namespace CosmosTime.UnitTests
 			var r2 = UtcTime.TryParse("2020-01-20", out var v2, dt => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
 			Assert.True(r2);
 			Assert.Equal("2020-01-19T21:00:00Z", v2.ToString());
+		}
+
+		[Fact]
+		public void UtcTime_ParseCosmosDb()
+		{
+			var ok = UtcTime.ParseCosmosDb("2020-01-20T12:13:14.1233333Z");
+			Assert.Equal("2020-01-20T12:13:14.1233333Z", ok.ToString());
+			Assert.Equal("2020-01-20T12:13:14.1233333Z", ok.ToCosmosDb());
+
+			var ok2 = UtcTime.ParseCosmosDb("2020-01-20T12:13:14.0000000Z");
+			Assert.Equal("2020-01-20T12:13:14Z", ok2.ToString());
+			Assert.Equal("2020-01-20T12:13:14.0000000Z", ok2.ToCosmosDb());
+
+			Assert.Throws<FormatException>(() =>
+			{
+				var nok1 = UtcTime.ParseCosmosDb("2020-01-20T12:13:14.1233333");
+			});
+
+			Assert.Throws<FormatException>(() =>
+			{
+				var nok2 = UtcTime.ParseCosmosDb("2020-01-20T12:13:14.123333Z");
+			});
+
+
+			Assert.Throws<FormatException>(() =>
+			{
+				var nok3 = UtcTime.ParseCosmosDb("2020-99-20T12:13:14.1233333Z");
+			});
+			Assert.Throws<FormatException>(() =>
+			{
+				var nok3 = UtcTime.ParseCosmosDb("2020-01-20T12:13:14.12333330");
+			});
+		}
+
+		[Fact]
+		public void UtcOffsetTime_ToString()
+		{
+			var offT = new UtcOffsetTime(new UtcTime(2020, 3, 15), 10);
+			Assert.Equal("2020-03-15T00:10:00+00:10", offT.ToString());
+
+			var offT2 = new UtcOffsetTime(new UtcTime(2020, 3, 15, 0, 0, 0, 123), 10);
+			Assert.Equal("2020-03-15T00:10:00.123+00:10", offT2.ToString());
 		}
 	}
 }
