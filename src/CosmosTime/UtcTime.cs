@@ -120,7 +120,7 @@ namespace CosmosTime
 
 	//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
 
-		public ZonedTime ToZonedTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
+		//public ZonedTime ToZonedTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
 
 		public UtcTime(int year, int month, int day) : this()
 		{

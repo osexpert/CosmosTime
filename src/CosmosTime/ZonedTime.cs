@@ -121,7 +121,7 @@ namespace CosmosTime
 
 
 
-		public UtcTime ToUtcTime() => new UtcTime(_zoned, _tz);
+		//public UtcTime ToUtcTime() => new UtcTime(_zoned, _tz);
 
 		public bool Equals(ZonedTime other)
 		{

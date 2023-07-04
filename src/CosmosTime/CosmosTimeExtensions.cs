@@ -24,6 +24,13 @@ namespace CosmosTime
 			return new UtcTime(anyTime, tz);
 		}
 
+
+		public static UtcTime ToUtcTime(this ZonedTime zoned)
+		{
+			return new UtcTime(zoned.ZonedDateTime, zoned.Zone);
+		}
+
+
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local.
 		/// If Kind.Unspecified, it will throw (must then use ToZonedTime that take a tz)
