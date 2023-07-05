@@ -15,15 +15,52 @@ namespace CosmosTime
 		short _offsetMins;
 
 		/// <summary>
+		/// Will capture Utc time + local offset to utc
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
-		/// So rename to NowLocal\LocalNow
+		/// Same as Now(TimeZoneInfo.Local)
 		/// </summary>
 		public static UtcOffsetTime LocalNow => DateTimeOffset.Now.ToUtcOffsetTime();
 
 		/// <summary>
-		/// An UtcOffsetTime without offset (no time zone info)
+		/// An UtcOffsetTime with utc time without offset (no time zone info)
+		/// Same as Now(TimeZoneInfo.Utc)
 		/// </summary>
 		public static UtcOffsetTime UtcNow => DateTimeOffset.UtcNow.ToUtcOffsetTime();
+
+		/// <summary>
+		/// Get Now in a zone (time will always be utc, but the offset captured will depend on the tz)
+		/// </summary>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="Exception"></exception>
+		public static UtcOffsetTime Now(TimeZoneInfo tz)
+		{
+			if (tz == null)
+				throw new ArgumentNullException("tz");
+
+			if (tz == TimeZoneInfo.Local)
+				return DateTimeOffset.Now.ToUtcOffsetTime();
+			else if (tz == TimeZoneInfo.Utc)
+				return DateTimeOffset.UtcNow.ToUtcOffsetTime();
+			else // convert to time in the zone
+			{
+				//throw new NotImplementedException();
+
+				//var timeInZone = DateTime.UtcNow.ToUtcTime(tz);
+				var utcNow = UtcTime.Now;
+
+				var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
+				////var timeInZone = TimeZoneInfo.ConvertTime(utcNow, tz);
+
+				var offsetMinsDbl = (dtInTz - utcNow.UtcDateTime).TotalMinutes;
+				var offsetMins = (short)offsetMinsDbl;
+				if (offsetMins != offsetMinsDbl)
+					throw new Exception("fractions lost in offset");
+
+				return new UtcOffsetTime(utcNow, offsetMins);
+			}
+		}
 
 		public UtcTime UtcTime => _utc;
 
@@ -34,6 +71,7 @@ namespace CosmosTime
 		/// Offset from Utc
 		/// </summary>
 		public int OffsetMins => _offsetMins;
+
 		public TimeSpan Offset => TimeSpan.FromMinutes(_offsetMins);
 
 		/// <summary>
@@ -78,12 +116,17 @@ namespace CosmosTime
 				}
 				else
 				{
+					if (dt.Kind != DateTimeKind.Unspecified)
+						throw new Exception("time kind must be unspec here");
 					var tz = tzIfUnspecified(dt);
+
 					var utc = dt.ToUtcTime(tz);
+
 					var offsetMinsDbl = (dt - utc.UtcDateTime).TotalMinutes;
 					var offsetMins = (short)offsetMinsDbl;
 					if (offsetMins != offsetMinsDbl)
 						throw new Exception("fractions lost in offset");
+
 					uo = new UtcOffsetTime(utc, offsetMins);
 					return true;
 				}
@@ -91,6 +134,15 @@ namespace CosmosTime
 
 			return false;
 		}
+
+		//private static short GetOffset(DateTime dt, UtcTime utc)
+		//{
+		//	var offsetMinsDbl = (dt - utc.UtcDateTime).TotalMinutes;
+		//	var offsetMins = (short)offsetMinsDbl;
+		//	if (offsetMins != offsetMinsDbl)
+		//		throw new Exception("fractions lost in offset");
+		//	return offsetMins;
+		//}
 
 
 		/// <summary>
@@ -147,6 +199,9 @@ namespace CosmosTime
 			return res;
 		}
 
+		/// <summary>
+		/// Parse fixed length utc (28 chars, ends with Z)
+		/// </summary>
 		public static UtcOffsetTime ParseCosmosDb(string utc, short offsetMinutes)
 		{
 			var utcs = UtcTime.ParseCosmosDb(utc);
@@ -163,6 +218,7 @@ namespace CosmosTime
 			return new DateTimeOffset(DateTime.SpecifyKind(local, DateTimeKind.Unspecified), TimeSpan.FromMinutes(_offsetMins));
 		}
 
+		// TODO: remove this?
 		public DateTime ToLocalDateTime() => _utc.ToLocalDateTime();
 
 		public override int GetHashCode() => _utc.GetHashCode();

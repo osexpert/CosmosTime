@@ -2,7 +2,10 @@
   <PropertyGroup>
 
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    
+ 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+ 	  <LangVersion>Latest</LangVersion>
+ 	  
+ 	  <NoWarn>1701;1702;1591;1573</NoWarn>
 <!--
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\keypair.key</AssemblyOriginatorKeyFile>

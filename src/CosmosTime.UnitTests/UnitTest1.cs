@@ -270,5 +270,15 @@ namespace CosmosTime.UnitTests
 			var offT2 = new UtcOffsetTime(new UtcTime(2020, 3, 15, 0, 0, 0, 123), 10);
 			Assert.Equal("2020-03-15T00:10:00.123+00:10", offT2.ToString());
 		}
+
+		[Fact]
+		public void UtcOffsetTime_Now()
+		{
+			var un = UtcOffsetTime.UtcNow;
+			var ln = UtcOffsetTime.LocalNow;
+			var naa = UtcOffsetTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+			var localN = UtcOffsetTime.Now(TimeZoneInfo.Local);
+			var utcN = UtcOffsetTime.Now(TimeZoneInfo.Utc);
+		}
 	}
 }

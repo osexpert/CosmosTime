@@ -4,13 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  <ItemGroup>
+	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
 
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\CosmosTime\CosmosTime.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\CosmosTime\CosmosTime.csproj" />
+  </ItemGroup>
 	
 </Project>
