@@ -54,6 +54,12 @@ namespace CosmosTime
 			return new ZonedTime(anyTime, tz);
 		}
 
+		public static ZonedTime ToZonedTime(this UtcTime utc, TimeZoneInfo tz)
+		{
+			return new ZonedTime(utc, tz);
+		}
+
+
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw
