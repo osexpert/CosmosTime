@@ -111,6 +111,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// ToLocalTime works here since kind is always utc
+		/// TODO: remove?
 		/// </summary>
 		/// <returns></returns>
 		public DateTime ToLocalDateTime() => _utc.ToLocalTime();

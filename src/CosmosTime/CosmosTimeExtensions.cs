@@ -125,5 +125,21 @@ namespace CosmosTime
 				return null;
 			return utc.Value.UtcDateTime;
 		}
+
+		public static IsoWeek GetWeek(this DateTime dt)
+		{
+			return IsoWeek.GetWeek(dt);
+		}
+
+		public static IsoWeek GetWeek(this UtcTime dt)
+		{
+			return IsoWeek.GetWeek(dt.UtcDateTime);
+		}
+
+		public static IsoWeek GetWeek(this ZonedTime dt)
+		{
+			return IsoWeek.GetWeek(dt.ZonedDateTime);
+		}
+
 	}
 }

@@ -17,7 +17,7 @@ namespace test
 		static void Main(string[] args)
 		{
 
-
+			var w = new DateTime();
 
 			//			Now say you want to add a certain number of days instead. Doing that on the universal time-line may end up working not quite as expected:
 
