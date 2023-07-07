@@ -62,8 +62,8 @@ namespace CosmosTime
 
 		public static IsoWeek GetWeek(DateTime dt)
 		{
-			var year = ISOWeek.GetYear(dt, out var week);
-			return new IsoWeek() { Year = year, Number = week };
+			var weekAndYear = ISOWeek.GetWeekAndYear(dt);
+			return new IsoWeek() { Year = weekAndYear.Year, Number = weekAndYear.Week };
 		}
 
 		public DateTime GetFirstDate() // DateOnly?

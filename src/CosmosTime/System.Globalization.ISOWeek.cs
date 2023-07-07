@@ -38,25 +38,27 @@ namespace CosmosTime // System.Globalization
 			return week;
 		}
 
-		public static int GetYear(DateTime date, out int week)
+		public static int GetYear(DateTime date) => GetWeekAndYear(date).Year;
+
+		public static (int Week, int Year) GetWeekAndYear(DateTime date)
 		{
-			week = GetWeekNumber(date);
+			int week = GetWeekNumber(date);
 
 			if (week < MinWeek)
 			{
 				// If the week number obtained equals 0, it means that the
 				// given date belongs to the preceding (week-based) year.
-				return date.Year - 1;
+				return (week, date.Year - 1);
 			}
 
 			if (week > GetWeeksInYear(date.Year))
 			{
 				// If a week number of 53 is obtained, one must check that
 				// the date is not actually in week 1 of the following year.
-				return date.Year + 1;
+				return (week, date.Year + 1);
 			}
 
-			return date.Year;
+			return (week, date.Year);
 		}
 
 		// The year parameter represents an ISO week-numbering year (also called ISO year informally).
