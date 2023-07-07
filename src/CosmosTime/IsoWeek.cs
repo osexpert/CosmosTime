@@ -16,7 +16,7 @@ namespace CosmosTime
 			if (number < 1)
 				throw new ArgumentException("number < 1");
 
-			var wiy = ISOWeek.GetWeeksInYear(year);
+			var wiy = GetWeeksInYear(year);
 			if (number > wiy)
 				throw new ArgumentException("number > weeks in year: " + wiy);
 
@@ -67,13 +67,15 @@ namespace CosmosTime
 			return new IsoWeek() { Year = year, Number = week };
 		}
 
-		public DateTime GetFirstDate() // DateOnly...
+		public DateTime GetFirstDate() // DateOnly?
 		{
+			//return DateOnly.FromDateTime(ISOWeek.ToDateTime(Year, Number, DayOfWeek.Monday));
 			return ISOWeek.ToDateTime(Year, Number, DayOfWeek.Monday);
 		}
 
-		public DateTime GetLastDate() // DateOnly...
+		public DateTime GetLastDate() // DateOnly?
 		{
+			//return DateOnly.FromDateTime(
 			return ISOWeek.ToDateTime(Year, Number, DayOfWeek.Sunday);
 		}
 

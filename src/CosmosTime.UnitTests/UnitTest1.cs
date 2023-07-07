@@ -280,5 +280,20 @@ namespace CosmosTime.UnitTests
 			var localN = UtcOffsetTime.Now(TimeZoneInfo.Local);
 			var utcN = UtcOffsetTime.Now(TimeZoneInfo.Utc);
 		}
+
+		[Fact]
+		public void IsoWeek_GetWeeksInRangeIterator()
+		{
+			var res = IsoWeek.GetWeeksInRangeIterator(new DateTime(2020, 1, 10), new DateTime(2021, 5, 5));
+			Assert.Equal(70, res.Count());
+			Assert.Equal("2020-W02", res.First().ToString());
+			Assert.Equal("2021-W18", res.Last().ToString());
+
+			var res2 = IsoWeek.GetWeeksInYearIterator(2020);
+			Assert.Equal(53, res2.Count());
+			Assert.Equal("2020-W01", res2.First().ToString());
+			Assert.Equal("2020-W53", res2.Last().ToString());
+
+		}
 	}
 }

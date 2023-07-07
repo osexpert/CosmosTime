@@ -24,6 +24,10 @@ namespace CosmosTime
 			return new UtcTime(anyTime, tz);
 		}
 
+		//public static DateOnly GetDateOnly(this DateTime dt)
+		//{
+		//	return new DateOnly(dt.Year, dt.Month, dt.Day);
+		//}
 
 		public static UtcTime ToUtcTime(this ZonedTime zoned)
 		{
