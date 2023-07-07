@@ -6,7 +6,7 @@ using System.Text;
 namespace CosmosTime
 {
 	/// <summary>
-	/// reprent an ISO week that start on moday
+	/// Represent an ISO week that starts on monday
 	/// </summary>
 	public struct IsoWeek : IEquatable<IsoWeek>, IComparable<IsoWeek>, IComparable
 	{
@@ -25,7 +25,7 @@ namespace CosmosTime
 
 		public override string ToString()
 		{
-			return $"{this.Year}-W{this.Number:00}"; // test 00 padding
+			return $"{this.Year}-W{this.Number:00}";
 		}
 
 		public int Number { get; private set; }
