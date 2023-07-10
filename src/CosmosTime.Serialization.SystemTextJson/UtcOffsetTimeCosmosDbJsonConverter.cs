@@ -22,7 +22,7 @@ namespace CosmosTime.Serialization.SystemTextJson
 			//var obj = JObject.Load(reader);
 			var obj = JsonObject.Parse(ref reader);
 			
-			return UtcOffsetTime.ParseCosmosDb((string)obj["timeUtc"], (short)obj["offsetMins"]);
+			return UtcOffsetTime.ParseCosmosDb((string)obj["timeUtc"], (short)obj["offsetMinutes"]);
 		}
 
 		public override void Write(Utf8JsonWriter writer, UtcOffsetTime value, JsonSerializerOptions options)
@@ -35,8 +35,8 @@ namespace CosmosTime.Serialization.SystemTextJson
 			writer.WritePropertyName("timeUtc");
 			writer.WriteStringValue(rr.UtcTime.ToCosmosDb());
 
-			writer.WritePropertyName("offsetMins");
-			writer.WriteNumberValue(rr.OffsetMins);
+			writer.WritePropertyName("offsetMinutes");
+			writer.WriteNumberValue(rr.OffsetMinutes);
 
 			writer.WriteEndObject();
 		}

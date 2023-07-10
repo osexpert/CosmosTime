@@ -10,7 +10,7 @@ namespace CosmosTime.Serialization.JsonNet
 	/// Format\parse composite format 
 	/// { 
 	///   "timeUtc": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
-	///   "offsetMins": -30
+	///   "offsetMinutes": -30
 	/// }
 	/// </summary>
 	public class UtcOffsetTimeCosmosDbJsonConverter : JsonConverter<UtcOffsetTime>
@@ -21,7 +21,7 @@ namespace CosmosTime.Serialization.JsonNet
 				throw new NotSupportedException("DateParseHandling.None required");
 
 			var obj = JObject.Load(reader);
-			return UtcOffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), obj["offsetMins"].Value<short>());
+			return UtcOffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), obj["offsetMinutes"].Value<short>());
 		}
 
 		public override void WriteJson(JsonWriter writer, UtcOffsetTime value, JsonSerializer serializer)
@@ -36,8 +36,8 @@ namespace CosmosTime.Serialization.JsonNet
 			writer.WritePropertyName("timeUtc");
 			writer.WriteValue(rr.UtcTime.ToCosmosDb());
 
-			writer.WritePropertyName("offsetMins");
-			writer.WriteValue(rr.OffsetMins);
+			writer.WritePropertyName("offsetMinutes");
+			writer.WriteValue(rr.OffsetMinutes);
 
 			writer.WriteEndObject();
 		}

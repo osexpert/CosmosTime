@@ -18,7 +18,7 @@ namespace CosmosTime.UnitTests
 			Assert.Equal(now.LocalDateTime, nowDto.LocalDateTime);
 			Assert.Equal(now.UtcDateTime, nowDto.UtcDateTime);
 
-			Assert.Equal(now.Offset, TimeSpan.FromMinutes(utcOffNow.OffsetMins));
+			Assert.Equal(now.Offset, TimeSpan.FromMinutes(utcOffNow.OffsetMinutes));
 			Assert.Equal(now.Offset, utcOffNow.Offset);
 			//Assert.Equal(now.UtcDateTime, utcOffNow.);
 		}

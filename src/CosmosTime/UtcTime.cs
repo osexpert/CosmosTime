@@ -29,6 +29,14 @@ namespace CosmosTime
 		/// </summary>
 		public DateTime UtcDateTime => _utc;
 
+		/// <summary>
+		/// ToLocalTime works here since kind is always utc
+		/// TODO: remove?
+		/// </summary>
+		/// <returns></returns>
+		//public DateTime ToLocalDateTime() => _utc.ToLocalTime();
+
+
 		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
 
 		public UtcTime Date => _utc.Date.ToUtcTime();
@@ -109,12 +117,6 @@ namespace CosmosTime
 			}
 		}
 
-		/// <summary>
-		/// ToLocalTime works here since kind is always utc
-		/// TODO: remove?
-		/// </summary>
-		/// <returns></returns>
-		public DateTime ToLocalDateTime() => _utc.ToLocalTime();
 
 
 		public long Ticks => _utc.Ticks;

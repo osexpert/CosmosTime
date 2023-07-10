@@ -20,7 +20,11 @@ namespace CosmosTime
 	public struct ZonedTime : IEquatable<ZonedTime>, IComparable<ZonedTime>, IComparable
 	{
 
+		/// <summary>
+		/// _zoned can be Unspeficied Kind or Kind Utc.
+		/// </summary>
 		DateTime _zoned;
+
 		TimeZoneInfo _tz;
 
 		// TODO: min \ max time
@@ -47,6 +51,15 @@ namespace CosmosTime
 		public TimeZoneInfo Zone => _tz;
 
 		/// <summary>
+		/// A DateTime with Kind Unspecified (TimeZone is not Utc) or Kind Utc (TimeZone is Utc).
+		/// </summary>
+		public DateTime ZonedDateTime => _zoned;
+
+
+		public long Ticks => _zoned.Ticks;
+
+
+		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
 		/// TODO: why not allow Local?? Does now.
 		/// </summary>
@@ -59,9 +72,10 @@ namespace CosmosTime
 			// Since Kind now is either Utc or Local, its easy
 			if (utcOrLocalTime.Kind == DateTimeKind.Local)
 			{
-				// can Local tz be Utc? Yes.
+				// can Local tz be Utc? Yes. Should we in this case change Kind of _zoned to Utc? Maybe...
 				_tz = TimeZoneInfo.Local;
-				_zoned = DateTime.SpecifyKind(utcOrLocalTime, DateTimeKind.Unspecified);
+				_zoned = DateTime.SpecifyKind(utcOrLocalTime, 
+					_tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 			}
 			else if (utcOrLocalTime.Kind == DateTimeKind.Utc)
 			{
@@ -104,7 +118,8 @@ namespace CosmosTime
 				if (tz != TimeZoneInfo.Local)
 					throw new ArgumentException("anyTime.Kind is Local while tz is not local");
 
-				_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
+				_zoned = DateTime.SpecifyKind(anyTime,
+					_tz == TimeZoneInfo.Utc ? DateTimeKind.Utc : DateTimeKind.Unspecified);
 			}
 			else if (anyTime.Kind == DateTimeKind.Utc)
 			{
@@ -144,15 +159,7 @@ namespace CosmosTime
 			return CompareTo((ZonedTime)obj);
 		}
 
-		/// <summary>
-		/// kind: Unspecified or Utc?
-		/// What if tz is same as Local? Can it be Local then?
-		/// I think it would be best if it NEVER was Kind local...
-		/// </summary>
-		public DateTime ZonedDateTime => _zoned;
 
-
-		public long Ticks => _zoned.Ticks;
 
 		//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
 
