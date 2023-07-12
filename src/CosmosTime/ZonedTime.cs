@@ -22,6 +22,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// _zoned can be Unspeficied Kind or Kind Utc.
+		/// Uses same logic as destination time in TimeZoneInfo.ConvertTimeFromUtc
 		/// </summary>
 		DateTime _zoned;
 
@@ -52,6 +53,16 @@ namespace CosmosTime
 
 		/// <summary>
 		/// A DateTime with Kind Unspecified (TimeZone is not Utc) or Kind Utc (TimeZone is Utc).
+		/// 
+		/// Naming: DateTimeOffset has UtcDateTime and LocalDateTime, so follow same naming {kind}DateTime.
+		/// BUT it also has DateTime with Kind Unspefified, so breaking the rule.
+		/// 
+		/// 
+		/// But since this has several kinds, dont prefix?????????????
+		/// 
+		/// Or maybe DateTime is best???
+		/// 
+		/// 
 		/// </summary>
 		public DateTime ZonedDateTime => _zoned;
 
@@ -93,6 +104,11 @@ namespace CosmosTime
 				throw new ArgumentNullException("tz");
 
 			_tz = tz;
+
+			// PROBLEM: can be 2 times in that zone that maps to the same utc time...I don't know what ConvertTimeFromUtc chooses
+			// Docs says: "If dateTime corresponds to an ambiguous time, this method assumes that it is the standard time of the source time zone."
+			// I guess would need one more arg if we want to choose
+
 			_zoned = TimeZoneInfo.ConvertTimeFromUtc(utcTime.UtcDateTime, tz);
 			// _zoned.Kind = unspec, except if tz=utc, then kind = utc...
 		}
@@ -111,10 +127,19 @@ namespace CosmosTime
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
-				_zoned = anyTime;
+				// FIXME: verify that this time happened in this zone?
+				if (tz.IsInvalidTime(anyTime))
+					throw new ArgumentException("Invalid time. Time could not have happened in this zone");
+
+				if (tz == TimeZoneInfo.Utc)
+					_zoned = DateTime.SpecifyKind(anyTime, DateTimeKind.Utc);
+				else
+					_zoned = anyTime;
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
 			{
+				// Any local time can also be invalid in its zone, but lets assume local times are correct...
+
 				if (tz != TimeZoneInfo.Local)
 					throw new ArgumentException("anyTime.Kind is Local while tz is not local");
 

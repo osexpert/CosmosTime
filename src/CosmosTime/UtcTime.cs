@@ -26,16 +26,9 @@ namespace CosmosTime
 
 		/// <summary>
 		/// Kind is always Utc
+		/// Naming: DateTimeOffset has UtcDateTime and LocalDateTime, so follow same naming {kind}DateTime
 		/// </summary>
 		public DateTime UtcDateTime => _utc;
-
-		/// <summary>
-		/// ToLocalTime works here since kind is always utc
-		/// TODO: remove?
-		/// </summary>
-		/// <returns></returns>
-		//public DateTime ToLocalDateTime() => _utc.ToLocalTime();
-
 
 		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
 
@@ -95,6 +88,7 @@ namespace CosmosTime
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
+				// ConvertTimeToUtc will verify the time is valid in the zone
 				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)

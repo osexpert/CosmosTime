@@ -279,6 +279,7 @@ namespace CosmosTime.UnitTests
 			var naa = UtcOffsetTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
 			var localN = UtcOffsetTime.Now(TimeZoneInfo.Local);
 			var utcN = UtcOffsetTime.Now(TimeZoneInfo.Utc);
+			// TODO: test something
 		}
 
 		[Fact]
@@ -294,6 +295,35 @@ namespace CosmosTime.UnitTests
 			Assert.Equal("2020-W01", res2.First().ToString());
 			Assert.Equal("2020-W53", res2.Last().ToString());
 
+		}
+
+		[Fact]
+		public void ZonedOffsetTime_Misc()
+		{
+			var now = ZonedOffsetTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+
+			var now2 = ZonedOffsetTime.Now(IanaTimeZone.GetTimeZoneInfo("Europe/Oslo"));
+
+			Assert.Throws<ArgumentException>(() =>
+			{
+				try
+				{
+					var zof = new ZonedOffsetTime(new ZonedTime(2020, 1, 20, 4, 5, 6, 7, IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa")), 42);
+				}
+				catch (ArgumentException e)
+				{
+					Assert.Equal("Offset is not valid in zone", e.Message);
+					throw;
+				}
+			});
+
+			var zof2 = new ZonedOffsetTime(new ZonedTime(2020, 1, 20, 4, 5, 6, 7, IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa")), 180);
+
+			Assert.Equal("2020-01-20T04:05:06.007+03:00[Africa/Nairobi]", zof2.ToString());
+			var dto_utfo = zof2.ToDateTimeOffset().ToUtcOffsetTime();
+			Assert.Equal("2020-01-20T04:05:06.007+03:00", dto_utfo.ToString());
+			var utfo = zof2.ToUtcOffsetTime();
+			Assert.Equal("2020-01-20T04:05:06.007+03:00", utfo.ToString());
 		}
 	}
 }
