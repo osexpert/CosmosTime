@@ -324,6 +324,10 @@ namespace CosmosTime.UnitTests
 			Assert.Equal("2020-01-20T04:05:06.007+03:00", dto_utfo.ToString());
 			var utfo = zof2.ToUtcOffsetTime();
 			Assert.Equal("2020-01-20T04:05:06.007+03:00", utfo.ToString());
+
+			var n = DateTime.Now;
+			var z = new ZonedOffsetTime(n.ToZonedTime());
+			Assert.Equal(n.Ticks, z.Ticks);
 		}
 	}
 }

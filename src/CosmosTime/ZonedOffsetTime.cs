@@ -15,6 +15,9 @@ namespace CosmosTime
 		ZonedTime _zoned;
 		short _offsetMinutes;
 
+
+		public ZonedTime ZonedTime => _zoned;
+
 		/// <summary>
 		/// Will capture Utc time + local offset to utc
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
@@ -85,9 +88,12 @@ namespace CosmosTime
 
 		public TimeSpan Offset => TimeSpan.FromMinutes(_offsetMinutes);
 
+		/// <summary>
+		/// FIXME: correct?? yes
+		/// </summary>
 		public long Ticks => ClockDateTime_KindUnspecified.Ticks;
 
-//		public long UtcTicks => _utc.Ticks;
+		//		public long UtcTicks => _utc.Ticks;
 
 
 
@@ -126,6 +132,17 @@ namespace CosmosTime
 		//	_offsetMinutes = offsetMinutes;
 		//}
 
+
+		/// <summary>
+		/// If time is ambigous, uses the standard time\offset
+		/// </summary>
+		public ZonedOffsetTime(ZonedTime zoned) : this(zoned, GetWholeMinutes(zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes))
+		{
+		}
+
+		/// <summary>
+		/// If time is ambigous, can specifify offset yourself
+		/// </summary>
 		public ZonedOffsetTime(ZonedTime zoned, short offsetMinutes) : this()
 		{
 			//		var local = utc.UtcDateTime + TimeSpan.FromMinutes(offsetMinutes);
