@@ -23,13 +23,13 @@ namespace CosmosTime
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
 		/// Same as Now(TimeZoneInfo.Local)
 		/// </summary>
-//		public static ZonedOffsetTime LocalNow => DateTimeOffset.Now.ToUtcOffsetTime();
+		public static ZonedOffsetTime LocalNow => Now(TimeZoneInfo.Local);
 
 		/// <summary>
 		/// An UtcOffsetTime with utc time without offset (no time zone info)
 		/// Same as Now(TimeZoneInfo.Utc)
 		/// </summary>
-//		public static ZonedOffsetTime UtcNow => DateTimeOffset.UtcNow.ToUtcOffsetTime();
+		public static ZonedOffsetTime UtcNow => Now(TimeZoneInfo.Utc);
 
 		/// <summary>
 		/// Get Now in a zone (time will always be utc, but the offset captured will depend on the tz)
@@ -47,25 +47,6 @@ namespace CosmosTime
 			var off = tz.GetUtcOffset(zoned.ZonedDateTime);
 
 			return new ZonedOffsetTime(zoned, GetWholeMinutes(off.TotalMinutes));
-
-			//if (tz == TimeZoneInfo.Local)
-			//	return DateTimeOffset.Now.ToZonedOffsetTime();
-			//else if (tz == TimeZoneInfo.Utc)
-			//	return DateTimeOffset.UtcNow.ToZonedOffsetTime();
-			//else // convert to time in the zone
-			//{
-			//	//throw new NotImplementedException();
-
-			//	//var timeInZone = DateTime.UtcNow.ToUtcTime(tz);
-			//	var utcNow = UtcTime.Now;
-
-			//	var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
-			//	////var timeInZone = TimeZoneInfo.ConvertTime(utcNow, tz);
-
-			//	var offsetMinsDbl = (dtInTz - utcNow.UtcDateTime).TotalMinutes;
-
-			//	return new ToZonedOffsetTime(utcNow, GetWholeMinutes(offsetMinsDbl));
-			//}
 		}
 
 		private static short GetWholeMinutes(double mins)
@@ -134,24 +115,33 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// If time is ambigous, uses the standard time\offset
+		/// If time is ambigous, uses the standard time offset
 		/// </summary>
 		public ZonedOffsetTime(ZonedTime zoned) : this(zoned, GetWholeMinutes(zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes))
 		{
 		}
 
 		/// <summary>
-		/// If time is ambigous, can specifify offset yourself
+		/// If time is ambigous, here you can specify offset yourself
 		/// </summary>
 		public ZonedOffsetTime(ZonedTime zoned, short offsetMinutes) : this()
 		{
 			//		var local = utc.UtcDateTime + TimeSpan.FromMinutes(offsetMinutes);
 			//			_dto = new DateTimeOffset(DateTime.SpecifyKind(local, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offsetMinutes));
 
+			(bool ok, string msg) = ValidateOffset(zoned, offsetMinutes);
+			if (!ok)
+				throw new ArgumentException(msg);
+
 			_zoned = zoned;
 
+			_offsetMinutes = offsetMinutes;
+		}
+
+		internal static (bool Ok, string Msg) ValidateOffset(ZonedTime zoned, short offsetMinutes)
+		{
 			if (offsetMinutes < -840 || offsetMinutes > 840)
-				throw new ArgumentException("offset must be max [+-] 14 hours");
+				return (false, "offset must be max [+-] 14 hours");
 
 			// FIXME: is there an easier\more effective way to validate this?
 			if (zoned.Zone.IsAmbiguousTime(zoned.ZonedDateTime))
@@ -159,19 +149,15 @@ namespace CosmosTime
 				var validOffsets = zoned.Zone.GetAmbiguousTimeOffsets(zoned.ZonedDateTime);
 
 				if (!validOffsets.Any(o => o.TotalMinutes == offsetMinutes))
-					throw new ArgumentException("Offset is not valid in zone (none of the ambiguous offsets)");
+					return (false, "Offset is not valid in zone (none of the ambiguous offsets)");
 			}
 			else if (zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes != offsetMinutes)
 			{
-				throw new ArgumentException("Offset is not valid in zone");
+				return (false, "Offset is not valid in zone");
 			}
 
-			_offsetMinutes = offsetMinutes;
-
-			// validate offset? well...the time can have 2 different offsets, and we don't know which.
-//			zoned.Zone.GetUtcOffset()
+			return (true, null);
 		}
-
 
 		//private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
 		private DateTime ClockDateTime_KindUnspecified => DateTime.SpecifyKind(_zoned.ZonedDateTime, DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);

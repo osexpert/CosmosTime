@@ -1,4 +1,6 @@
-﻿using System;
+﻿// this seems pointless. it is simply a map between TimeZoneInfo.Id and TimeZoneInfo.DisplayName
+#if false
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -294,6 +296,12 @@ namespace CosmosTime.TimeZone
 			{"Dateline Standard Time", "(UTC-12:00) International Date Line West"},
 		};
 
+		public static IEnumerable<string> GetIds()
+			=> _IdToName.Keys.Union(_nameToId.Values);
+
+		public static IEnumerable<string> GetNames()
+			=> _IdToName.Values.Union(_nameToId.Keys);
+
 		public static string GetIdFromName(string msSqlTzName)
 		{
 			if (TryGetIdFromName(msSqlTzName, out var id))
@@ -335,3 +343,4 @@ namespace CosmosTime.TimeZone
 		}
 	}
 }
+#endif

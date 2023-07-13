@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -749,10 +750,17 @@ namespace CosmosTime.TimeZone
 			{"Tonga Standard Time", "Pacific/Tongatapu"},
 		};
 
+		public static IEnumerable<string> GetIanaIds()
+			=> _ianaToWindows.Keys;
+
+		public static IEnumerable<string> GetWindowsIds()
+			=> _windowsToIana.Keys;
 
 		public static string LocalIanaId => GetIanaId(TimeZoneInfo.Local.Id);
 
+
 		public static string GetIanaId(TimeZoneInfo tz) => GetIanaId(tz.Id);
+
 
 		public static bool TryGetIanaId(TimeZoneInfo tz, out string ianaId)
 		{
@@ -790,7 +798,7 @@ namespace CosmosTime.TimeZone
 			return false;
 		}
 
-		static string GetWindowsId(string ianaId)
+		public static string GetWindowsId(string ianaId)
 		{
 			if (TryGetWindowsId(ianaId, out var winId))
 				return winId;
@@ -798,7 +806,7 @@ namespace CosmosTime.TimeZone
 			throw new TimeZoneNotFoundException("Time zone not found: " + ianaId);
 		}
 
-		static bool TryGetWindowsId(string ianaId, out string winId)
+		public static bool TryGetWindowsId(string ianaId, out string winId)
 		{
 			if (_ianaToWindows.TryGetValue(ianaId, out var win))
 			{
@@ -817,11 +825,34 @@ namespace CosmosTime.TimeZone
 		/// <returns></returns>
 		public static TimeZoneInfo GetTimeZoneInfo(string ianaId)
 		{
-			// This is no longer true. So now always check both:
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				return TimeZoneInfo.FindSystemTimeZoneById(GetWindowsId(ianaId));
-			else //if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-				return TimeZoneInfo.FindSystemTimeZoneById(ianaId);
+			if (TryGetTimeZoneInfo(ianaId, out var tz))
+				return tz;
+			else
+				throw new TimeZoneNotFoundException($"TimeZoneInfo for IanaId {ianaId} not found");
+		}
+
+		public static bool TryGetTimeZoneInfo(string ianaId, out TimeZoneInfo tz)
+		{
+			tz = null;
+
+			if (TryGetWindowsId(ianaId, out var winId))
+			{
+				// Originally Windows supported only WindowsId's and Linux only IanaId's, but lately I think both support both types.
+				// But play it safe.
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+				{
+					tz = TimeZoneInfo.FindSystemTimeZoneById(winId);
+					return true;
+				}
+				else
+				{
+					// winId not used
+					tz = TimeZoneInfo.FindSystemTimeZoneById(ianaId);
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 

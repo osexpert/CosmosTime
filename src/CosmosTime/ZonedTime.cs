@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace CosmosTime
@@ -29,6 +30,11 @@ namespace CosmosTime
 		TimeZoneInfo _tz;
 
 		// TODO: min \ max time
+
+		public static ZonedTime LocalNow => Now(TimeZoneInfo.Local);
+
+		public static ZonedTime UtcNow => Now(TimeZoneInfo.Utc);
+
 
 		public static ZonedTime Now(TimeZoneInfo tz)
 		{
@@ -288,10 +294,58 @@ namespace CosmosTime
 
 		public override string ToString()
 		{
-			if (IanaTimeZone.TryGetIanaId(_tz, out var ianaId))
-				return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}[{ianaId}]";
-			else
-				return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}";
+			//if (IanaTimeZone.TryGetIanaId(_tz, out var ianaId))
+			return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}[{IanaTimeZone.GetIanaId(_tz)}]";
+//			else
+				//skip or fail?? currently fail
+	//			return $"{_zoned.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture)}";
+		}
+
+		/// <summary>
+		/// Supported directly:
+		/// "{time}Z[{tz}]" -> "{time}-00:00"
+		/// "{time}+|-{offset}[{tz}]" -> "{time}[{tz}]"
+		/// "{time}[{tz}]" -> "{time}[{tz}]"
+		/// 
+		/// TODO: can support more by supplying callbacks
+		/// 
+		/// </summary>
+		public static bool TryParse(string time, out ZonedTime zoned)//, bool missintz?)
+		{
+			zoned = default;
+
+			if (time.Last() != ']')
+				return false;
+
+			var i = time.IndexOf('[');
+			if (i == -1)
+				return false;
+
+			var timePart = time.Substring(0, i);
+			var tzPart = time.Substring(i + 1, time.Length - i - 2);
+
+			// TODO: add option to allow specify tz via callback?
+			if (!IanaTimeZone.TryGetTimeZoneInfo(tzPart, out TimeZoneInfo tz))
+				return false;
+
+			if (!IsoTimeParser.TryParseAsIso(timePart, out DateTimeOffset dto, out TimeZoneKind tzk))
+				return false;
+
+			zoned = new ZonedTime(dto.DateTime, tz);
+
+			if (tzk != TimeZoneKind.None)
+				if (!ZonedOffsetTime.ValidateOffset(zoned, GetWholeMinutes(dto.Offset.TotalMinutes)).Ok)
+					return false;
+
+			return true;
+		}
+
+		private static short GetWholeMinutes(double mins)
+		{
+			var res = (short)mins;
+			if (res != mins)
+				throw new Exception("fractions lost in offset");
+			return res;
 		}
 	}
 }

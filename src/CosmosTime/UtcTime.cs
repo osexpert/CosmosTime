@@ -209,7 +209,7 @@ namespace CosmosTime
 			throw new FormatException();// "not utc or local[+-]offset");
 		}
 
-		public static UtcTime Parse(string str, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
+		public static UtcTime Parse(string str, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
 		{
 			if (TryParse(str, out var ut, tzIfUnspecified))
 				return ut;
@@ -224,6 +224,9 @@ namespace CosmosTime
 		/// <para>2020-01-01T12:12:12Z</para>
 		/// <para>2020-01-01T12:12:12.123Z</para>
 		/// <para>2020-01-01T12:12:12.123+00:30</para>
+		/// 
+		/// Time without zone can not be parsed. Example:
+		/// <para>2020-01-01T12:12:12.123</para>
 		/// </summary>
 		/// <param name="str"></param>
 		/// <param name="utc"></param>
@@ -232,9 +235,9 @@ namespace CosmosTime
 		{
 			utc = default;
 
-			if (IsoTimeParser.TryParseAsIso(str, out DateTime dt, out var tzk) && tzk != TimeZoneKind.None)
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
 			{
-				utc = dt.ToUtcTime();
+				utc = dto.UtcDateTime.ToUtcTime();
 				return true;
 			}
 
@@ -242,24 +245,24 @@ namespace CosmosTime
 		}
 
 
-		public static bool TryParse(string str, out UtcTime utc, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
+		public static bool TryParse(string str, out UtcTime utc, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
 		{
 			if (tzIfUnspecified == null)
 				throw new ArgumentNullException(nameof(tzIfUnspecified));
 
 			utc = default;
 
-			if (IsoTimeParser.TryParseAsIso(str, out DateTime dt, out var tzk))
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk))
 			{
-				if (tzk != TimeZoneKind.None)
+				if (tzk == TimeZoneKind.None)
 				{
-					utc = dt.ToUtcTime();
+					var tz = tzIfUnspecified(dto);
+					utc = dto.DateTime.ToUtcTime(tz);
 					return true;
 				}
 				else
 				{
-					var tz = tzIfUnspecified(dt);
-					utc = dt.ToUtcTime(tz);
+					utc = dto.UtcDateTime.ToUtcTime();
 					return true;
 				}
 			}

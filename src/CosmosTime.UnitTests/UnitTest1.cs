@@ -1,5 +1,7 @@
 ﻿using CosmosTime.TimeZone;
 using FakeTimeZone;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 using Xunit.Sdk;
 
 namespace CosmosTime.UnitTests
@@ -279,6 +281,13 @@ namespace CosmosTime.UnitTests
 			var naa = UtcOffsetTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
 			var localN = UtcOffsetTime.Now(TimeZoneInfo.Local);
 			var utcN = UtcOffsetTime.Now(TimeZoneInfo.Utc);
+
+			var zun = ZonedTime.UtcNow;
+			var zln = ZonedTime.LocalNow;
+
+			var zoun = ZonedOffsetTime.UtcNow;
+			var zoln = ZonedOffsetTime.LocalNow;
+
 			// TODO: test something
 		}
 
@@ -328,6 +337,127 @@ namespace CosmosTime.UnitTests
 			var n = DateTime.Now;
 			var z = new ZonedOffsetTime(n.ToZonedTime());
 			Assert.Equal(n.Ticks, z.Ticks);
+		}
+
+		[Fact]
+		public void TimeZones_WindowsToIana()
+		{
+			foreach (var tz in TimeZoneInfo.GetSystemTimeZones())
+			{
+				if (IanaTimeZone.TryGetIanaId(tz, out var ianaid))
+				{
+					var reverse = IanaTimeZone.GetTimeZoneInfo(ianaid);
+					Assert.Equal(tz, reverse);
+				}
+				else if (tz.Id == "Mid-Atlantic Standard Time")
+				{
+					Assert.False(tz.HasIanaId);
+				}
+				else if (tz.Id == "Kamchatka Standard Time")
+				{
+					Assert.False(tz.HasIanaId);
+				}
+				else
+				{
+					throw new NotImplementedException();
+				}
+			}
+		}
+
+		[Fact]
+		public void TimeZones_Iana()
+		{
+			var ianaIds = IanaTimeZone.GetIanaIds().ToList();
+			foreach (var ianaId in ianaIds)
+			{
+				var tz = IanaTimeZone.GetTimeZoneInfo(ianaId);
+				Assert.NotNull(tz);
+
+				var winid = IanaTimeZone.GetWindowsId(ianaId);
+				Assert.NotNull(winid);
+			}
+
+			var winids = IanaTimeZone.GetWindowsIds().ToList();
+			foreach (var wid in winids)
+			{
+				var tz = TimeZoneInfo.FindSystemTimeZoneById(wid);
+				Assert.NotNull(tz);
+
+				var iana = IanaTimeZone.GetIanaId(wid);
+				Assert.NotNull(iana);
+			}
+		}
+
+		//[Fact]
+		//public void TimeZones_Mssql()
+		//{
+		//	var ids = MsSqlTimeZone.GetIds().ToList();
+		//	foreach (var id in ids)
+		//	{
+		//		var tz = TimeZoneInfo.FindSystemTimeZoneById(id);
+		//		Assert.NotNull(tz);
+
+		//		var name = MsSqlTimeZone.GetNameFromId(id);
+
+		//		Assert.Equal(name, tz.DisplayName);
+
+		//		var id_rev = MsSqlTimeZone.GetIdFromName(name);
+		//		Assert.Equal(id, id_rev);
+		//	}
+
+		//	var names = MsSqlTimeZone.GetNames().ToList();
+		//	foreach (var name in names)
+		//	{
+		//		var id = MsSqlTimeZone.GetIdFromName(name);
+		//		var name_rev = MsSqlTimeZone.GetNameFromId(id);
+		//		Assert.Equal(name, name_rev);
+		//	}
+		//}
+
+		[Fact]
+		public void ZonedTime_MissingIana()
+		{
+			var z = ZonedTime.Now(TimeZoneInfo.FindSystemTimeZoneById("Kamchatka Standard Time"));
+
+			Assert.Throws<TimeZoneNotFoundException>(() =>
+			{
+				var s = z.ToString();
+			});
+
+
+//			Assert.EndsWith("[Windows/Kamchatka Standard Time]", z.ToString());
+
+
+		}
+
+		[Fact]
+		public void ZonedTime_Parse()
+		{
+			// missing zone
+			Assert.False(ZonedTime.TryParse("2020-01-20T04:05:06.007+03:00", out var _));
+			Assert.False(ZonedTime.TryParse("2020-01-20T04:05:06.007", out var _));
+			Assert.False(ZonedTime.TryParse("2020-01-20T04:05:06.007Z", out var _));
+
+			// dette gir liten mening. blir fort mismatch her. ZonedOffsetTime vil ha validering for dette, så ZonedTime kan sikkert parse via ZonedOffsetTime
+			// og kaste offsetten.
+
+			var b1 = ZonedTime.TryParse("2020-01-20T04:05:06.007+03:00[Europe/Oslo]", out var p1);
+			Assert.False(b1); // wrong offset
+
+			var b1_ok = ZonedTime.TryParse("2020-01-20T04:05:06.007+01:00[Europe/Oslo]", out var p1_ok);
+			Assert.True(b1_ok); // ok offset
+			Assert.Equal("2020-01-20T04:05:06.007[Europe/Berlin]", p1_ok.ToString());
+
+			var b2 = ZonedTime.TryParse("2020-01-20T04:05:06.007[Europe/Oslo]", out var p2);
+			Assert.True(b2);
+			Assert.Equal("2020-01-20T04:05:06.007[Europe/Berlin]", p2.ToString());
+
+			var b3 = ZonedTime.TryParse("2020-01-20T04:05:06.007Z[Europe/Oslo]", out var p3);
+			Assert.False(b3); // Z and tz conflict
+
+			var b4 = ZonedTime.TryParse("2020-01-20T04:05:06.007Z[UTC]", out var p4);
+			Assert.True(b4); // Z and tz match
+			Assert.Equal("2020-01-20T04:05:06.007[Etc/UTC]", p4.ToString());
 		}
 	}
 }

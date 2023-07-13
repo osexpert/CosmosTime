@@ -19,13 +19,13 @@ namespace CosmosTime
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
 		/// Same as Now(TimeZoneInfo.Local)
 		/// </summary>
-		public static UtcOffsetTime LocalNow => DateTimeOffset.Now.ToUtcOffsetTime();
+		public static UtcOffsetTime LocalNow => Now(TimeZoneInfo.Local);
 
 		/// <summary>
 		/// An UtcOffsetTime with utc time without offset (no time zone info)
 		/// Same as Now(TimeZoneInfo.Utc)
 		/// </summary>
-		public static UtcOffsetTime UtcNow => DateTimeOffset.UtcNow.ToUtcOffsetTime();
+		public static UtcOffsetTime UtcNow => Now(TimeZoneInfo.Utc);
 
 		/// <summary>
 		/// Get Now in a zone (time will always be utc, but the offset captured will depend on the tz)
@@ -45,16 +45,9 @@ namespace CosmosTime
 				return DateTimeOffset.UtcNow.ToUtcOffsetTime();
 			else // convert to time in the zone
 			{
-				//throw new NotImplementedException();
-
-				//var timeInZone = DateTime.UtcNow.ToUtcTime(tz);
 				var utcNow = UtcTime.Now;
-
 				var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
-				////var timeInZone = TimeZoneInfo.ConvertTime(utcNow, tz);
-
 				var offsetMinsDbl = (dtInTz - utcNow.UtcDateTime).TotalMinutes;
-
 				return new UtcOffsetTime(utcNow, GetWholeMinutes(offsetMinsDbl));
 			}
 		}
@@ -104,7 +97,7 @@ namespace CosmosTime
 		{
 			uo = default;
 
-			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out DateTime dt, out var tzk) && tzk != TimeZoneKind.None)
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
 			{
 				uo = dto.ToUtcOffsetTime();
 				return true;
@@ -119,28 +112,26 @@ namespace CosmosTime
 		/// "{time}{offset}"
 		/// "{time}" (tzIfUnspecified will be called)
 		/// </summary>
-		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo, Func<DateTime, TimeZoneInfo> tzIfUnspecified)
+		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
 		{
 			if (tzIfUnspecified == null)
 				throw new ArgumentNullException(nameof(tzIfUnspecified));
 
 			uo = default;
 
-			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out DateTime dt, out var tzk))
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var tzk))
 			{
-				if (tzk != TimeZoneKind.None)
+				if (tzk == TimeZoneKind.None)
 				{
-					uo = dto.ToUtcOffsetTime();
+					var tz = tzIfUnspecified(dto);
+					var utc = dto.DateTime.ToUtcTime(tz);
+					var offsetMinsDbl = (dto.DateTime - utc.UtcDateTime).TotalMinutes;
+					uo = new UtcOffsetTime(utc, GetWholeMinutes(offsetMinsDbl));
 					return true;
 				}
 				else
 				{
-					if (dt.Kind != DateTimeKind.Unspecified)
-						throw new Exception("time kind must be unspec here");
-					var tz = tzIfUnspecified(dt);
-					var utc = dt.ToUtcTime(tz);
-					var offsetMinsDbl = (dt - utc.UtcDateTime).TotalMinutes;
-					uo = new UtcOffsetTime(utc, GetWholeMinutes(offsetMinsDbl));
+					uo = dto.ToUtcOffsetTime();
 					return true;
 				}
 			}

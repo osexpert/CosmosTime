@@ -1,4 +1,6 @@
-﻿using System;
+﻿// this seems pointless. it is simply a map between TimeZoneInfo.Id and TimeZoneInfo.DisplayName
+#if false
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -68,3 +70,4 @@ namespace CosmosTime.TimeZone
 		}
 	}
 }
+#endif

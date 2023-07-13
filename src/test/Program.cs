@@ -63,7 +63,7 @@ namespace test
 			var utc = UtcTime.Now.ToString();
 
 
-			MsSqlTimeZoneTool.Generate(@"d:\sqltimezones.txt", @"d:\msSqlTimeZoneMap.cs");
+//			MsSqlTimeZoneTool.Generate(@"d:\sqltimezones.txt", @"d:\msSqlTimeZoneMap.cs");
 
 			IanaTimeZoneTool.Generate(@"d:\timeZoneMap10.cs");
 
