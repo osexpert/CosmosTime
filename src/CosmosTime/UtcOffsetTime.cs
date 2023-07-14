@@ -47,7 +47,7 @@ namespace CosmosTime
 			{
 				var utcNow = UtcTime.Now;
 				var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
-				var offsetMinsDbl = (dtInTz - utcNow.UtcDateTime).TotalMinutes;
+				var offsetMinsDbl = (dtInTz - utcNow.UtcDateTime).TotalMinutes; // same as tz.GetUtcOffset(dtInTz), I think.
 				return new UtcOffsetTime(utcNow, GetWholeMinutes(offsetMinsDbl));
 			}
 		}
