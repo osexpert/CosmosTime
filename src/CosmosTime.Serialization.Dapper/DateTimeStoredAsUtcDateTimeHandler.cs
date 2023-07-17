@@ -12,7 +12,7 @@ namespace CosmosTime.Serialization.Dapper
 	/// SqlMapper.RemoveTypeMap(typeof(DateTime));
 	/// SqlMapper.AddTypeHandler(typeof(DateTime), new DateTimeStoredAsDateTimeInUtcHandler());
 	/// </summary>
-	public class DateTimeStoredAsDateTimeInUtcHandler : SqlMapper.TypeHandler<DateTime>
+	public class DateTimeStoredAsUtcDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 	{
 		public override void SetValue(IDbDataParameter parameter, DateTime value)
 		{

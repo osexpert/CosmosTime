@@ -11,7 +11,7 @@ namespace CosmosTime.Serialization.Dapper
 	/// 
 	/// SqlMapper.AddTypeHandler(typeof(UtcTime), new UtcTimeStoredAsDateTimeInUtcHandler());
 	/// </summary>
-	public class UtcTimeStoredAsDateTimeInUtcHandler : SqlMapper.TypeHandler<UtcTime>
+	public class UtcTimeStoredAsUtcDateTimeHandler : SqlMapper.TypeHandler<UtcTime>
 	{
 		public override void SetValue(IDbDataParameter parameter, UtcTime value)
 		{

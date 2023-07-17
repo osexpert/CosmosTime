@@ -89,6 +89,7 @@ namespace CosmosTime
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
 				// ConvertTimeToUtc will verify the time is valid in the zone
+				// For ambigous time, will chose standard time offset
 				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
@@ -111,6 +112,62 @@ namespace CosmosTime
 			}
 		}
 
+		/// <summary>
+		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
+		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
+		/// If anyTime.Kind is Unspecified, then tz can be anything
+		/// </summary>
+		public UtcTime(DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
+		{
+			if (tz == null)
+				throw new ArgumentNullException();
+
+			if (anyTime.Kind == DateTimeKind.Unspecified)
+			{
+				// ConvertTimeToUtc will verify the time is valid in the zone
+				//_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
+
+				//Shared.ValidateOffset(tz)
+
+				//if (tz.IsAmbiguousTime(anyTime))
+				//{
+				//	if (!tz.GetAmbiguousTimeOffsets(anyTime).Any(o => o == offset))
+				//		throw new ArgumentException("AmbiguousTime but passed offset matches none");
+				//	_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
+				//}
+				//else
+				//{
+				//	if (tz.GetUtcOffset(anyTime) != offset)
+				//		throw new ArgumentException("offset mismatch");
+				//	_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
+				//}
+
+				(var ok, var msg) = Shared.ValidateOffset(tz, anyTime, Shared.GetWholeMinutes(offset));
+				if (!ok)
+					throw new ArgumentException(msg);
+
+				_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
+
+			}
+			else if (anyTime.Kind == DateTimeKind.Local)
+			{
+				if (tz != TimeZoneInfo.Local)
+					throw new ArgumentException("When anyTime.Kind is Local, tz must be TimeZoneInfo.Local");
+
+				_utc = anyTime.ToUniversalTime();
+			}
+			else if (anyTime.Kind == DateTimeKind.Utc)
+			{
+				if (tz != TimeZoneInfo.Utc)
+					throw new ArgumentException("When anyTime.Kind is Utc, tz must be TimeZoneInfo.Utc");
+
+				_utc = anyTime;
+			}
+			else
+			{
+				throw new Exception("impossible");
+			}
+		}
 
 
 		public long Ticks => _utc.Ticks;

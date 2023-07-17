@@ -19,20 +19,27 @@ namespace CosmosTime
 		}
 
 
+
 		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
 			return new UtcTime(anyTime, tz);
 		}
+
+		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
+		{
+			return new UtcTime(anyTime, tz, offset);
+		}
+
 
 		//public static DateOnly GetDateOnly(this DateTime dt)
 		//{
 		//	return new DateOnly(dt.Year, dt.Month, dt.Day);
 		//}
 
-		public static UtcTime ToUtcTime(this ZonedTime zoned)
-		{
-			return new UtcTime(zoned.ZonedDateTime, zoned.Zone);
-		}
+		//public static UtcTime ToUtcTime(this ZonedTime zoned)
+		//{
+		//	return new UtcTime(zoned.ZonedDateTime, zoned.Zone);
+		//}
 
 
 		/// <summary>
@@ -41,10 +48,10 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
-		{
-			return new ZonedTime(utcOrLocalTime);
-		}
+		//public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
+		//{
+		//	return new ZonedTime(utcOrLocalTime);
+		//}
 
 		/// <summary>
 		/// DateTime can be any kind.
@@ -53,17 +60,35 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tz)
+		//public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tz)
+		//{
+		//	return new ZonedTime(anyTime, tz);
+		//}
+
+		//public static ZonedTime ToZonedTime(this UtcTime utc, TimeZoneInfo tz)
+		//{
+		//	return new ZonedTime(utc, tz);
+		//}
+
+		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
 		{
-			return new ZonedTime(anyTime, tz);
+			return new OffsetTime(utc, offset);
 		}
 
-		public static ZonedTime ToZonedTime(this UtcTime utc, TimeZoneInfo tz)
+		public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
 		{
-			return new ZonedTime(utc, tz);
+			return new ZonedTime(utcOrLocalTime);
 		}
 
-
+		//public static int TotalWholeMinutes(this TimeSpan timeSpan)
+		//{
+		//	//return Shared.GetWholeMinutes(timeSpan);
+		//	var mins = timeSpan.TotalMinutes;
+		//	var res = (int)mins;
+		//	if (res != mins)
+		//		throw new Exception("not whole minutes (has fractions)");
+		//	return res;
+		//}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw
@@ -111,16 +136,16 @@ namespace CosmosTime
 		//	return new UtcTime(dt.Value.ToUniversalTime());
 		//}
 
-		public static UtcOffsetTime ToUtcOffsetTime(this DateTimeOffset dto)
+		public static OffsetTime ToOffsetTime(this DateTimeOffset dto)
 		{
-			return new UtcOffsetTime(dto);
+			return new OffsetTime(dto);
 		}
 
-		public static UtcOffsetTime? ToUtcOffsetTime(this DateTimeOffset? dto)
+		public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
 		{
 			if (dto == null)
 				return null;
-			return new UtcOffsetTime(dto.Value);
+			return new OffsetTime(dto.Value);
 		}
 
 		public static DateTime? ToUtcDateTime(this UtcTime? utc)
@@ -140,9 +165,14 @@ namespace CosmosTime
 			return IsoWeek.GetWeek(dt.UtcDateTime);
 		}
 
+		public static IsoWeek GetWeek(this OffsetTime dt)
+		{
+			return IsoWeek.GetWeek(dt.UnspecifiedDateTime);
+		}
+
 		public static IsoWeek GetWeek(this ZonedTime dt)
 		{
-			return IsoWeek.GetWeek(dt.ZonedDateTime);
+			return IsoWeek.GetWeek(dt.OffsetTime.UnspecifiedDateTime);
 		}
 
 	}

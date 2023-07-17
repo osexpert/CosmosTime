@@ -1,4 +1,5 @@
-﻿using CosmosTime.TimeZone;
+﻿#if false
+using CosmosTime.TimeZone;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,16 +47,10 @@ namespace CosmosTime
 			var zoned = ZonedTime.Now(tz);
 			var off = tz.GetUtcOffset(zoned.ZonedDateTime);
 
-			return new ZonedOffsetTime(zoned, GetWholeMinutes(off.TotalMinutes));
+			return new ZonedOffsetTime(zoned, Shared.GetWholeMinutes(off.TotalMinutes));
 		}
 
-		private static short GetWholeMinutes(double mins)
-		{
-			var res = (short)mins;
-			if (res != mins)
-				throw new Exception("fractions lost in offset");
-			return res;
-		}
+
 
 	//	public static readonly ZonedOffsetTime MinValue = DateTimeOffset.MinValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
 //		public static readonly ZonedOffsetTime MaxValue = DateTimeOffset.MaxValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
@@ -117,7 +112,7 @@ namespace CosmosTime
 		/// <summary>
 		/// If time is ambigous, uses the standard time offset
 		/// </summary>
-		public ZonedOffsetTime(ZonedTime zoned) : this(zoned, GetWholeMinutes(zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes))
+		public ZonedOffsetTime(ZonedTime zoned) : this(zoned, Shared.GetWholeMinutes(zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes))
 		{
 		}
 
@@ -129,34 +124,13 @@ namespace CosmosTime
 			//		var local = utc.UtcDateTime + TimeSpan.FromMinutes(offsetMinutes);
 			//			_dto = new DateTimeOffset(DateTime.SpecifyKind(local, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offsetMinutes));
 
-			(bool ok, string msg) = ValidateOffset(zoned, offsetMinutes);
+			(bool ok, string msg) = Shared.ValidateOffset(zoned, offsetMinutes);
 			if (!ok)
 				throw new ArgumentException(msg);
 
 			_zoned = zoned;
 
 			_offsetMinutes = offsetMinutes;
-		}
-
-		internal static (bool Ok, string Msg) ValidateOffset(ZonedTime zoned, short offsetMinutes)
-		{
-			if (offsetMinutes < -840 || offsetMinutes > 840)
-				return (false, "offset must be max [+-] 14 hours");
-
-			// FIXME: is there an easier\more effective way to validate this?
-			if (zoned.Zone.IsAmbiguousTime(zoned.ZonedDateTime))
-			{
-				var validOffsets = zoned.Zone.GetAmbiguousTimeOffsets(zoned.ZonedDateTime);
-
-				if (!validOffsets.Any(o => o.TotalMinutes == offsetMinutes))
-					return (false, "Offset is not valid in zone (none of the ambiguous offsets)");
-			}
-			else if (zoned.Zone.GetUtcOffset(zoned.ZonedDateTime).TotalMinutes != offsetMinutes)
-			{
-				return (false, "Offset is not valid in zone");
-			}
-
-			return (true, null);
 		}
 
 		//private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
@@ -252,3 +226,4 @@ namespace CosmosTime
 
 	}
 }
+#endif
