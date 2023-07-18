@@ -7,24 +7,11 @@ using System.Text;
 
 namespace CosmosTime
 {
-	//public struct Offset
-	//{
-	//	short _minutes;
-
- //       public Offset(int hours, int minutes)
- //       {
-	//		var totalMinutes = minutes + hours * 60;
-	//	}
-
-	//	public static Offset FromMinutes(int minutes)
-	//	{
-	//		return new Offset(0, minutes);
-	//	}
- //   }
-
-
-	[TypeConverter(typeof(OffsetTimeTypeConverter))]
-	public struct OffsetTime : IEquatable<OffsetTime>, IComparable<OffsetTime>, IComparable
+	/// <summary>
+	/// Store utc + offset
+	/// </summary>
+	[TypeConverter(typeof(UtcOffsetTimeTypeConverter))]
+	public struct UtcOffsetTime : IEquatable<UtcOffsetTime>, IComparable<UtcOffsetTime>, IComparable
 	{
 		UtcTime _utc;
 		short _offsetMinutes;
@@ -34,13 +21,13 @@ namespace CosmosTime
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
 		/// Same as Now(TimeZoneInfo.Local)
 		/// </summary>
-		public static OffsetTime LocalNow => Now(TimeZoneInfo.Local);
+		public static UtcOffsetTime LocalNow => Now(TimeZoneInfo.Local);
 
 		/// <summary>
 		/// An UtcOffsetTime with utc time without offset (no time zone info)
 		/// Same as Now(TimeZoneInfo.Utc)
 		/// </summary>
-		public static OffsetTime UtcNow => Now(TimeZoneInfo.Utc);
+		public static UtcOffsetTime UtcNow => Now(TimeZoneInfo.Utc);
 
 		/// <summary>
 		/// Get Now in a zone (time will always be utc, but the offset captured will depend on the tz)
@@ -49,27 +36,27 @@ namespace CosmosTime
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="Exception"></exception>
-		public static OffsetTime Now(TimeZoneInfo tz)
+		public static UtcOffsetTime Now(TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException("tz");
 
 			if (tz == TimeZoneInfo.Local)
-				return DateTimeOffset.Now.ToOffsetTime();
+				return DateTimeOffset.Now.ToUtcOffsetTime();
 			else if (tz == TimeZoneInfo.Utc)
-				return DateTimeOffset.UtcNow.ToOffsetTime();
+				return DateTimeOffset.UtcNow.ToUtcOffsetTime();
 			else // convert to time in the zone
 			{
 				var utcNow = UtcTime.Now;
 				var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
 				var offset = (dtInTz - utcNow.UtcDateTime); // same as tz.GetUtcOffset(dtInTz), I think.
-				return new OffsetTime(utcNow, Shared.GetWholeMinutes(offset));
+				return new UtcOffsetTime(utcNow, offset);
 			}
 		}
 
 
-		public static readonly OffsetTime MinValue = DateTimeOffset.MinValue.ToOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
-		public static readonly OffsetTime MaxValue = DateTimeOffset.MaxValue.ToOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
+		public static readonly UtcOffsetTime MinValue = DateTimeOffset.MinValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
+		public static readonly UtcOffsetTime MaxValue = DateTimeOffset.MaxValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
 
 		public UtcTime UtcTime => _utc;
 
@@ -95,7 +82,7 @@ namespace CosmosTime
 		/// {time}Z
 		/// {time}+|-{offset}
 		/// </summary>
-		public static OffsetTime Parse(string str)
+		public static UtcOffsetTime Parse(string str)
 		{
 			if (TryParse(str, out var ut))
 				return ut;
@@ -107,13 +94,13 @@ namespace CosmosTime
 		/// "{time}Z"
 		/// "{time}{offset}"
 		/// </summary>
-		public static bool TryParse(string utcOffsetString, out OffsetTime uo)
+		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo)
 		{
 			uo = default;
 
 			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
 			{
-				uo = dto.ToOffsetTime();
+				uo = dto.ToUtcOffsetTime();
 				return true;
 			}
 
@@ -126,7 +113,7 @@ namespace CosmosTime
 		/// "{time}{offset}"
 		/// "{time}" (tzIfUnspecified will be called)
 		/// </summary>
-		public static bool TryParse(string utcOffsetString, out OffsetTime uo, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
+		public static bool TryParse(string utcOffsetString, out UtcOffsetTime uo, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
 		{
 			if (tzIfUnspecified == null)
 				throw new ArgumentNullException(nameof(tzIfUnspecified));
@@ -140,12 +127,12 @@ namespace CosmosTime
 					var tz = tzIfUnspecified(dto);
 					var utc = dto.DateTime.ToUtcTime(tz);
 					var offset = (dto.DateTime - utc.UtcDateTime);
-					uo = new OffsetTime(utc, Shared.GetWholeMinutes(offset));
+					uo = new UtcOffsetTime(utc, offset);
 					return true;
 				}
 				else
 				{
-					uo = dto.ToOffsetTime();
+					uo = dto.ToUtcOffsetTime();
 					return true;
 				}
 			}
@@ -157,7 +144,7 @@ namespace CosmosTime
 		/// <summary>
 		///
 		/// </summary>
-		public OffsetTime(DateTimeOffset dto)
+		public UtcOffsetTime(DateTimeOffset dto)
 		{
 			// what about dto.ToUniversalTime? versus  dto.UtcDateTime ???
 			//dto.ToUniversalTime sets offset to 0. But they are still equal!!
@@ -175,17 +162,12 @@ namespace CosmosTime
 		/// <param name="utcs"></param>
 		/// <param name="offsetMinutes"></param>
 		/// <exception cref="ArgumentException"></exception>
-		public OffsetTime(UtcTime utc, TimeSpan offset) : this(utc, Shared.GetWholeMinutes(offset))
+		public UtcOffsetTime(UtcTime utc, TimeSpan offset)
 		{
-		}
-
-		internal OffsetTime(UtcTime utc, short offsetMinutes) : this()
-		{
-			if (offsetMinutes < -840 || offsetMinutes > 840)
+			_offsetMinutes = Shared.GetWholeMinutes(offset);
+			if (_offsetMinutes < -840 || _offsetMinutes > 840)
 				throw new ArgumentException("offset must be max [+-] 14 hours");
-
 			_utc = utc;
-			_offsetMinutes = offsetMinutes;
 		}
 
 		//private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
@@ -200,9 +182,11 @@ namespace CosmosTime
 		/// Alt name: UnspecifiedIsoDateTime?
 		/// UnspecifiedLocalDateTime?
 		/// UnspecifiedAdjustedDateTime
+		/// ClockDateTime
+		/// UnspecifiedClockDateTime
 		/// etc.
 		/// </summary>
-		public DateTime UnspecifiedDateTime => ClockDateTime_KindUnspecified;
+		public DateTime ClockDateTime => ClockDateTime_KindUnspecified;
 
 		public DateTime UtcDateTime => _utc.UtcDateTime;
 
@@ -238,10 +222,10 @@ namespace CosmosTime
 		/// <summary>
 		/// Parse fixed length utc (28 chars, ends with Z)
 		/// </summary>
-		public static OffsetTime ParseCosmosDb(string utc, TimeSpan offset)
+		public static UtcOffsetTime ParseCosmosDb(string utc, TimeSpan offset)
 		{
 			var utcs = UtcTime.ParseCosmosDb(utc);
-			return new OffsetTime(utcs, offset);
+			return new UtcOffsetTime(utcs, offset);
 		}
 
 		public DateTimeOffset ToDateTimeOffset()
@@ -260,7 +244,7 @@ namespace CosmosTime
 
 		public override int GetHashCode() => _utc.GetHashCode();
 		
-		public override bool Equals(object obj) => obj is OffsetTime other && Equals(other);
+		public override bool Equals(object obj) => obj is UtcOffsetTime other && Equals(other);
 
 		/// <summary>
 		/// Equal if the Utc time is equal.
@@ -268,9 +252,9 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(OffsetTime other) => this._utc == other._utc;
+		public bool Equals(UtcOffsetTime other) => this._utc == other._utc;
 		
-		public int CompareTo(OffsetTime other) => this._utc.CompareTo(other._utc);
+		public int CompareTo(UtcOffsetTime other) => this._utc.CompareTo(other._utc);
 
 		int IComparable.CompareTo(object obj)
 		{
@@ -278,19 +262,19 @@ namespace CosmosTime
 			{
 				return 1;
 			}
-			return CompareTo((OffsetTime)obj);
+			return CompareTo((UtcOffsetTime)obj);
 		}
 
-		public static OffsetTime operator +(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc + t, d._offsetMinutes); 
-		public static OffsetTime operator -(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc - t, d._offsetMinutes);
-		public static TimeSpan operator -(OffsetTime a, OffsetTime b) => a._utc - b._utc;
+		public static UtcOffsetTime operator +(UtcOffsetTime d, TimeSpan t) => new UtcOffsetTime(d._utc + t, d.Offset); 
+		public static UtcOffsetTime operator -(UtcOffsetTime d, TimeSpan t) => new UtcOffsetTime(d._utc - t, d.Offset);
+		public static TimeSpan operator -(UtcOffsetTime a, UtcOffsetTime b) => a._utc - b._utc;
 
-		public static bool operator ==(OffsetTime a, OffsetTime b) => a._utc == b._utc;
-		public static bool operator !=(OffsetTime a, OffsetTime b) => a._utc != b._utc;
-		public static bool operator <(OffsetTime a, OffsetTime b) => a._utc < b._utc;
-		public static bool operator >(OffsetTime a, OffsetTime b) => a._utc > b._utc;
-		public static bool operator <=(OffsetTime a, OffsetTime b) => a._utc <= b._utc;
-		public static bool operator >=(OffsetTime a, OffsetTime b) => a._utc >= b._utc;
+		public static bool operator ==(UtcOffsetTime a, UtcOffsetTime b) => a._utc == b._utc;
+		public static bool operator !=(UtcOffsetTime a, UtcOffsetTime b) => a._utc != b._utc;
+		public static bool operator <(UtcOffsetTime a, UtcOffsetTime b) => a._utc < b._utc;
+		public static bool operator >(UtcOffsetTime a, UtcOffsetTime b) => a._utc > b._utc;
+		public static bool operator <=(UtcOffsetTime a, UtcOffsetTime b) => a._utc <= b._utc;
+		public static bool operator >=(UtcOffsetTime a, UtcOffsetTime b) => a._utc >= b._utc;
 
 	}
 }

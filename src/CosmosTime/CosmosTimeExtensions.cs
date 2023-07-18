@@ -43,64 +43,56 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// DateTime must be Kind.Utc or Kind.Local.
-		/// If Kind.Unspecified, it will throw (must then use ToZonedTime that take a tz)
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
-		//public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
-		//{
-		//	return new ZonedTime(utcOrLocalTime);
-		//}
-
-		/// <summary>
 		/// DateTime can be any kind.
 		/// If Kind.Unspecified then time is adjusted to supplied tz.
 		/// If kind Kind.Utc or Kind.Local, it is simply validated that the tz matches.
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		//public static ZonedTime ToZonedTime(this DateTime anyTime, TimeZoneInfo tz)
+		//public static ZonedTime ToUtcZoneTime(this DateTime anyTime, TimeZoneInfo tz)
 		//{
 		//	return new ZonedTime(anyTime, tz);
 		//}
 
-		//public static ZonedTime ToZonedTime(this UtcTime utc, TimeZoneInfo tz)
-		//{
-		//	return new ZonedTime(utc, tz);
-		//}
-
-		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
+		public static UtcZoneTime ToUtcZoneTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
-			return new OffsetTime(utc, offset);
+			return new UtcZoneTime(anyTime, tz);
 		}
 
-		public static ZonedTime ToZonedTime(this DateTime utcOrLocalTime)
+		public static UtcOffsetTime ToUtcOffsetTime(this UtcTime utc, TimeSpan offset)
 		{
-			return new ZonedTime(utcOrLocalTime);
+			return new UtcOffsetTime(utc, offset);
 		}
 
-		//public static int TotalWholeMinutes(this TimeSpan timeSpan)
-		//{
-		//	//return Shared.GetWholeMinutes(timeSpan);
-		//	var mins = timeSpan.TotalMinutes;
-		//	var res = (int)mins;
-		//	if (res != mins)
-		//		throw new Exception("not whole minutes (has fractions)");
-		//	return res;
-		//}
+		/// <summary>
+		/// DateTime must be Kind.Utc or Kind.Local.
+		/// If Kind.Unspecified, it will throw (must then use ToUtzZoneTime that take a tz)
+		/// </summary>
+		public static UtcZoneTime ToUtcZoneTime(this DateTime utcOrLocalTime)
+		{
+			return new UtcZoneTime(utcOrLocalTime);
+		}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		//public static LocalTime ToLocalTime2(this DateTime utcOrLocalTime)
+		//public static ClockTime ToClockTime(this DateTime utcOrLocalTime)
 		//{
-		//	return new LocalTime(utcOrLocalTime);
+		//	return new ClockTime(utcOrLocalTime);
 		//}
 
+		public static ClockTime ToClockTime(this UtcZoneTime zoned)
+		{
+			return new ClockTime(zoned);
+		}
 
+
+		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz)//, Func< TimeSpan> chooseOffset)
+		{
+			return new UtcZoneTime(ct.ClockDateTime, tz);
+		}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw
@@ -136,16 +128,16 @@ namespace CosmosTime
 		//	return new UtcTime(dt.Value.ToUniversalTime());
 		//}
 
-		public static OffsetTime ToOffsetTime(this DateTimeOffset dto)
+		public static UtcOffsetTime ToUtcOffsetTime(this DateTimeOffset dto)
 		{
-			return new OffsetTime(dto);
+			return new UtcOffsetTime(dto);
 		}
 
-		public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
+		public static UtcOffsetTime? ToUtcOffsetTime(this DateTimeOffset? dto)
 		{
 			if (dto == null)
 				return null;
-			return new OffsetTime(dto.Value);
+			return new UtcOffsetTime(dto.Value);
 		}
 
 		public static DateTime? ToUtcDateTime(this UtcTime? utc)
@@ -165,14 +157,14 @@ namespace CosmosTime
 			return IsoWeek.GetWeek(dt.UtcDateTime);
 		}
 
-		public static IsoWeek GetWeek(this OffsetTime dt)
+		public static IsoWeek GetWeek(this UtcOffsetTime dt)
 		{
-			return IsoWeek.GetWeek(dt.UnspecifiedDateTime);
+			return IsoWeek.GetWeek(dt.ClockDateTime);
 		}
 
-		public static IsoWeek GetWeek(this ZonedTime dt)
+		public static IsoWeek GetWeek(this UtcZoneTime dt)
 		{
-			return IsoWeek.GetWeek(dt.OffsetTime.UnspecifiedDateTime);
+			return IsoWeek.GetWeek(dt.OffsetTime.ClockDateTime);
 		}
 
 	}

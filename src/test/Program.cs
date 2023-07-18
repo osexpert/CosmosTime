@@ -34,7 +34,7 @@ namespace test
 			//We've accidentally landed two days ahead instead of just one. This happened because, on 2022-03-13, the clocks were turned forward 1 hour, so that day only had 23 hours on that time zone. Adding 24 hours on the universal time-line ended up being too much.
 
 			var tz = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
-			var tiemInZone = new ZonedTime(2022, 3, 12, 23, 30, 0, 0, tz);
+			var tiemInZone = new UtcZoneTime(2022, 3, 12, 23, 30, 0, 0, tz);
 
 			var next = tiemInZone + TimeSpan.FromDays(1);
 
@@ -52,7 +52,7 @@ namespace test
 			//2022 - 03 - 13 23:30:00 - 05:00[America / Winnipeg]
 
 			var tz2 = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
-			var tiemInZone2 = new ZonedTime(2022, 3, 12, 23, 30, 0, 0, tz);
+			var tiemInZone2 = new UtcZoneTime(2022, 3, 12, 23, 30, 0, 0, tz);
 			var newTime2 = tiemInZone + TimeSpan.FromDays(1);
 
 			Console.WriteLine("ff");
@@ -60,7 +60,7 @@ namespace test
 			//var n = LocalTime.Now;
 			//var s = n.ToString();
 
-			var nz = ZonedTime.Now(TimeZoneInfo.Local);
+			var nz = UtcZoneTime.Now(TimeZoneInfo.Local);
 			var nzs = nz.ToString();
 
 			var utc = UtcTime.Now.ToString();

@@ -11,17 +11,17 @@ namespace CosmosTime.Serialization.Dapper
 	/// 
 	/// SqlMapper.AddTypeHandler(typeof(UtcTime), new UtcOffsetTimeStoredAsDateTimeOffsetHandler());
 	/// </summary>
-	public class OffsetTimeStoredAsDateTimeOffsetHandler : SqlMapper.TypeHandler<OffsetTime>
+	public class UtcOffsetTimeStoredAsDateTimeOffsetHandler : SqlMapper.TypeHandler<UtcOffsetTime>
 	{
-		public override void SetValue(IDbDataParameter parameter, OffsetTime value)
+		public override void SetValue(IDbDataParameter parameter, UtcOffsetTime value)
 		{
 			parameter.Value = value.ToDateTimeOffset();
 		}
 
-		public override OffsetTime Parse(object value)
+		public override UtcOffsetTime Parse(object value)
 		{
 			var dto = (DateTimeOffset)value;
-			return dto.ToOffsetTime();
+			return dto.ToUtcOffsetTime();
 		}
 	}
 

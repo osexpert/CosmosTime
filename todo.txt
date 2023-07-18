@@ -1,0 +1,29 @@
+
+on ZonedTime,
+have Adjust-methods (or Advance) that can move us 1 day ahead (serokell_tztime_test, adding 24h move 2 days ahead).
+
+If we could have some way to advance 1 day ahead...
+ZonedTime.AddLocalDays
+ZonedTime.AddLocalDays
+
+Date
+DatePart
+DateOnly
+
+Have the option to do this:
+public DateOnly Date =>
+or follow old DateTime design:
+public DateTime Date =>
+
+In case we use
+public DateOnly Date =>
+it is possible to preserve old function by adding DatePart propery, that does the same as Date did before.
+public DateTime DatePart =>
+
+Here utc is master and clock time may be wrong (if tz-db changes)
+UtcTime, UtcOffsetTime, UtcZoneTime
+
+But if we want clock time to be master\always correct and utc dynamic (if tz-db changes)?
+ClockTime, ClockOffsetTime, ClockZoneTime
+
+public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz)//, Func<TimeSpan[], TimeSpan> chooseOffset)

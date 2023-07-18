@@ -15,20 +15,20 @@ namespace CosmosTime.Serialization.SystemTextJson
 	///   "offsetMins": -30
 	/// }
 	/// </summary>
-	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
+	public class UtcOffsetTimeCosmosDbJsonConverter : JsonConverter<UtcOffsetTime>
 	{
-		public override OffsetTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		public override UtcOffsetTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			//var obj = JObject.Load(reader);
 			var obj = JsonObject.Parse(ref reader);
 			
-			return OffsetTime.ParseCosmosDb((string)obj["timeUtc"], TimeSpan.FromMinutes((int)obj["offsetMinutes"]));
+			return UtcOffsetTime.ParseCosmosDb((string)obj["timeUtc"], TimeSpan.FromMinutes((int)obj["offsetMinutes"]));
 		}
 
-		public override void Write(Utf8JsonWriter writer, OffsetTime value, JsonSerializerOptions options)
+		public override void Write(Utf8JsonWriter writer, UtcOffsetTime value, JsonSerializerOptions options)
 		{
 		
-			var rr = (OffsetTime)value;
+			var rr = (UtcOffsetTime)value;
 
 			writer.WriteStartObject();
 

@@ -32,7 +32,7 @@ namespace CosmosTime
 
 		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
 
-		public UtcTime Date => _utc.Date.ToUtcTime();
+		public UtcTime DatePart => _utc.Date.ToUtcTime();
 
 		/// <summary>
 		/// Fixed length
@@ -90,7 +90,7 @@ namespace CosmosTime
 			{
 				// ConvertTimeToUtc will verify the time is valid in the zone
 				// For ambigous time, will chose standard time offset
-				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
+				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz);
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
 			{
@@ -116,11 +116,17 @@ namespace CosmosTime
 		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
 		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
 		/// If anyTime.Kind is Unspecified, then tz can be anything
+		/// 
+		/// The only reason to use this ctor with offset is that you have an ambigous time and want to choose the offset manually.
 		/// </summary>
 		public UtcTime(DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
 		{
 			if (tz == null)
 				throw new ArgumentNullException();
+
+			(var ok, var msg) = Shared.ValidateOffset(tz, anyTime, offset);
+			if (!ok)
+				throw new ArgumentException(msg);
 
 			if (anyTime.Kind == DateTimeKind.Unspecified)
 			{
@@ -142,9 +148,7 @@ namespace CosmosTime
 				//	_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 				//}
 
-				(var ok, var msg) = Shared.ValidateOffset(tz, anyTime, Shared.GetWholeMinutes(offset));
-				if (!ok)
-					throw new ArgumentException(msg);
+
 
 				_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
 
@@ -174,7 +178,7 @@ namespace CosmosTime
 
 	//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
 
-		//public ZonedTime ToZonedTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
+		//public ZonedTime ToUtcZoneTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
 
 		public UtcTime(int year, int month, int day) : this()
 		{
@@ -207,8 +211,8 @@ namespace CosmosTime
 		}
 
 		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
-		public static UtcTime operator -(UtcTime d, TimeSpan t) => (d._utc - t).ToUtcTime();
 		public static UtcTime operator +(UtcTime d, TimeSpan t) => (d._utc + t).ToUtcTime();
+		public static UtcTime operator -(UtcTime d, TimeSpan t) => (d._utc - t).ToUtcTime();
 
 		public static bool operator ==(UtcTime a, UtcTime b) => a._utc == b._utc;
 		public static bool operator !=(UtcTime a, UtcTime b) => a._utc != b._utc;

@@ -28,10 +28,12 @@ namespace CosmosTime
 		//	return (true, null);
 		//}
 
-		internal static (bool Ok, string Msg) ValidateOffset(TimeZoneInfo tz, DateTime zonedDateTime, short offsetMinutes)
+		internal static (bool Ok, string Msg) ValidateOffset(TimeZoneInfo tz, DateTime zonedDateTime, TimeSpan offset)
 		{
 			// zonedDateTime should never be Local kind
 			// zonedDateTime should be Kind Utc if tz is Utc
+
+			var offsetMinutes = Shared.GetWholeMinutes(offset);
 
 			if (offsetMinutes < -840 || offsetMinutes > 840)
 				return (false, "offset must be max [+-] 14 hours");
