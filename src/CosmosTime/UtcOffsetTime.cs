@@ -72,9 +72,13 @@ namespace CosmosTime
 		public long UtcTicks => _utc.Ticks;
 
 
-
-
-
+		/// <summary>
+		/// The specified time is clock time (not utc)
+		/// </summary>
+		public UtcOffsetTime(ClockTime ct, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
+		{
+			throw new NotImplementedException();
+		}
 
 
 		/// <summary>
@@ -177,14 +181,8 @@ namespace CosmosTime
 		internal DateTime ClockDateTime_KindUnspecified => DateTime.SpecifyKind(_utc.UtcDateTime.AddMinutes(_offsetMinutes), DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);
 
 		/// <summary>
-		/// UtcTime + Offset = local time (as shown in the Iso string: {local_time}+|-{offset}) = UnspecifiedDateTime
+		/// UtcTime + Offset = Clock Time
 		/// Unspecified Kind.
-		/// Alt name: UnspecifiedIsoDateTime?
-		/// UnspecifiedLocalDateTime?
-		/// UnspecifiedAdjustedDateTime
-		/// ClockDateTime
-		/// UnspecifiedClockDateTime
-		/// etc.
 		/// </summary>
 		public DateTime ClockDateTime => ClockDateTime_KindUnspecified;
 
@@ -265,9 +263,10 @@ namespace CosmosTime
 			return CompareTo((UtcOffsetTime)obj);
 		}
 
+		public static TimeSpan operator -(UtcOffsetTime a, UtcOffsetTime b) => a._utc - b._utc;
+
 		public static UtcOffsetTime operator +(UtcOffsetTime d, TimeSpan t) => new UtcOffsetTime(d._utc + t, d.Offset); 
 		public static UtcOffsetTime operator -(UtcOffsetTime d, TimeSpan t) => new UtcOffsetTime(d._utc - t, d.Offset);
-		public static TimeSpan operator -(UtcOffsetTime a, UtcOffsetTime b) => a._utc - b._utc;
 
 		public static bool operator ==(UtcOffsetTime a, UtcOffsetTime b) => a._utc == b._utc;
 		public static bool operator !=(UtcOffsetTime a, UtcOffsetTime b) => a._utc != b._utc;

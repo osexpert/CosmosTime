@@ -89,10 +89,20 @@ namespace CosmosTime
 		}
 
 
-		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz)//, Func< TimeSpan> chooseOffset)
+		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz)
 		{
-			return new UtcZoneTime(ct.ClockDateTime, tz);
+			return new UtcZoneTime(ct, tz);
 		}
+
+		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz, TimeSpan offset)
+		{
+			return new UtcZoneTime(ct, tz, offset);
+		}
+
+		//public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
+		//{
+		//	return new UtcZoneTime(ct, tz, choseOffsetIfAmbigious);
+		//}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw

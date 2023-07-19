@@ -133,23 +133,6 @@ namespace CosmosTime
 				// ConvertTimeToUtc will verify the time is valid in the zone
 				//_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 
-				//Shared.ValidateOffset(tz)
-
-				//if (tz.IsAmbiguousTime(anyTime))
-				//{
-				//	if (!tz.GetAmbiguousTimeOffsets(anyTime).Any(o => o == offset))
-				//		throw new ArgumentException("AmbiguousTime but passed offset matches none");
-				//	_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
-				//}
-				//else
-				//{
-				//	if (tz.GetUtcOffset(anyTime) != offset)
-				//		throw new ArgumentException("offset mismatch");
-				//	_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
-				//}
-
-
-
 				_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
 
 			}
@@ -211,6 +194,7 @@ namespace CosmosTime
 		}
 
 		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
+
 		public static UtcTime operator +(UtcTime d, TimeSpan t) => (d._utc + t).ToUtcTime();
 		public static UtcTime operator -(UtcTime d, TimeSpan t) => (d._utc - t).ToUtcTime();
 

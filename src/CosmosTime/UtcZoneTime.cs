@@ -75,6 +75,10 @@ namespace CosmosTime
 			//}
 		}
 
+		//public UtcZoneTime(DateTime anyTime, TimeZoneInfo tz, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
 		public long Ticks => _offset_time.Ticks;
 
@@ -152,35 +156,24 @@ namespace CosmosTime
 		/// 
 		/// TODO: could have had a callback...so only need to specify offset if ambigous?
 		/// </summary>
-		public UtcZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset) : this()
+		public UtcZoneTime(ClockTime ct, TimeZoneInfo tz, TimeSpan offset) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = ct.ClockDateTime;
 			Init(new UtcOffsetTime(dt.ToUtcTime(tz, offset), offset), tz);
-		}
-
-		public UtcZoneTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz)
-			: this(year, month, day, hour, minute, second, 0, tz)
-		{
-		}
-
-		public UtcZoneTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz, TimeSpan offset)
-			: this(year, month, day, hour, minute, second, 0, tz, offset)
-		{
 		}
 
 		/// <summary>
 		/// Uses default offset (standard time offset) in case of ambigous time.
 		/// </summary>
-		public UtcZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) : this()
+		public UtcZoneTime(ClockTime ct, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = ct.ClockDateTime;
 			Init(new UtcOffsetTime(dt.ToUtcTime(tz), tz.GetUtcOffset(dt)), tz);
 		}
-
 
 
 		/// <summary>
