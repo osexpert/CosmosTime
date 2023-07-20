@@ -346,7 +346,7 @@ namespace CosmosTime.UnitTests
 				}
 			});
 
-			var zof2 = new ZoneTime(new ClockTime(2020, 1, 20, 4, 5, 6, 7), IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
+			var zof2 = new ZoneTime(2020, 1, 20, 4, 5, 6, 7, IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
 			var zof2_ = new ClockTime(2020, 1, 20, 4, 5, 6, 7).ToZoneTime(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
 			Assert.Equal(zof2, zof2_);
 
@@ -612,7 +612,7 @@ namespace CosmosTime.UnitTests
 			{
 				try
 				{
-					var zt = new ZoneTime(new ClockTime(2013, 3, 10, 2, 34, 56), tz);
+					var zt = new ZoneTime(2013, 3, 10, 2, 34, 56, tz);
 				}
 				catch (ArgumentException e)
 				{
@@ -653,7 +653,7 @@ namespace CosmosTime.UnitTests
 			//λ > t1 = LocalTime(YearMonthDay 2022 11 6)(TimeOfDay 0 30 0)
 			//λ > t1
 			//2022 - 11 - 06 00:30:00
-			var zt = new ZoneTime(new ClockTime(2022, 11, 6, 0, 30, 0), IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
+			var zt = new ZoneTime(2022, 11, 6, 0, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
 			Assert.Equal("2022-11-06T00:30:00-05:00[America/Chicago]", zt.ToString());
 
 			var ztplus1h = zt.AddHours(1);
@@ -686,7 +686,7 @@ namespace CosmosTime.UnitTests
 			//			λ > --It's 23:30 on 2022-03-12 in the America/Winnipeg time zone.
 			//λ > tz = TZ.tzByLabel TZ.America__Winnipeg
 			//λ > t1 = LocalTime(YearMonthDay 2022 3 12)(TimeOfDay 23 30 0)
-			var zt2 = new ZoneTime(new ClockTime(2022, 3, 12, 23, 30, 0), IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
+			var zt2 = new ZoneTime(2022, 3, 12, 23, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
 			//λ > --Convert to UTC, add 1 day, convert back to our time zone.
 			var zt2plus1day = zt2.AddHours(24);
 			// yes...we did end up on day 14..

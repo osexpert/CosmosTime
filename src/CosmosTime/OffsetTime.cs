@@ -63,16 +63,15 @@ namespace CosmosTime
 		/// <summary>
 		/// Offset from Utc
 		/// </summary>
-		//internal short OffsetMinutes => _offsetMinutes;
-
 		public TimeSpan Offset => TimeSpan.FromMinutes(_offsetMinutes);
 
 		/// <summary>
-		/// Clock time ticks
+		/// Ticks in clock time
+		/// If you need Tick in Utc, use UtcTime.Ticks
 		/// </summary>
 		public long Ticks => ClockDateTime_KindUnspecified.Ticks;
 
-		public long UtcTicks => _utc.Ticks;
+		//		public long UtcTicks => _utc.Ticks;
 
 
 		/// <summary>
@@ -82,6 +81,32 @@ namespace CosmosTime
 		//{
 		//	throw new NotImplementedException();
 		//}
+
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public OffsetTime(int year, int month, int day, TimeZoneInfo tz)
+			: this(year, month, day, 0, 0, 0, 0, tz)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz)
+			: this(year, month, day, hour, minute, second, 0, tz)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) 
+		{
+			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			Init(dt.ToUtcTime(tz), tz.GetUtcOffset(dt));
+		}
 
 
 		/// <summary>
@@ -170,6 +195,11 @@ namespace CosmosTime
 		/// <param name="offsetMinutes"></param>
 		/// <exception cref="ArgumentException"></exception>
 		public OffsetTime(UtcTime utc, TimeSpan offset)
+		{
+			Init(utc, offset);
+		}
+
+		private void Init(UtcTime utc, TimeSpan offset)
 		{
 			_offsetMinutes = Shared.GetWholeMinutes(offset);
 			if (_offsetMinutes < -840 || _offsetMinutes > 840)

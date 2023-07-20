@@ -23,8 +23,6 @@ namespace CosmosTime
 
 		public TimeZoneInfo Zone => _tz;
 
-
-
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
 		/// TODO: why not allow Local?? Does now.
@@ -36,24 +34,72 @@ namespace CosmosTime
 			Init(new OffsetTime(utcOrLocalTime.ToUtcTime(), tz.GetUtcOffset(utcOrLocalTime)), tz);
 		}
 
-
 		public ZoneTime(DateTime anyTime, TimeZoneInfo tz)
 		{
 			Init(new OffsetTime(anyTime.ToUtcTime(tz), tz.GetUtcOffset(anyTime)), tz);
 		}
 
 		/// <summary>
-		/// Clock time ticks
+		/// Zone time ticks
 		/// </summary>
 		public long Ticks => _offset_time.Ticks;
 
+		/// <summary>
+		/// year, month, day, etc. in Zone time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, TimeZoneInfo tz)
+			: this(year, month, day, 0, 0, 0, 0, tz)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Zone time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz)
+			: this(year, month, day, hour, minute, second, 0, tz)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Zone time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz)
+		{
+			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			Init(dt.ToUtcTime(tz).ToOffsetTime(tz.GetUtcOffset(dt)), tz);
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Zone time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, TimeZoneInfo tz, TimeSpan offset)
+			: this(year, month, day, 0, 0, 0, 0, tz, offset)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz, TimeSpan offset)
+			: this(year, month, day, hour, minute, second, 0, tz, offset)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Zone time
+		/// </summary>
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset)
+		{
+			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			Init(dt.ToUtcTime(tz, offset).ToOffsetTime(offset), tz);
+		}
 
 		public ZoneTime(OffsetTime time, TimeZoneInfo tz)
 		{
 			Init(time, tz);
 		}
 
-		private void Init(OffsetTime offset_time, TimeZoneInfo tz)
+		private void Init(OffsetTime offsetTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
@@ -62,14 +108,14 @@ namespace CosmosTime
 			// trigger validation that IanaId exists
 			//var ianaIdDummy = IanaTimeZone.GetIanaId(tz);
 
-			if (tz.IsInvalidTime(offset_time.ClockDateTime))
-				throw new ArgumentException($"Invalid time: '{offset_time}' is invalid in '{GetIanaId()}'");
+			if (tz.IsInvalidTime(offsetTime.ClockDateTime))
+				throw new ArgumentException($"Invalid time: '{offsetTime}' is invalid in '{GetIanaId()}'");
 
-			(var ok, var msg) = Shared.ValidateOffset(tz, offset_time.ClockDateTime, offset_time.Offset);
+			(var ok, var msg) = Shared.ValidateOffset(tz, offsetTime.ClockDateTime, offsetTime.Offset);
 			if (!ok)
 				throw new ArgumentException(msg);
 
-			_offset_time = offset_time;
+			_offset_time = offsetTime;
 		}
 
 		private string GetIanaId()
@@ -120,22 +166,22 @@ namespace CosmosTime
 		/// 
 		/// TODO: could have had a callback...so only need to specify offset if ambigous?
 		/// </summary>
-		public ZoneTime(ClockTime ct, TimeZoneInfo tz, TimeSpan offset) : this()
+		public ZoneTime(ClockTime clockTime, TimeZoneInfo tz, TimeSpan offset) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var dt = ct.ClockDateTime;
+			var dt = clockTime.ClockDateTime;
 			Init(new OffsetTime(dt.ToUtcTime(tz, offset), offset), tz);
 		}
 
 		/// <summary>
 		/// Uses default offset (standard time offset) in case of ambigous time.
 		/// </summary>
-		public ZoneTime(ClockTime ct, TimeZoneInfo tz) : this()
+		public ZoneTime(ClockTime clockTime, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var dt = ct.ClockDateTime;
+			var dt = clockTime.ClockDateTime;
 			Init(new OffsetTime(dt.ToUtcTime(tz), tz.GetUtcOffset(dt)), tz);
 		}
 
@@ -211,10 +257,16 @@ namespace CosmosTime
 
 
 		//private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
-//		private DateTime ClockDateTime_KindUnspecified => DateTime.SpecifyKind(_offset_time.UtcTime.UtcDateTime.AddMinutes(_offset_time.OffsetMinutes), DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);
+		//		private DateTime ClockDateTime_KindUnspecified => DateTime.SpecifyKind(_offset_time.UtcTime.UtcDateTime.AddMinutes(_offset_time.OffsetMinutes), DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);
 
 		/// <summary>
-		/// Variable length local[+-]offset
+		/// Iso format: 
+		/// {time}+|-{offset}[{iana}]
+		/// {utc_time}Z[{iana}]
+		/// Examples:
+		/// 2020-01-20T04:05:06.007+01:00[Europe/Berlin]
+		/// 2020-01-20T04:05:06.007Z[Etc/UTC]
+		/// Time is variable length (milliseconds)
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()

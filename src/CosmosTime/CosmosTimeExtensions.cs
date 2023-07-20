@@ -18,11 +18,14 @@ namespace CosmosTime
 			return new UtcTime(utcOrLocalTime);
 		}
 
-
-
 		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
 			return new UtcTime(anyTime, tz);
+		}
+
+		public static UtcTime ToUtcTime(this ClockTime clockTime, TimeZoneInfo tz)
+		{
+			return new UtcTime(clockTime.ClockDateTime, tz);
 		}
 
 		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)

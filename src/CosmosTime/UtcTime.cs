@@ -41,7 +41,8 @@ namespace CosmosTime
 		public UtcTime DatePart => _utc.Date.ToUtcTime();
 
 		/// <summary>
-		/// Fixed length
+		/// Fixed length (28 chars) Iso format in Utc.
+		/// Example: 2020-01-20T12:13:14.0000000Z
 		/// </summary>
 		/// <returns></returns>
 		public string ToCosmosDb()
@@ -60,7 +61,11 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// Variable length utc (Z)
+		/// Iso format with variable length milliseconds in utc (Z)
+		/// Examples: 
+		/// 2020-01-20T12:13:14.1234Z
+		/// 2020-01-20T12:13:14.123Z
+		/// 2020-01-20T12:13:14.123456Z
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
@@ -69,10 +74,8 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// TODO: why not allow Local?? Does now.
+		/// DateTime must be Kind Utc or Local, else will throw
 		/// </summary>
-		/// <param name="utcTime"></param>
 		public UtcTime(DateTime utcOrLocalTime)
 		{
 			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
@@ -85,7 +88,7 @@ namespace CosmosTime
 		/// <summary>
 		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
 		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
-		/// If anyTime.Kind is Unspecified, then tz can be anything
+		/// If anyTime.Kind is Unspecified, then tz can be anything and anyTime is converted from this zone into Utc.
 		/// </summary>
 		public UtcTime(DateTime anyTime, TimeZoneInfo tz)
 		{
@@ -172,16 +175,25 @@ namespace CosmosTime
 
 		//public ZonedTime ToUtcZoneTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
 
+		/// <summary>
+		/// year, month, day, etc. is time in Utc
+		/// </summary>
 		public UtcTime(int year, int month, int day) : this()
 		{
 			_utc = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Utc);
 		}
 
+		/// <summary>
+		/// year, month, day, etc. is time in Utc
+		/// </summary>
 		public UtcTime(int year, int month, int day, int hour, int minute, int second) : this()
 		{
 			_utc = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Utc);
 		}
 
+		/// <summary>
+		/// year, month, day, etc. is time in Utc
+		/// </summary>
 		public UtcTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
 		{
 			_utc = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Utc);
@@ -239,6 +251,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// Parse Utc fixed length format with 28 chars and ending with Z.
+		/// Example: 2020-01-20T12:13:14.0000000Z
 		/// </summary>
 		public static UtcTime ParseCosmosDb(string utc)
 		{
