@@ -36,7 +36,7 @@ namespace CosmosTime
 		public ClockTime DatePart => ToClockTime(_clock_time.Date);
 
 
-		public ClockTime(UtcZoneTime zoned)
+		public ClockTime(ZoneTime zoned)
 		{
 			_clock_time = zoned.OffsetTime.ClockDateTime;
 		}
@@ -66,20 +66,20 @@ namespace CosmosTime
 			_clock_time = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
 		}
 
-		public ClockTime Min(ClockTime other)
-		{
-			if (this._clock_time < other._clock_time)
-				return this;
-			else
-				return other;
-		}
-		public ClockTime Max(ClockTime other)
-		{
-			if (this._clock_time > other._clock_time)
-				return this;
-			else
-				return other;
-		}
+		//public ClockTime Min(ClockTime other)
+		//{
+		//	if (this._clock_time < other._clock_time)
+		//		return this;
+		//	else
+		//		return other;
+		//}
+		//public ClockTime Max(ClockTime other)
+		//{
+		//	if (this._clock_time > other._clock_time)
+		//		return this;
+		//	else
+		//		return other;
+		//}
 
 		public static TimeSpan operator -(ClockTime a, ClockTime b) => a._clock_time - b._clock_time;
 

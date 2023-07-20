@@ -30,8 +30,14 @@ namespace CosmosTime
 		/// </summary>
 		public DateTime UtcDateTime => _utc;
 
+		/// <summary>
+		/// Now in Utc
+		/// </summary>
 		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
 
+		/// <summary>
+		/// Date part in Utc
+		/// </summary>
 		public UtcTime DatePart => _utc.Date.ToUtcTime();
 
 		/// <summary>
@@ -157,6 +163,9 @@ namespace CosmosTime
 		}
 
 
+		/// <summary>
+		/// Ticks in utc
+		/// </summary>
 		public long Ticks => _utc.Ticks;
 
 	//	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
@@ -178,20 +187,20 @@ namespace CosmosTime
 			_utc = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Utc);
 		}
 
-		public UtcTime Min(UtcTime other)
-		{
-			if (this._utc < other._utc)
-				return this;
-			else
-				return other;
-		}
-		public UtcTime Max(UtcTime other)
-		{
-			if (this._utc > other._utc)
-				return this;
-			else
-				return other;
-		}
+		//public UtcTime Min(UtcTime other)
+		//{
+		//	if (this._utc < other._utc)
+		//		return this;
+		//	else
+		//		return other;
+		//}
+		//public UtcTime Max(UtcTime other)
+		//{
+		//	if (this._utc > other._utc)
+		//		return this;
+		//	else
+		//		return other;
+		//}
 
 		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
 
@@ -316,36 +325,6 @@ namespace CosmosTime
 		}
 
 
-
-		//public double ToOADate()
-		//{
-		//	return _utc.ToOADate();
-		//}
-
-		//public static UtcTime FromOADate(double d)
-		//{
-		//	return new DateTime(DoubleDateToTicks(d), DateTimeKind.Utc).ToUtcTime();
-		//}
-
-		//// snatched from DateTime
-		//internal static long DoubleDateToTicks(double value)
-		//{
-		//	if ((value >= 2958466.0) || (value <= -657435.0))
-		//	{
-		//		throw new ArgumentException(("Arg_OleAutDateInvalid"));
-		//	}
-		//	long num = (long)((value * 86400000.0) + ((value >= 0.0) ? 0.5 : -0.5));
-		//	if (num < 0L)
-		//	{
-		//		num -= (num % 0x5265c00L) * 2L;
-		//	}
-		//	num += 0x3680b5e1fc00L;
-		//	if ((num < 0L) || (num >= 0x11efae44cb400L))
-		//	{
-		//		throw new ArgumentException(("Arg_OleAutDateScale"));
-		//	}
-		//	return (num * 0x2710L);
-		//}
 	}
 
 

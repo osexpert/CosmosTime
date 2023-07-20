@@ -82,5 +82,24 @@ namespace CosmosTime
 				return new[] { tz.GetUtcOffset(time) };
 			}
 		}
+
+		internal static TimeZoneInfo GetTimeZoneFromKindUtcOrLocal(DateTime utcOrLocalTime)
+		{
+			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
+				throw new ArgumentException("unspecified kind not allowed");
+
+			// Since Kind now is either Utc or Local, its easy
+			if (utcOrLocalTime.Kind == DateTimeKind.Local)
+			{
+				// can Local tz be Utc? Yes. Should we in this case change Kind of _zoned to Utc? Maybe...
+				return TimeZoneInfo.Local;
+			}
+			else if (utcOrLocalTime.Kind == DateTimeKind.Utc)
+			{
+				return TimeZoneInfo.Utc;
+			}
+			else
+				throw new Exception("impossible, still unspec");
+		}
 	}
 }

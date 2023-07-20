@@ -14,12 +14,13 @@ namespace CosmosTime
 	/// I guess if we wanted a struct with focus on clock times, and where the utc\global time would change in the future, if tz-db changes,
 	/// then would need eg. ClockZoneTime (clock_time + offset + tz)
 	/// </summary>
-	public struct UtcZoneTime : IEquatable<UtcZoneTime>, IComparable<UtcZoneTime>, IComparable
+	public struct ZoneTime : IEquatable<ZoneTime>, IComparable<ZoneTime>, IComparable
 	{
-		UtcOffsetTime _offset_time;
+		OffsetTime _offset_time;
 		TimeZoneInfo _tz;
 
-		public UtcOffsetTime OffsetTime => _offset_time;
+		public OffsetTime OffsetTime => _offset_time;
+
 		public TimeZoneInfo Zone => _tz;
 
 
@@ -29,67 +30,30 @@ namespace CosmosTime
 		/// TODO: why not allow Local?? Does now.
 		/// </summary>
 		/// <param name="utcOrLocalTime"></param>
-		public UtcZoneTime(DateTime utcOrLocalTime)
+		public ZoneTime(DateTime utcOrLocalTime)
 		{
-			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
-				throw new ArgumentException("unspecified kind not allowed");
-
-			// Since Kind now is either Utc or Local, its easy
-			if (utcOrLocalTime.Kind == DateTimeKind.Local)
-			{
-				// can Local tz be Utc? Yes. Should we in this case change Kind of _zoned to Utc? Maybe...
-				var tz = TimeZoneInfo.Local;
-				Init(new UtcOffsetTime(utcOrLocalTime.ToUtcTime(), tz.GetUtcOffset(utcOrLocalTime)), tz);
-			}
-			else if (utcOrLocalTime.Kind == DateTimeKind.Utc)
-			{
-				var tz = TimeZoneInfo.Utc;
-				Init(new UtcOffsetTime(utcOrLocalTime.ToUtcTime(), tz.GetUtcOffset(utcOrLocalTime)), tz);
-			}
-			else
-				throw new Exception("impossible, still unspec");
+			TimeZoneInfo tz = Shared.GetTimeZoneFromKindUtcOrLocal(utcOrLocalTime);
+			Init(new OffsetTime(utcOrLocalTime.ToUtcTime(), tz.GetUtcOffset(utcOrLocalTime)), tz);
 		}
 
 
-		public UtcZoneTime(DateTime anyTime, TimeZoneInfo tz)
+		public ZoneTime(DateTime anyTime, TimeZoneInfo tz)
 		{
-			Init(new UtcOffsetTime(anyTime.ToUtcTime(tz), tz.GetUtcOffset(anyTime)), tz);
-
-			//// Since Kind now is either Utc or Local, its easy
-			//if (anyTime.Kind == DateTimeKind.Local)
-			//{
-			//	// can Local tz be Utc? Yes. Should we in this case change Kind of _zoned to Utc? Maybe...
-			//	if (tz != TimeZoneInfo.Local)
-			//		throw new ArgumentException("When anyTime.Kind is Local, tz must be TimeZoneInfo.Local");
-			//	Init(new OffsetTime(anyTime.ToUtcTime(), tz.GetUtcOffset(anyTime)), tz);
-			//}
-			//else if (anyTime.Kind == DateTimeKind.Utc)
-			//{
-			//	if (tz != TimeZoneInfo.Utc)
-			//		throw new ArgumentException("When anyTime.Kind is Utc, tz must be TimeZoneInfo.Utc");
-			//	Init(new OffsetTime(anyTime.ToUtcTime(), tz.GetUtcOffset(anyTime)), tz);
-			//}
-			//else // unspec
-			//{
-			//	Init(new OffsetTime(anyTime.ToUtcTime(tz), tz.GetUtcOffset(anyTime)), tz);
-			//}
+			Init(new OffsetTime(anyTime.ToUtcTime(tz), tz.GetUtcOffset(anyTime)), tz);
 		}
 
-		//public UtcZoneTime(DateTime anyTime, TimeZoneInfo tz, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
+		/// <summary>
+		/// Clock time ticks
+		/// </summary>
 		public long Ticks => _offset_time.Ticks;
 
 
-
-		public UtcZoneTime(UtcOffsetTime time, TimeZoneInfo tz)
+		public ZoneTime(OffsetTime time, TimeZoneInfo tz)
 		{
 			Init(time, tz);
 		}
 
-		private void Init(UtcOffsetTime offset_time, TimeZoneInfo tz)
+		private void Init(OffsetTime offset_time, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
@@ -121,13 +85,13 @@ namespace CosmosTime
 		/// It make little sense to call this on a server, it will capture the server offset to utc, and that make little sense.
 		/// Same as Now(TimeZoneInfo.Local)
 		/// </summary>
-		public static UtcZoneTime LocalNow => Now(TimeZoneInfo.Local);
+		public static ZoneTime LocalNow => Now(TimeZoneInfo.Local);
 
 		/// <summary>
 		/// An UtcOffsetTime with utc time without offset (no time zone info)
 		/// Same as Now(TimeZoneInfo.Utc)
 		/// </summary>
-		public static UtcZoneTime UtcNow => Now(TimeZoneInfo.Utc);
+		public static ZoneTime UtcNow => Now(TimeZoneInfo.Utc);
 
 		/// <summary>
 		/// Get Now in a zone (time will always be utc, but the offset captured will depend on the tz, and if ambigous, one will be chosen for you (standard time))
@@ -136,7 +100,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
 		/// <exception cref="Exception"></exception>
-		public static UtcZoneTime Now(TimeZoneInfo tz)
+		public static ZoneTime Now(TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException("tz");
@@ -144,10 +108,10 @@ namespace CosmosTime
 			//			var zoned = ZonedTime.Now(tz);
 			//		var off = tz.GetUtcOffset(zoned.ZonedDateTime);
 
-			var offTime = UtcOffsetTime.Now(tz);
+			var offTime = OffsetTime.Now(tz);
 
 			// TODO: skip validation?
-			return new UtcZoneTime(offTime, tz);
+			return new ZoneTime(offTime, tz);
 		}
 
 
@@ -156,23 +120,23 @@ namespace CosmosTime
 		/// 
 		/// TODO: could have had a callback...so only need to specify offset if ambigous?
 		/// </summary>
-		public UtcZoneTime(ClockTime ct, TimeZoneInfo tz, TimeSpan offset) : this()
+		public ZoneTime(ClockTime ct, TimeZoneInfo tz, TimeSpan offset) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
 			var dt = ct.ClockDateTime;
-			Init(new UtcOffsetTime(dt.ToUtcTime(tz, offset), offset), tz);
+			Init(new OffsetTime(dt.ToUtcTime(tz, offset), offset), tz);
 		}
 
 		/// <summary>
 		/// Uses default offset (standard time offset) in case of ambigous time.
 		/// </summary>
-		public UtcZoneTime(ClockTime ct, TimeZoneInfo tz) : this()
+		public ZoneTime(ClockTime ct, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
 			var dt = ct.ClockDateTime;
-			Init(new UtcOffsetTime(dt.ToUtcTime(tz), tz.GetUtcOffset(dt)), tz);
+			Init(new OffsetTime(dt.ToUtcTime(tz), tz.GetUtcOffset(dt)), tz);
 		}
 
 
@@ -185,7 +149,7 @@ namespace CosmosTime
 		/// TODO: can support more by supplying callbacks
 		/// 
 		/// </summary>
-		public static bool TryParse(string time, out UtcZoneTime zoned)
+		public static bool TryParse(string time, out ZoneTime zoned)
 		{
 			zoned = default;
 
@@ -215,7 +179,7 @@ namespace CosmosTime
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
-				zoned = new UtcZoneTime(new UtcOffsetTime(new UtcTime(dto.DateTime, tz), offset), tz);
+				zoned = new ZoneTime(new OffsetTime(new UtcTime(dto.DateTime, tz), offset), tz);
 			}
 			else
 			{
@@ -224,7 +188,7 @@ namespace CosmosTime
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
-				zoned = new UtcZoneTime(new UtcOffsetTime(new UtcTime(dto.DateTime, tz), dto.Offset), tz);
+				zoned = new ZoneTime(new OffsetTime(new UtcTime(dto.DateTime, tz), dto.Offset), tz);
 			}
 
 			return true;
@@ -243,7 +207,7 @@ namespace CosmosTime
 
 		public override int GetHashCode() => _offset_time.GetHashCode();
 
-		public override bool Equals(object obj) => obj is UtcZoneTime other && Equals(other);
+		public override bool Equals(object obj) => obj is ZoneTime other && Equals(other);
 
 
 		//private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
@@ -264,9 +228,9 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(UtcZoneTime other) => this._offset_time == other._offset_time;
+		public bool Equals(ZoneTime other) => this._offset_time == other._offset_time;
 
-		public int CompareTo(UtcZoneTime other) => this._offset_time.CompareTo(other._offset_time);
+		public int CompareTo(ZoneTime other) => this._offset_time.CompareTo(other._offset_time);
 
 		int IComparable.CompareTo(object obj)
 		{
@@ -274,31 +238,31 @@ namespace CosmosTime
 			{
 				return 1;
 			}
-			return CompareTo((UtcZoneTime)obj);
+			return CompareTo((ZoneTime)obj);
 		}
 
-		public static UtcZoneTime operator +(UtcZoneTime d, TimeSpan t)
+		public static ZoneTime operator +(ZoneTime d, TimeSpan t)
 		{
 			var adj = d._offset_time.UtcTime + t;
-			return new UtcZoneTime(new UtcOffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
 		}
-		public static UtcZoneTime operator -(UtcZoneTime d, TimeSpan t)
+		public static ZoneTime operator -(ZoneTime d, TimeSpan t)
 		{
 			var adj = d._offset_time.UtcTime - t;
-			return new UtcZoneTime(new UtcOffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
 		}
 
-		private UtcZoneTime Adjust(TimeSpan adjustment, bool add)
+		private ZoneTime Adjust(TimeSpan adjustment, bool add)
 		{
 			if (add)
 			{
 				var adj = this._offset_time.UtcTime + adjustment;
-				return new UtcZoneTime(new UtcOffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
+				return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			}
 			else
 			{
 				var adj = this._offset_time.UtcTime - adjustment;
-				return new UtcZoneTime(new UtcOffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
+				return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			}
 
 			// WHAT use could this have???
@@ -323,18 +287,18 @@ namespace CosmosTime
 
 
 
-		public static TimeSpan operator -(UtcZoneTime a, UtcZoneTime b) => a._offset_time - b._offset_time;
+		public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
 
-		public static bool operator ==(UtcZoneTime a, UtcZoneTime b) => a._offset_time == b._offset_time;
-		public static bool operator !=(UtcZoneTime a, UtcZoneTime b) => a._offset_time != b._offset_time;
-		public static bool operator <(UtcZoneTime a, UtcZoneTime b) => a._offset_time < b._offset_time;
-		public static bool operator >(UtcZoneTime a, UtcZoneTime b) => a._offset_time > b._offset_time;
-		public static bool operator <=(UtcZoneTime a, UtcZoneTime b) => a._offset_time <= b._offset_time;
-		public static bool operator >=(UtcZoneTime a, UtcZoneTime b) => a._offset_time >= b._offset_time;
+		public static bool operator ==(ZoneTime a, ZoneTime b) => a._offset_time == b._offset_time;
+		public static bool operator !=(ZoneTime a, ZoneTime b) => a._offset_time != b._offset_time;
+		public static bool operator <(ZoneTime a, ZoneTime b) => a._offset_time < b._offset_time;
+		public static bool operator >(ZoneTime a, ZoneTime b) => a._offset_time > b._offset_time;
+		public static bool operator <=(ZoneTime a, ZoneTime b) => a._offset_time <= b._offset_time;
+		public static bool operator >=(ZoneTime a, ZoneTime b) => a._offset_time >= b._offset_time;
 
-		public UtcZoneTime AddSeconds(double sec) => this + TimeSpan.FromSeconds(sec);
-		public UtcZoneTime AddMinutes(double min) => this + TimeSpan.FromMinutes(min);
-		public UtcZoneTime AddHours(double h) => this + TimeSpan.FromHours(h);
+		public ZoneTime AddSeconds(double sec) => this + TimeSpan.FromSeconds(sec);
+		public ZoneTime AddMinutes(double min) => this + TimeSpan.FromMinutes(min);
+		public ZoneTime AddHours(double h) => this + TimeSpan.FromHours(h);
 
 		// Adding days may not always work, DST will make some days more or less than 24h.
 		// You can still add 24 hours, but then it may be clearer that you are not adding days.
@@ -369,21 +333,11 @@ namespace CosmosTime
 		//	return adj.ToUtcZoneTime(_tz);
 		//}
 
-		//public ClockTime ToClockTime()
-		//{
-		//	return new ClockTime(this);
-		//}
+
 		//public ZonedTime AdjustClockTime(Func<ClockTime, ClockTime> ct)
 		//{
 		//	ct()
 		//}
 	}
 
-	//public struct ClockTime
-	//{
-	//	public ClockTime AddDays(double days)
-	//	{
-	//		throw new NotImplementedException();
-	//	}
-	//}
 }

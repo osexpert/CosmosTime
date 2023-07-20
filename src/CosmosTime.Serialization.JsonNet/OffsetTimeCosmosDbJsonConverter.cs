@@ -13,23 +13,23 @@ namespace CosmosTime.Serialization.JsonNet
 	///   "offsetMinutes": -30
 	/// }
 	/// </summary>
-	public class UtcOffsetTimeCosmosDbJsonConverter : JsonConverter<UtcOffsetTime>
+	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
 	{
-		public override UtcOffsetTime ReadJson(JsonReader reader, Type objectType, UtcOffsetTime existingValue, bool hasExistingValue, JsonSerializer serializer)
+		public override OffsetTime ReadJson(JsonReader reader, Type objectType, OffsetTime existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)
 				throw new NotSupportedException("DateParseHandling.None required");
 
 			var obj = JObject.Load(reader);
-			return UtcOffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), TimeSpan.FromMinutes(obj["offsetMinutes"].Value<int>()));
+			return OffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), TimeSpan.FromMinutes(obj["offsetMinutes"].Value<int>()));
 		}
 
-		public override void WriteJson(JsonWriter writer, UtcOffsetTime value, JsonSerializer serializer)
+		public override void WriteJson(JsonWriter writer, OffsetTime value, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)
 				throw new NotSupportedException("DateParseHandling.None required");
 
-			var rr = (UtcOffsetTime)value;
+			var rr = (OffsetTime)value;
 
 			writer.WriteStartObject();
 

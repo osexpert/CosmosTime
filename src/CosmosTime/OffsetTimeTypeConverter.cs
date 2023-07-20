@@ -9,7 +9,7 @@ namespace CosmosTime
 	/// <summary>
 	/// Format\parse variable length format
 	/// </summary>
-	public class UtcOffsetTimeTypeConverter : TypeConverter
+	public class OffsetTimeTypeConverter : TypeConverter
 	{
 		/// <inheritdoc />
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -19,7 +19,7 @@ namespace CosmosTime
 		{
 			if (value is string utcOffsetString)
 			{
-				if (UtcOffsetTime.TryParse(utcOffsetString, out var uo))
+				if (OffsetTime.TryParse(utcOffsetString, out var uo))
 					return uo;
 			}
 
@@ -30,7 +30,7 @@ namespace CosmosTime
 		{
 			if (destinationType == typeof(string))
 			{
-				var u = (UtcOffsetTime)value;
+				var u = (OffsetTime)value;
 				return u.ToString(); // variable length
 			}
 

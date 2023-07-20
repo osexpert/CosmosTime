@@ -54,23 +54,23 @@ namespace CosmosTime
 		//	return new ZonedTime(anyTime, tz);
 		//}
 
-		public static UtcZoneTime ToUtcZoneTime(this DateTime anyTime, TimeZoneInfo tz)
+		public static ZoneTime ToZoneTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
-			return new UtcZoneTime(anyTime, tz);
+			return new ZoneTime(anyTime, tz);
 		}
 
-		public static UtcOffsetTime ToUtcOffsetTime(this UtcTime utc, TimeSpan offset)
+		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
 		{
-			return new UtcOffsetTime(utc, offset);
+			return new OffsetTime(utc, offset);
 		}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local.
 		/// If Kind.Unspecified, it will throw (must then use ToUtzZoneTime that take a tz)
 		/// </summary>
-		public static UtcZoneTime ToUtcZoneTime(this DateTime utcOrLocalTime)
+		public static ZoneTime ToZoneTime(this DateTime utcOrLocalTime)
 		{
-			return new UtcZoneTime(utcOrLocalTime);
+			return new ZoneTime(utcOrLocalTime);
 		}
 
 		/// <summary>
@@ -83,20 +83,20 @@ namespace CosmosTime
 		//	return new ClockTime(utcOrLocalTime);
 		//}
 
-		public static ClockTime ToClockTime(this UtcZoneTime zoned)
+		public static ClockTime ToClockTime(this ZoneTime zoned)
 		{
 			return new ClockTime(zoned);
 		}
 
 
-		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz)
+		public static ZoneTime ToZoneTime(this ClockTime ct, TimeZoneInfo tz)
 		{
-			return new UtcZoneTime(ct, tz);
+			return new ZoneTime(ct, tz);
 		}
 
-		public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz, TimeSpan offset)
+		public static ZoneTime ToZoneTime(this ClockTime ct, TimeZoneInfo tz, TimeSpan offset)
 		{
-			return new UtcZoneTime(ct, tz, offset);
+			return new ZoneTime(ct, tz, offset);
 		}
 
 		//public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
@@ -116,38 +116,16 @@ namespace CosmosTime
 			return new UtcTime(utcOrLocalTime.Value);
 		}
 
-		/// <summary>
-		/// Will convert from local to Utc. Should ideally only be used on a client.
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
-		//public static UtcTime LocalToUtcTime(this DateTime dt)
-		//{
-		//	return new UtcTime(dt.ToUniversalTime());
-		//}
-
-		/// <summary>
-		/// Will convert from local to Utc. Should ideally only be used on a client.
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
-		//public static UtcTime? LocalToUtcTime(this DateTime? dt)
-		//{
-		//	if (dt == null)
-		//		return null;
-		//	return new UtcTime(dt.Value.ToUniversalTime());
-		//}
-
-		public static UtcOffsetTime ToUtcOffsetTime(this DateTimeOffset dto)
+		public static OffsetTime ToOffsetTime(this DateTimeOffset dto)
 		{
-			return new UtcOffsetTime(dto);
+			return new OffsetTime(dto.UtcDateTime.ToUtcTime(), dto.Offset);
 		}
 
-		public static UtcOffsetTime? ToUtcOffsetTime(this DateTimeOffset? dto)
+		public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
 		{
 			if (dto == null)
 				return null;
-			return new UtcOffsetTime(dto.Value);
+			return dto.Value.ToOffsetTime();
 		}
 
 		public static DateTime? ToUtcDateTime(this UtcTime? utc)
@@ -167,12 +145,12 @@ namespace CosmosTime
 			return IsoWeek.GetWeek(dt.UtcDateTime);
 		}
 
-		public static IsoWeek GetWeek(this UtcOffsetTime dt)
+		public static IsoWeek GetWeek(this OffsetTime dt)
 		{
 			return IsoWeek.GetWeek(dt.ClockDateTime);
 		}
 
-		public static IsoWeek GetWeek(this UtcZoneTime dt)
+		public static IsoWeek GetWeek(this ZoneTime dt)
 		{
 			return IsoWeek.GetWeek(dt.OffsetTime.ClockDateTime);
 		}
