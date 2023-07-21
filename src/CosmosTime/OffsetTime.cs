@@ -47,13 +47,31 @@ namespace CosmosTime
 				return DateTimeOffset.UtcNow.ToOffsetTime();
 			else // convert to time in the zone
 			{
-				var utcNow = UtcTime.Now;
-				var dtInTz = TimeZoneInfo.ConvertTime(utcNow.UtcDateTime, tz);
-				var offset = (dtInTz - utcNow.UtcDateTime); // same as tz.GetUtcOffset(dtInTz), I think.
-				return new OffsetTime(utcNow, offset);
+				var utcNow = DateTime.UtcNow;
+				var dtInTz = TimeZoneInfo.ConvertTime(utcNow, tz);
+				var offset = (dtInTz - utcNow); // same as tz.GetUtcOffset(dtInTz), I think.
+				return OffsetTime.FromUtcDateTime(utcNow, offset);
 			}
 		}
 
+		public static OffsetTime FromUtcDateTime(DateTime utcTime, TimeSpan offset)
+		{
+			var ot = new OffsetTime();
+			ot.Init(UtcTime.FromUtcDateTime(utcTime), offset);
+			return ot;
+		}
+		public static OffsetTime FromLocalDateTime(DateTime localTime, TimeSpan offset)
+		{
+			var ot = new OffsetTime();
+			ot.Init(UtcTime.FromLocalDateTime(localTime), offset);
+			return ot;
+		}
+		public static OffsetTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeSpan offset)
+		{
+			var ot = new OffsetTime();
+			ot.Init(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset);
+			return ot;
+		}
 
 		public static readonly OffsetTime MinValue = DateTimeOffset.MinValue.ToOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
 		public static readonly OffsetTime MaxValue = DateTimeOffset.MaxValue.ToOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
@@ -105,7 +123,7 @@ namespace CosmosTime
 		public OffsetTime(long ticks, TimeSpan offset)
 		{
 			var dt = new DateTime(ticks, DateTimeKind.Unspecified);
-			Init(dt.ToUtcTime(offset), offset);
+			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
 		}
 
 		/// <summary>
@@ -130,7 +148,8 @@ namespace CosmosTime
 		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) 
 		{
 			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
-			Init(dt.ToUtcTime(tz), tz.GetUtcOffset(dt));
+			var offset = tz.GetUtcOffset(dt);
+			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
 		}
 
 
@@ -170,10 +189,10 @@ namespace CosmosTime
 		/// "{time}{offset}"
 		/// "{time}" (tzIfUnspecified will be called)
 		/// </summary>
-		public static bool TryParse(string utcOffsetString, out OffsetTime uo, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
+		public static bool TryParse(string utcOffsetString, out OffsetTime uo, Func<DateTimeOffset, TimeSpan> getOffsetOfNone)
 		{
-			if (tzIfUnspecified == null)
-				throw new ArgumentNullException(nameof(tzIfUnspecified));
+			if (getOffsetOfNone == null)
+				throw new ArgumentNullException(nameof(getOffsetOfNone));
 
 			uo = default;
 
@@ -181,9 +200,9 @@ namespace CosmosTime
 			{
 				if (tzk == TimeZoneKind.None)
 				{
-					var tz = tzIfUnspecified(dto);
-					var utc = dto.DateTime.ToUtcTime(tz);
-					var offset = (dto.DateTime - utc.UtcDateTime);
+					var offset = getOffsetOfNone(dto);
+					var utc = UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset);
+//					var offset = (dto.DateTime - utc.UtcDateTime);
 					uo = new OffsetTime(utc, offset);
 					return true;
 				}

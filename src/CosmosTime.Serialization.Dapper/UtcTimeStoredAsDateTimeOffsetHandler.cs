@@ -23,7 +23,7 @@ namespace CosmosTime.Serialization.Dapper
 		public override UtcTime Parse(object value)
 		{
 			var dto = (DateTimeOffset)value;
-			return dto.UtcDateTime.ToUtcTime();
+			return UtcTime.FromUtcDateTime(dto.UtcDateTime);
 		}
 	}
 }

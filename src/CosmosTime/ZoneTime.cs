@@ -28,21 +28,47 @@ namespace CosmosTime
 		/// TODO: why not allow Local?? Does now.
 		/// </summary>
 		/// <param name="utcOrLocalTime"></param>
-		public ZoneTime(DateTime utcOrLocalTime)
+		public static ZoneTime FromUtcDateTime(DateTime utcTime)
 		{
-			TimeZoneInfo tz = Shared.GetTimeZoneFromKindUtcOrLocal(utcOrLocalTime);
-			Init(new OffsetTime(utcOrLocalTime.ToUtcTime(), tz.GetUtcOffset(utcOrLocalTime)), tz);
+			TimeZoneInfo tz = TimeZoneInfo.Utc;
+			return new ZoneTime(new OffsetTime(UtcTime.FromUtcDateTime(utcTime), tz.GetUtcOffset(utcTime)), tz);
 		}
 
-		public ZoneTime(DateTime anyTime, TimeZoneInfo tz)
+		public static ZoneTime FromLocalDateTime(DateTime localTime)
 		{
-			Init(new OffsetTime(anyTime.ToUtcTime(tz), tz.GetUtcOffset(anyTime)), tz);
+			TimeZoneInfo tz = TimeZoneInfo.Local;
+			return new ZoneTime(new OffsetTime(UtcTime.FromLocalDateTime(localTime), tz.GetUtcOffset(localTime)), tz);
 		}
+
+		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecTime, TimeZoneInfo tz)
+		{
+			if (tz == null)
+				throw new ArgumentNullException(nameof(tz));
+			var offset = tz.GetUtcOffset(unspecTime);
+			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecTime, offset), offset), tz);
+		}
+
+
+		//public static ZoneTime FromAnyDateTime(DateTime anyTime, TimeZoneInfo tz)
+		//{
+		//	return new ZoneTime(new OffsetTime(UtcTime.FromAnyDateTime(anyTime, tz), tz.GetUtcOffset(anyTime)), tz);
+		//}
 
 		/// <summary>
-		/// Clock time ticks
+		/// Ticks in Clock time
 		/// </summary>
 		public long Ticks => _offset_time.Ticks;
+
+		/// <summary>
+		/// TimeOfDay in Clock time
+		/// </summary>
+		public TimeOnly TimeOfDay => _offset_time.TimeOfDay;
+
+		/// <summary>
+		/// Date in Clock time
+		/// </summary>
+		public DateOnly Date => _offset_time.Date;
+
 
 		/// <summary>
 		/// year, month, day, etc. in Zone time
@@ -66,7 +92,8 @@ namespace CosmosTime
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz)
 		{
 			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
-			Init(dt.ToUtcTime(tz).ToOffsetTime(tz.GetUtcOffset(dt)), tz);
+			var offset = tz.GetUtcOffset(dt);
+			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
 		}
 
 		/// <summary>
@@ -87,12 +114,12 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Zone time
-		/// Both tz and offset? Yes, in case you want to choose offset..
+		/// Both tz and offset? Yes, in case you want to choose offset (or you simply know it up front)
 		/// </summary>
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset)
 		{
 			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
-			Init(dt.ToUtcTime(tz, offset).ToOffsetTime(offset), tz);
+			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
 		}
 
 		public ZoneTime(UtcTime time, TimeZoneInfo tz)
@@ -162,10 +189,10 @@ namespace CosmosTime
 			//			var zoned = ZonedTime.Now(tz);
 			//		var off = tz.GetUtcOffset(zoned.ZonedDateTime);
 
-			var offTime = OffsetTime.Now(tz);
+			var offsetTime = OffsetTime.Now(tz);
 
 			// TODO: skip validation?
-			return new ZoneTime(offTime, tz);
+			return new ZoneTime(offsetTime, tz);
 		}
 
 
@@ -179,7 +206,7 @@ namespace CosmosTime
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
 			var dt = clockTime.ClockDateTime;
-			Init(new OffsetTime(dt.ToUtcTime(tz, offset), offset), tz);
+			Init(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dt, offset), offset), tz);
 		}
 
 		/// <summary>
@@ -190,20 +217,21 @@ namespace CosmosTime
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
 			var dt = clockTime.ClockDateTime;
-			Init(new OffsetTime(dt.ToUtcTime(tz), tz.GetUtcOffset(dt)), tz);
+			var offset = tz.GetUtcOffset(dt);
+			Init(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dt, offset), offset), tz);
 		}
 
 
 		/// <summary>
 		/// Supported directly:
-		/// "{time}Z[{tz}]" -> "{time}-00:00"
-		/// "{time}+|-{offset}[{tz}]" -> "{time}[{tz}]"
-		/// "{time}[{tz}]" -> "{time}[{tz}]"
+		/// <para>{time}Z[{tz}] -> {time}-00:00</para>
+		/// <para>{time}+|-{offset}[{tz}]" -> {time}[{tz}]</para>
+		/// <para>{time}[{tz}] -> {time}[{tz}]</para>
 		/// 
 		/// TODO: can support more by supplying callbacks
-		/// 
+		/// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
 		/// </summary>
-		public static bool TryParse(string time, out ZoneTime zoned)
+		public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
 		{
 			zoned = default;
 
@@ -228,8 +256,16 @@ namespace CosmosTime
 
 			if (tzk == TimeZoneKind.None)
 			{
-				// use default tz offset
-				var offset = tz.GetUtcOffset(dto.DateTime);
+				TimeSpan offset;
+				if (chooseOffsetIfAmbigous == null)
+				{
+					// use default tz offset
+					offset = tz.GetUtcOffset(dto);
+				}
+				else
+				{
+					offset = tz.GetUtcOffset(dto, chooseOffsetIfAmbigous);
+				}
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
@@ -290,7 +326,7 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
-		public bool Equals(ZoneTime other) => this._offset_time == other._offset_time;
+		public bool Equals(ZoneTime other) => this._offset_time.Equals(other._offset_time);
 
 		public int CompareTo(ZoneTime other) => this._offset_time.CompareTo(other._offset_time);
 
@@ -313,7 +349,7 @@ namespace CosmosTime
 		{
 			var adj = _offset_time.ClockDateTime + t;
 			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
-			return adj.ToZoneTime(_tz);
+			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
 		public ZoneTime SubtractUtc(TimeSpan t)
@@ -326,7 +362,7 @@ namespace CosmosTime
 		{
 			var adj = _offset_time.ClockDateTime - t;
 			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
-			return adj.ToZoneTime(_tz);
+			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
 		public TimeSpan SubtractUtc(ZoneTime t)
@@ -355,6 +391,7 @@ namespace CosmosTime
 		//	return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
 		//}
 
+#if false
 		private ZoneTime Adjust(TimeSpan adjustment, bool add)
 		{
 			if (add)
@@ -388,7 +425,7 @@ namespace CosmosTime
 #endif
 		}
 
-
+#endif
 
 		//public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
 

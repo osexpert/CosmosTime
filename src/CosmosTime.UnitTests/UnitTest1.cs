@@ -43,7 +43,7 @@ namespace CosmosTime.UnitTests
 		public void UtcTime_Now_roundtrip_DateTime_Now()
 		{
 			var n = DateTime.Now;
-			var utcTime = n.ToUtcTime();
+			var utcTime = UtcTime.FromLocalDateTime(n);
 			var udt = utcTime.UtcDateTime.ToLocalTime();
 			Assert.Equal(n, udt);
 		}
@@ -52,7 +52,7 @@ namespace CosmosTime.UnitTests
 		public void UtcTime_Now_roundtrip_DateTime_UtcNow()
 		{
 			var n = DateTime.UtcNow;
-			var utcTime = n.ToUtcTime();
+			var utcTime = UtcTime.FromUtcDateTime(n);
 			var udt = utcTime.UtcDateTime;
 			Assert.Equal(n, udt);
 		}
@@ -224,11 +224,11 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void UtcOffsetTime_Parse_Unspec()
 		{
-			var r1 = OffsetTime.TryParse("2020-01-20", out var v1, dt => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin"));
+			var r1 = OffsetTime.TryParse("2020-01-20", out var v1, dto => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin").GetUtcOffset(dto));
 			Assert.True(r1);
 			Assert.Equal("2020-01-20T00:00:00+01:00", v1.ToString());
 
-			var r2 = OffsetTime.TryParse("2020-01-20", out var v2, dt => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+			var r2 = OffsetTime.TryParse("2020-01-20", out var v2, dto => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa").GetUtcOffset(dto));
 			Assert.True(r2);
 			Assert.Equal("2020-01-20T00:00:00+03:00", v2.ToString());
 		}
@@ -308,6 +308,11 @@ namespace CosmosTime.UnitTests
 			var uozt_ln = ZoneTime.LocalNow;
 			var uozt_aa = ZoneTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
 
+
+			var ctLocalNow = ClockTime.LocalNow;
+			var ctUtcNow = ClockTime.UtcNow;
+			var ctAAow = ClockTime.Now(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+
 			// TODO: test something
 		}
 
@@ -333,18 +338,11 @@ namespace CosmosTime.UnitTests
 
 			var now2 = ZoneTime.Now(IanaTimeZone.GetTimeZoneInfo("Europe/Oslo"));
 
-			Assert.Throws<ArgumentException>(() =>
+			var ae = Assert.Throws<ArgumentException>(() =>
 			{
-				try
-				{
-					var zof = new ZoneTime(new ClockTime(2020, 1, 20, 4, 5, 6, 7), IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(42));
-				}
-				catch (ArgumentException e)
-				{
-					Assert.Equal("Offset is not valid in zone", e.Message);
-					throw;
-				}
+				var zof = new ZoneTime(new ClockTime(2020, 1, 20, 4, 5, 6, 7), IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(42));
 			});
+			Assert.Equal("Offset is not valid in zone", ae.Message);
 
 			var zof2 = new ZoneTime(2020, 1, 20, 4, 5, 6, 7, IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
 			var zof2_ = new ClockTime(2020, 1, 20, 4, 5, 6, 7).ToZoneTime(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
@@ -359,7 +357,7 @@ namespace CosmosTime.UnitTests
 			var n = DateTime.Now;
 			//var z = new UtcOffsetZoneTime(n.ToUtcZoneTime());
 			//var z = new UtcOffsetZoneTime(n.ToUtcTime().ToUtcOffsetTime()
-			var z = n.ToZoneTime();
+			var z = ZoneTime.FromLocalDateTime(n);//.ToZoneTime();
 			Assert.Equal(n.Ticks, z.Ticks);
 		}
 
@@ -594,49 +592,26 @@ namespace CosmosTime.UnitTests
 
 			var dt = new LocalDateTime(2013, 3, 10, 2, 34, 56);
 			DateTimeZone utcMinus8 = DateTimeZoneProviders.Tzdb["America/Vancouver"];
-			Assert.Throws<ArgumentException>(() =>
+			var ae1 = Assert.Throws<ArgumentException>(() =>
 			{
-				try
-				{
-					var zdt = new ZonedDateTime(dt, utcMinus8, Offset.FromHours(-8));
-				}
-				catch (ArgumentException e)
-				{
-					Assert.Equal("Offset -08 is invalid for local date and time 10.03.2013 02:34:56 in time zone America/Vancouver (Parameter 'offset')", e.Message);
-					throw;
-				}
+				var zdt = new ZonedDateTime(dt, utcMinus8, Offset.FromHours(-8));
 			});
+			Assert.Equal("Offset -08 is invalid for local date and time 10.03.2013 02:34:56 in time zone America/Vancouver (Parameter 'offset')", ae1.Message);
 
-
-			Assert.Throws<ArgumentException>(() =>
+			var ae2 = Assert.Throws<ArgumentException>(() =>
 			{
-				try
-				{
-					var zt = new ZoneTime(2013, 3, 10, 2, 34, 56, tz);
-				}
-				catch (ArgumentException e)
-				{
-					Assert.Equal("The supplied DateTime represents an invalid time.  For example, when the clock is adjusted forward, any time in the period that is skipped is invalid. (Parameter 'dateTime')", e.Message);
-					throw;
-				}
+				var zt = new ZoneTime(2013, 3, 10, 2, 34, 56, tz);
 			});
+			Assert.Equal("Invalid time: '2013-03-10T02:34:56-08:00' is invalid in 'America/Los_Angeles'", ae2.Message);
 
 			using (var ftz = new FakeLocalTimeZone(tz))
 			{
-				Assert.Throws<ArgumentException>(() =>
+				var local = new DateTime(2013, 3, 10, 2, 34, 56, DateTimeKind.Local);
+				var ae3 = Assert.Throws<ArgumentException>(() =>
 				{
-					var local = new DateTime(2013, 3, 10, 2, 34, 56, DateTimeKind.Local);
-					try
-					{
-
-						var zt = new ZoneTime(local);
-					}
-					catch (ArgumentException e)
-					{
-						Assert.Equal("Invalid time: '2013-03-10T02:34:56-08:00' is invalid in 'America/Los_Angeles'", e.Message);
-						throw;
-					}
+					var zt = ZoneTime.FromLocalDateTime(local);
 				});
+				Assert.Equal("Invalid time: '2013-03-10T02:34:56-08:00' is invalid in 'America/Los_Angeles'", ae3.Message);
 			};
 
 
@@ -784,6 +759,46 @@ namespace CosmosTime.UnitTests
 			//Assert.Equal(24, (ctplus1day - ct).TotalHours);
 
 
+		}
+
+		[Fact]
+		public void Amobigious_Choose_offset()
+		{
+			//Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", zBack.ToString());
+
+			var b = ZoneTime.TryParse("2017-10-29T01:45:00[Europe/London]", out var zt, offsets =>
+			{
+				return offsets.Last();
+			});
+			Assert.True(b);
+			Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", zt.ToString());
+
+			var b2 = ZoneTime.TryParse("2017-10-29T01:45:00[Europe/London]", out var zt2, offsets =>
+			{
+				return offsets.First();
+			});
+			Assert.True(b2);
+			Assert.Equal("2017-10-29T01:45:00+00:00[Europe/London]", zt2.ToString());
+
+			
+			//var b3 = ZoneTime.TryParse("2017-10-29T01:45:00[Europe/London]", out var zt3, offsets =>
+			//{
+			//	throw new Exception("ambigous");
+			//});
+			//Assert.False(b2);
+			
+		}
+
+		[Fact]
+		public void UtcTime_twoWaysToInitRaw()
+		{
+			var dt = new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Unspecified);
+			//var u1 = UtcTime.FromAnyDateTime(dt, TimeZoneInfo.Utc);
+			var u2 = UtcTime.FromUnspecifiedDateTime(dt, TimeSpan.Zero);
+			var u3 = UtcTime.FromUnspecifiedDateTime(dt, TimeZoneInfo.Utc);
+			//Assert.Equal(u1, u2);
+			Assert.Equal(u2, u3);
+			Assert.Equal("2020-01-02T03:04:05Z", u2.ToString());
 		}
 	}
 }

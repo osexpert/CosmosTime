@@ -29,17 +29,32 @@ namespace CosmosTime
 
 		//public UtcTime ToUtcTime() => _clock_time.ToUtcTime();
 
-		public static ClockTime Now => ToClockTime_MakeUnspecified(DateTime.Now);
 
-		/// <summary>
-		/// Or simply Date?
-		/// </summary>
-		//public ClockTime DatePart => ToClockTime(_clock_time.Date);
 
-		/// Or DateTrumcated ?
-		//public ClockTime DateOfTime => Truncate(TimeSpan.FromDays(1));
-		// DateComponent, DatePart, 
-		//public ClockTime KeepDate => ToClockTime(_clock_time.Date);
+		public static ClockTime LocalNow => Now(TimeZoneInfo.Local);
+
+		public static ClockTime UtcNow => Now(TimeZoneInfo.Utc);
+
+		public static ClockTime Now(TimeZoneInfo tz)
+		{
+			if (tz == null)
+				throw new ArgumentNullException("tz");
+
+			if (tz == TimeZoneInfo.Local)
+				return ToClockTime_MakeUnspecified(DateTime.Now);
+			else if (tz == TimeZoneInfo.Utc)
+				return ToClockTime_MakeUnspecified(DateTime.UtcNow);
+			else // convert to time in the zone
+			{
+				var utcNow = DateTime.UtcNow;
+				var dtInTz = TimeZoneInfo.ConvertTime(utcNow, tz);
+				// if tz is Utc, kind may be utc?
+				return ToClockTime_MakeUnspecified(dtInTz);
+			}
+		}
+
+
+
 
 		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(_clock_time);
 

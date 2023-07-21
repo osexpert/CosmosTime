@@ -7,70 +7,15 @@ namespace CosmosTime
 	public static class CosmosTimeExtensions
 	{
 
-		/// <summary>
-		/// DateTime must be Kind.Utc or Kind.Local.
-		/// If Kind.Unspecified, it will throw (must then use ToUtcTime that take a tz)
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
-		public static UtcTime ToUtcTime(this DateTime utcOrLocalTime)
-		{
-			return UtcTime.FromUtcOrLocalDateTime(utcOrLocalTime);
-		}
-
-		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz)
-		{
-			return UtcTime.FromAnyDateTime(anyTime, tz);
-		}
-
-		public static UtcTime ToUtcTime(this ClockTime clockTime, TimeZoneInfo tz)
-		{
-			return UtcTime.FromAnyDateTime(clockTime.ClockDateTime, tz);
-		}
-
-		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
-		{
-			return UtcTime.FromAnyDateTime(anyTime, tz, offset);
-		}
-
-		public static UtcTime ToUtcTime(this DateTime unspecifiedTime, TimeSpan offset)
-		{
-			return UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset);
-		}
-
-		//public static DateOnly GetDateOnly(this DateTime dt)
-		//{
-		//	return new DateOnly(dt.Year, dt.Month, dt.Day);
-		//}
-
-		//public static UtcTime ToUtcTime(this ZonedTime zoned)
-		//{
-		//	return new UtcTime(zoned.ZonedDateTime, zoned.Zone);
-		//}
-
-
-		/// <summary>
-		/// DateTime can be any kind.
-		/// If Kind.Unspecified then time is adjusted to supplied tz.
-		/// If kind Kind.Utc or Kind.Local, it is simply validated that the tz matches.
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <returns></returns>
-		//public static ZonedTime ToUtcZoneTime(this DateTime anyTime, TimeZoneInfo tz)
-		//{
-		//	return new ZonedTime(anyTime, tz);
-		//}
-
-		public static ZoneTime ToZoneTime(this DateTime anyTime, TimeZoneInfo tz)
-		{
-			return new ZoneTime(anyTime, tz);
-		}
-
 		public static ZoneTime ToZoneTime(this UtcTime utcTime, TimeZoneInfo tz)
 		{
 			return new ZoneTime(utcTime, tz);
 		}
 
+		public static ZoneTime ToZoneTime(this OffsetTime offsetTime, TimeZoneInfo tz)
+		{
+			return new ZoneTime(offsetTime, tz);
+		}
 
 		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
 		{
@@ -81,10 +26,10 @@ namespace CosmosTime
 		/// DateTime must be Kind.Utc or Kind.Local.
 		/// If Kind.Unspecified, it will throw (must then use ToUtzZoneTime that take a tz)
 		/// </summary>
-		public static ZoneTime ToZoneTime(this DateTime utcOrLocalTime)
-		{
-			return new ZoneTime(utcOrLocalTime);
-		}
+		//public static ZoneTime ToZoneTime(this DateTime utcOrLocalTime)
+		//{
+		//	return new ZoneTime(utcOrLocalTime);
+		//}
 
 		/// <summary>
 		/// DateTime must be Kind.Utc or Kind.Local, else will throw
@@ -122,16 +67,16 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
-		public static UtcTime? ToUtcTime(this DateTime? utcOrLocalTime)
-		{
-			if (utcOrLocalTime == null)
-				return null;
-			return UtcTime.FromUtcOrLocalDateTime(utcOrLocalTime.Value);
-		}
+		//public static UtcTime? ToUtcTime(this DateTime? utcOrLocalTime)
+		//{
+		//	if (utcOrLocalTime == null)
+		//		return null;
+		//	return UtcTime.FromUtcOrLocalDateTime(utcOrLocalTime.Value);
+		//}
 
 		public static OffsetTime ToOffsetTime(this DateTimeOffset dto)
 		{
-			return new OffsetTime(dto.UtcDateTime.ToUtcTime(), dto.Offset);
+			return new OffsetTime(UtcTime.FromUtcDateTime(dto.UtcDateTime), dto.Offset);
 		}
 
 		public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
@@ -168,5 +113,36 @@ namespace CosmosTime
 			return IsoWeek.GetWeek(dt.OffsetTime.ClockDateTime);
 		}
 
+		public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTime dt, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
+		{
+			if (chooseOffsetIfAmbigous == null)
+				throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
+
+			if (tz.IsAmbiguousTime(dt))
+			{
+				var offsets = tz.GetAmbiguousTimeOffsets(dt);
+				return chooseOffsetIfAmbigous(offsets);
+			}
+			else
+			{
+				return tz.GetUtcOffset(dt);
+			}
+		}
+
+		public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTimeOffset dto, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
+		{
+			if (chooseOffsetIfAmbigous == null)
+				throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
+
+			if (tz.IsAmbiguousTime(dto))
+			{
+				var offsets = tz.GetAmbiguousTimeOffsets(dto);
+				return chooseOffsetIfAmbigous(offsets);
+			}
+			else
+			{
+				return tz.GetUtcOffset(dto);
+			}
+		}
 	}
 }

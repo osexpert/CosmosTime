@@ -14,14 +14,14 @@ namespace CosmosTime
 	{
 
 
-		public static readonly UtcTime MinValue = new DateTime(0L, DateTimeKind.Utc).ToUtcTime();
+		public static readonly UtcTime MinValue = UtcTime.FromUtcDateTime(new DateTime(0L, DateTimeKind.Utc));
 		/// <summary>
 		/// Seems like a bug in DateTime: 
 		/// DateTime.MaxValue.ToUniversalTime().Ticks				  -> 3155378939999999999 // no...not UTC max (its lower)
 		/// DateTimeOffset.MaxValue.Ticks							  -> 3155378975999999999 // correct
 		/// new DateTime(0x2bca2875f4373fffL, DateTimeKind.Utc).Ticks -> 3155378975999999999 // correct
 		/// </summary>
-		public static readonly UtcTime MaxValue = new DateTime(0x2bca2875f4373fffL, DateTimeKind.Utc).ToUtcTime(); // snatched from DateTime
+		public static readonly UtcTime MaxValue = UtcTime.FromUtcDateTime(new DateTime(0x2bca2875f4373fffL, DateTimeKind.Utc)); // snatched from DateTime
 
 		DateTime _utc;
 
@@ -34,12 +34,23 @@ namespace CosmosTime
 		/// <summary>
 		/// Now in Utc
 		/// </summary>
-		public static UtcTime Now => DateTime.UtcNow.ToUtcTime();
+		public static UtcTime Now => UtcTime.FromUtcDateTime(DateTime.UtcNow);
+
+		/// <summary>
+		/// TimeOfDay in Utc
+		/// </summary>
+		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(_utc);
+
+		/// <summary>
+		/// Date in Utc
+		/// </summary>
+		public DateOnly Date => DateOnly.FromDateTime(_utc);
+
 
 		/// <summary>
 		/// Date part in Utc
 		/// </summary>
-		public UtcTime DatePart => _utc.Date.ToUtcTime();
+		//public UtcTime DatePart => _utc.Date.ToUtcTime();
 
 		/// <summary>
 		/// Fixed length (28 chars) Iso format in Utc.
@@ -75,17 +86,30 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// DateTime must be Kind Utc or Local, else will throw
+		/// DateTime must be Kind Utc, else will throw
 		/// </summary>
-		public static UtcTime FromUtcOrLocalDateTime(DateTime utcOrLocalTime)
+		public static UtcTime FromUtcDateTime(DateTime utcTime)
 		{
-			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
-				throw new ArgumentException("unspecified kind not allowed");
+			if (utcTime.Kind != DateTimeKind.Utc)
+				throw new ArgumentException("kind must be utc");
 
 			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
-			return new UtcTime { _utc = utcOrLocalTime.ToUniversalTime() };
+			return new UtcTime { _utc = utcTime };
 		}
 
+		/// <summary>
+		/// DateTime must be Local, else will throw
+		/// </summary>
+		public static UtcTime FromLocalDateTime(DateTime localTime)
+		{
+			if (localTime.Kind != DateTimeKind.Local)
+				throw new ArgumentException("kind must be local");
+
+			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
+			return new UtcTime { _utc = localTime.ToUniversalTime() };
+		}
+
+#if false
 		/// <summary>
 		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
 		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
@@ -122,12 +146,13 @@ namespace CosmosTime
 			}
 		}
 
+
 		/// <summary>
 		/// If anyTime.Kind is Local, then tz must be TimeZoneInfo.Local
 		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
 		/// If anyTime.Kind is Unspecified, then tz can be anything
 		/// 
-		/// The only reason to use this ctor with offset is that you have an ambigous time and want to choose the offset manually.
+		/// The only reason to use this ctor with offset is that you have an ambigous time and want to choose the offset manually (or you simply know it up front)
 		/// </summary>
 		public static UtcTime FromAnyDateTime(DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
 		{
@@ -165,6 +190,7 @@ namespace CosmosTime
 				throw new Exception("impossible");
 			}
 		}
+#endif
 
 		/// <summary>
 		/// Offset is only used if Kind is Unspecified
@@ -172,9 +198,23 @@ namespace CosmosTime
 		public static UtcTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeSpan offset)
 		{
 			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
-				throw new ArgumentException("Only unspecified time allowed");
+				throw new ArgumentException("Kind must be unspecified");
 
 			 return new UtcTime { _utc = DateTime.SpecifyKind(unspecifiedTime - offset, DateTimeKind.Utc) };
+		}
+
+		public static UtcTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
+		{
+			if (tz == null)
+				throw new ArgumentNullException();
+
+			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
+				throw new ArgumentException("Kind must be unspecified");
+
+			
+			// ConvertTimeToUtc will verify the time is valid in the zone
+			// For ambigous time, will chose standard time offset
+			return new UtcTime { _utc = TimeZoneInfo.ConvertTimeToUtc(unspecifiedTime, tz) };
 		}
 
 
@@ -228,8 +268,8 @@ namespace CosmosTime
 
 		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
 
-		public static UtcTime operator +(UtcTime d, TimeSpan t) => (d._utc + t).ToUtcTime();
-		public static UtcTime operator -(UtcTime d, TimeSpan t) => (d._utc - t).ToUtcTime();
+		public static UtcTime operator +(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc + t);
+		public static UtcTime operator -(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc - t);
 
 		public static bool operator ==(UtcTime a, UtcTime b) => a._utc == b._utc;
 		public static bool operator !=(UtcTime a, UtcTime b) => a._utc != b._utc;
@@ -238,10 +278,10 @@ namespace CosmosTime
 		public static bool operator <=(UtcTime a, UtcTime b) => a._utc <= b._utc;
 		public static bool operator >=(UtcTime a, UtcTime b) => a._utc >= b._utc;
 
-		public UtcTime AddSeconds(double sec) => _utc.AddSeconds(sec).ToUtcTime();
-		public UtcTime AddMinutes(double min) => _utc.AddMinutes(min).ToUtcTime();
-		public UtcTime AddHours(double h) => _utc.AddHours(h).ToUtcTime();
-		public UtcTime AddDays(double days) => _utc.AddDays(days).ToUtcTime();
+		public UtcTime AddSeconds(double sec) => UtcTime.FromUtcDateTime(_utc.AddSeconds(sec));
+		public UtcTime AddMinutes(double min) => UtcTime.FromUtcDateTime(_utc.AddMinutes(min));
+		public UtcTime AddHours(double h) => UtcTime.FromUtcDateTime(_utc.AddHours(h));
+		public UtcTime AddDays(double days) => UtcTime.FromUtcDateTime(_utc.AddDays(days));
 
 		// kind of both is utc
 		public bool Equals(UtcTime other) => _utc.Equals(other._utc);
@@ -273,7 +313,7 @@ namespace CosmosTime
 
 			// does verify the length, but do it outselfs anyways to be sure
 			var dt = DateTime.ParseExact(utc, Constants.FixedLengthIsoFormatWithZ, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind /* needed? yes, else kind is wrong*/);
-			return dt.ToUtcTime();
+			return UtcTime.FromUtcDateTime(dt);
 		}
 
 		/// <summary>
@@ -316,7 +356,7 @@ namespace CosmosTime
 
 			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
 			{
-				utc = dto.UtcDateTime.ToUtcTime();
+				utc = UtcTime.FromUtcDateTime(dto.UtcDateTime);
 				return true;
 			}
 
@@ -336,12 +376,12 @@ namespace CosmosTime
 				if (tzk == TimeZoneKind.None)
 				{
 					var offset = getOffsetIfNone(dto);
-					utc = dto.DateTime.ToUtcTime(offset);
+					utc = UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset);
 					return true;
 				}
 				else
 				{
-					utc = dto.UtcDateTime.ToUtcTime();
+					utc = UtcTime.FromUtcDateTime(dto.UtcDateTime);
 					return true;
 				}
 			}
