@@ -24,10 +24,9 @@ namespace CosmosTime.Serialization.Dapper
 			if (dt.Kind != DateTimeKind.Unspecified)
 				throw new Exception("impossible: kind is not unspecified");
 
-			return UtcTime.FromUnspecifiedDateTime(dt, TimeZoneInfo.Utc);
+			return UtcTime.FromUtcDateTime(DateTime.SpecifyKind(dt, DateTimeKind.Utc));
 			//return UtcTime.FromUnspecifiedDateTime(dt, TimeSpan.Zero);
-			//return UtcTime.FromAnyDateTime(dt, TimeZoneInfo.Utc);
-			//return UtcTime.FromUnspecifiedDateTime(dt, TimeZoneInfo.Utc.GetUtcOffset(dt));
+			//return UtcTime.FromUnspecifiedDateTime(dt, TimeZoneInfo.Utc);
 		}
 	}
 

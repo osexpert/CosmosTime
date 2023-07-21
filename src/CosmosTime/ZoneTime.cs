@@ -1,6 +1,7 @@
 ﻿using CosmosTime.TimeZone;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,6 +15,7 @@ namespace CosmosTime
 	/// I guess if we wanted a struct with focus on clock times, and where the utc\global time would change in the future, if tz-db changes,
 	/// then would need eg. ClockZoneTime (clock_time + offset + tz)
 	/// </summary>
+	[TypeConverter(typeof(ZoneTimeTypeConverter))]
 	public struct ZoneTime : IEquatable<ZoneTime>, IComparable<ZoneTime>, IComparable
 	{
 		OffsetTime _offset_time;

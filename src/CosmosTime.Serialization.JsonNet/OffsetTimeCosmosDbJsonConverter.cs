@@ -21,7 +21,7 @@ namespace CosmosTime.Serialization.JsonNet
 				throw new NotSupportedException("DateParseHandling.None required");
 
 			var obj = JObject.Load(reader);
-			return OffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), TimeSpan.FromMinutes(obj["offsetMinutes"].Value<int>()));
+			return OffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), TimeSpan.FromMinutes(obj["offsetMinutes"].Value<short>()));
 		}
 
 		public override void WriteJson(JsonWriter writer, OffsetTime value, JsonSerializer serializer)

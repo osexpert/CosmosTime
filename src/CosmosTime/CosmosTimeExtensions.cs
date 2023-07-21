@@ -43,7 +43,7 @@ namespace CosmosTime
 
 		public static ClockTime ToClockTime(this ZoneTime zoned)
 		{
-			return new ClockTime(zoned);
+			return new ClockTime(zoned.Ticks);
 		}
 
 

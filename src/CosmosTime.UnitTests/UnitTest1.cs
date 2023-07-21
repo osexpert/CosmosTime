@@ -796,9 +796,23 @@ namespace CosmosTime.UnitTests
 			//var u1 = UtcTime.FromAnyDateTime(dt, TimeZoneInfo.Utc);
 			var u2 = UtcTime.FromUnspecifiedDateTime(dt, TimeSpan.Zero);
 			var u3 = UtcTime.FromUnspecifiedDateTime(dt, TimeZoneInfo.Utc);
-			//Assert.Equal(u1, u2);
+			var u4 = UtcTime.FromUtcDateTime(DateTime.SpecifyKind(dt, DateTimeKind.Utc));
+
+			Assert.Equal(u4, u2);
 			Assert.Equal(u2, u3);
 			Assert.Equal("2020-01-02T03:04:05Z", u2.ToString());
+		}
+
+		[Fact]
+		public void ClockTime_ParseMiscFormats()
+		{
+			var p1 = ClockTime.Parse("2020-01-02T03:04:05Z");
+			var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00");
+			var p3 = ClockTime.Parse("2020-01-02T03:04:05");
+
+			Assert.Equal(p1, p2);
+			Assert.Equal(p1, p3);
+			Assert.Equal("2020-01-02T03:04:05", p1.ToString());
 		}
 	}
 }

@@ -11,9 +11,11 @@ namespace CosmosTime
 	/// <summary>
 	/// The time as you see on the clock:-)
 	/// No info about time zone or anything.
+	/// No context.
 	/// Backed by a DateTime of Unspecified kind.
 	/// </summary>
-	//	[TypeConverter(typeof(UtcTimeTypeConverter))]
+
+	[TypeConverter(typeof(ClockTimeTypeConverter))]
 	public struct ClockTime : IEquatable<ClockTime>, IComparable<ClockTime>, IComparable
 	{
 
@@ -67,14 +69,14 @@ namespace CosmosTime
 		//	return ct.AddTicks(-(ct.Ticks % timeSpan.Ticks));
 		//}
 
-		public ClockTime AddTicks(long t) => ToClockTime_MakeUnspecified(_clock_time.AddTicks(t));
+		public ClockTime AddTicks(long t) => ToClockTime(_clock_time.AddTicks(t));
 
 		private static ClockTime ToClockTime_MakeUnspecified(DateTime t) => ToClockTime(DateTime.SpecifyKind(t, DateTimeKind.Unspecified));
 
-		public ClockTime(ZoneTime zoned)
-		{
-			_clock_time = zoned.OffsetTime.ClockDateTime;
-		}
+		//public ClockTime(ZoneTime zoned)
+		//{
+		//	_clock_time = zoned.OffsetTime.ClockDateTime;
+		//}
 
 		private static ClockTime ToClockTime(DateTime unspecTime)
 		{
@@ -88,7 +90,7 @@ namespace CosmosTime
 
 		public ClockTime(int year, int month, int day) : this()
 		{
-			_clock_time = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified); 
+			_clock_time = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified);
 		}
 
 		public ClockTime(int year, int month, int day, int hour, int minute, int second) : this()
@@ -99,6 +101,16 @@ namespace CosmosTime
 		public ClockTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
 		{
 			_clock_time = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+		}
+
+		public ClockTime(DateTime anyTime)
+		{
+			_clock_time = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
+		}
+
+		public ClockTime(long ticks)
+		{
+			_clock_time = new DateTime(ticks, DateTimeKind.Unspecified);
 		}
 
 		//public ClockTime Min(ClockTime other)
@@ -152,8 +164,27 @@ namespace CosmosTime
 		}
 
 		public override string ToString() => _clock_time.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture);
-		
-	}
 
+		public static bool TryParse(string str, out ClockTime clockTime)
+		{
+			clockTime = default;
+
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk))
+			{
+				clockTime = ToClockTime(dto.DateTime);
+				return true;
+			}
+
+			return false;
+		}
+
+		public static ClockTime Parse(string str)
+		{
+			if (TryParse(str, out var ct))
+				return ct;
+			else
+				throw new FormatException();
+		}
+	}
 
 }
