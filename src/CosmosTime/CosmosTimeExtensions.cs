@@ -15,24 +15,28 @@ namespace CosmosTime
 		/// <returns></returns>
 		public static UtcTime ToUtcTime(this DateTime utcOrLocalTime)
 		{
-			return new UtcTime(utcOrLocalTime);
+			return UtcTime.FromUtcOrLocalDateTime(utcOrLocalTime);
 		}
 
 		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz)
 		{
-			return new UtcTime(anyTime, tz);
+			return UtcTime.FromAnyDateTime(anyTime, tz);
 		}
 
 		public static UtcTime ToUtcTime(this ClockTime clockTime, TimeZoneInfo tz)
 		{
-			return new UtcTime(clockTime.ClockDateTime, tz);
+			return UtcTime.FromAnyDateTime(clockTime.ClockDateTime, tz);
 		}
 
 		public static UtcTime ToUtcTime(this DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
 		{
-			return new UtcTime(anyTime, tz, offset);
+			return UtcTime.FromAnyDateTime(anyTime, tz, offset);
 		}
 
+		public static UtcTime ToUtcTime(this DateTime unspecifiedTime, TimeSpan offset)
+		{
+			return UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset);
+		}
 
 		//public static DateOnly GetDateOnly(this DateTime dt)
 		//{
@@ -61,6 +65,12 @@ namespace CosmosTime
 		{
 			return new ZoneTime(anyTime, tz);
 		}
+
+		public static ZoneTime ToZoneTime(this UtcTime utcTime, TimeZoneInfo tz)
+		{
+			return new ZoneTime(utcTime, tz);
+		}
+
 
 		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
 		{
@@ -116,7 +126,7 @@ namespace CosmosTime
 		{
 			if (utcOrLocalTime == null)
 				return null;
-			return new UtcTime(utcOrLocalTime.Value);
+			return UtcTime.FromUtcOrLocalDateTime(utcOrLocalTime.Value);
 		}
 
 		public static OffsetTime ToOffsetTime(this DateTimeOffset dto)

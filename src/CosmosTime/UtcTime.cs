@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CosmosTime
@@ -76,13 +77,13 @@ namespace CosmosTime
 		/// <summary>
 		/// DateTime must be Kind Utc or Local, else will throw
 		/// </summary>
-		public UtcTime(DateTime utcOrLocalTime)
+		public static UtcTime FromUtcOrLocalDateTime(DateTime utcOrLocalTime)
 		{
 			if (utcOrLocalTime.Kind == DateTimeKind.Unspecified)
 				throw new ArgumentException("unspecified kind not allowed");
 
 			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
-			_utc = utcOrLocalTime.ToUniversalTime();
+			return new UtcTime { _utc = utcOrLocalTime.ToUniversalTime() };
 		}
 
 		/// <summary>
@@ -90,7 +91,7 @@ namespace CosmosTime
 		/// If anyTime.Kind is Utc, then tz must be TimeZoneInfo.Utc
 		/// If anyTime.Kind is Unspecified, then tz can be anything and anyTime is converted from this zone into Utc.
 		/// </summary>
-		public UtcTime(DateTime anyTime, TimeZoneInfo tz)
+		public static UtcTime FromAnyDateTime(DateTime anyTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException();
@@ -99,21 +100,21 @@ namespace CosmosTime
 			{
 				// ConvertTimeToUtc will verify the time is valid in the zone
 				// For ambigous time, will chose standard time offset
-				_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz);
+				return new UtcTime { _utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz) };
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
 			{
 				if (tz != TimeZoneInfo.Local)
 					throw new ArgumentException("When anyTime.Kind is Local, tz must be TimeZoneInfo.Local");
 
-				_utc = anyTime.ToUniversalTime();
+				return new UtcTime { _utc = anyTime.ToUniversalTime() };
 			}
 			else if (anyTime.Kind == DateTimeKind.Utc)
 			{
 				if (tz != TimeZoneInfo.Utc)
 					throw new ArgumentException("When anyTime.Kind is Utc, tz must be TimeZoneInfo.Utc");
 
-				_utc = anyTime;
+				return new UtcTime { _utc = anyTime };
 			}
 			else
 			{
@@ -128,7 +129,7 @@ namespace CosmosTime
 		/// 
 		/// The only reason to use this ctor with offset is that you have an ambigous time and want to choose the offset manually.
 		/// </summary>
-		public UtcTime(DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
+		public static UtcTime FromAnyDateTime(DateTime anyTime, TimeZoneInfo tz, TimeSpan offset)
 		{
 			if (tz == null)
 				throw new ArgumentNullException();
@@ -142,7 +143,7 @@ namespace CosmosTime
 				// ConvertTimeToUtc will verify the time is valid in the zone
 				//_utc = TimeZoneInfo.ConvertTimeToUtc(anyTime, tz); // TODO: test
 
-				_utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc);
+				return new UtcTime { _utc = DateTime.SpecifyKind(anyTime - offset, DateTimeKind.Utc) };
 
 			}
 			else if (anyTime.Kind == DateTimeKind.Local)
@@ -150,19 +151,30 @@ namespace CosmosTime
 				if (tz != TimeZoneInfo.Local)
 					throw new ArgumentException("When anyTime.Kind is Local, tz must be TimeZoneInfo.Local");
 
-				_utc = anyTime.ToUniversalTime();
+				return new UtcTime { _utc = anyTime.ToUniversalTime() };
 			}
 			else if (anyTime.Kind == DateTimeKind.Utc)
 			{
 				if (tz != TimeZoneInfo.Utc)
 					throw new ArgumentException("When anyTime.Kind is Utc, tz must be TimeZoneInfo.Utc");
 
-				_utc = anyTime;
+				return new UtcTime { _utc = anyTime };
 			}
 			else
 			{
 				throw new Exception("impossible");
 			}
+		}
+
+		/// <summary>
+		/// Offset is only used if Kind is Unspecified
+		/// </summary>
+		public static UtcTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeSpan offset)
+		{
+			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
+				throw new ArgumentException("Only unspecified time allowed");
+
+			 return new UtcTime { _utc = DateTime.SpecifyKind(unspecifiedTime - offset, DateTimeKind.Utc) };
 		}
 
 
@@ -273,14 +285,14 @@ namespace CosmosTime
 		{
 			if (TryParse(str, out var ut))
 				return ut;
-			throw new FormatException();// "not utc or local[+-]offset");
+			throw new FormatException("Format must be {utc}Z or {local}[+-]{offset}");
 		}
 
-		public static UtcTime Parse(string str, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
+		public static UtcTime Parse(string str, Func<DateTimeOffset, TimeSpan> getOffsetIfNone)
 		{
-			if (TryParse(str, out var ut, tzIfUnspecified))
+			if (TryParse(str, out var ut, getOffsetIfNone))
 				return ut;
-			throw new FormatException();// "not utc or local[+-]offset");
+			throw new FormatException("Format must be {utc}Z or {local}[+-]{offset}");
 		}
 
 
@@ -312,10 +324,10 @@ namespace CosmosTime
 		}
 
 
-		public static bool TryParse(string str, out UtcTime utc, Func<DateTimeOffset, TimeZoneInfo> tzIfUnspecified)
+		public static bool TryParse(string str, out UtcTime utc, Func<DateTimeOffset, TimeSpan> getOffsetIfNone)
 		{
-			if (tzIfUnspecified == null)
-				throw new ArgumentNullException(nameof(tzIfUnspecified));
+			if (getOffsetIfNone == null)
+				throw new ArgumentNullException(nameof(getOffsetIfNone));
 
 			utc = default;
 
@@ -323,8 +335,8 @@ namespace CosmosTime
 			{
 				if (tzk == TimeZoneKind.None)
 				{
-					var tz = tzIfUnspecified(dto);
-					utc = dto.DateTime.ToUtcTime(tz);
+					var offset = getOffsetIfNone(dto);
+					utc = dto.DateTime.ToUtcTime(offset);
 					return true;
 				}
 				else

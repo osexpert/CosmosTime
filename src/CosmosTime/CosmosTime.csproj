@@ -6,6 +6,7 @@
 
   <ItemGroup>
 <!--    <PackageReference Include="Portable.System.DateTimeOnly" Version="7.0.1" /> -->
+    <PackageReference Include="Portable.System.DateTimeOnly" Version="7.0.1" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 

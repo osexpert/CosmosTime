@@ -36,7 +36,7 @@ namespace test
 			var tz = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
 			var tiemInZone = new ZoneTime(new ClockTime(2022, 3, 12, 23, 30, 0, 0), tz);
 
-			var next = tiemInZone + TimeSpan.FromDays(1);
+			var next = tiemInZone.AddUtc(TimeSpan.FromDays(1));
 
 			var u = tiemInZone.OffsetTime.UtcTime;//.UtcDateTime;
 			u = u + TimeSpan.FromDays(1);
@@ -53,7 +53,7 @@ namespace test
 
 			var tz2 = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
 			var tiemInZone2 = new ZoneTime(new ClockTime(2022, 3, 12, 23, 30, 0, 0), tz);
-			var newTime2 = tiemInZone + TimeSpan.FromDays(1);
+			var newTime2 = tiemInZone.AddUtc(TimeSpan.FromDays(1));
 
 			Console.WriteLine("ff");
 

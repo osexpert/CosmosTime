@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -28,13 +29,32 @@ namespace CosmosTime
 
 		//public UtcTime ToUtcTime() => _clock_time.ToUtcTime();
 
-		public static ClockTime Now => ToClockTime(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified));
+		public static ClockTime Now => ToClockTime_MakeUnspecified(DateTime.Now);
 
 		/// <summary>
 		/// Or simply Date?
 		/// </summary>
-		public ClockTime DatePart => ToClockTime(_clock_time.Date);
+		//public ClockTime DatePart => ToClockTime(_clock_time.Date);
 
+		/// Or DateTrumcated ?
+		//public ClockTime DateOfTime => Truncate(TimeSpan.FromDays(1));
+		// DateComponent, DatePart, 
+		//public ClockTime KeepDate => ToClockTime(_clock_time.Date);
+
+		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(_clock_time);
+
+		public DateOnly Date => DateOnly.FromDateTime(_clock_time);
+
+		//public static ClockTime Truncate(ClockTime ct, TimeSpan timeSpan)
+		//{
+		//	if (timeSpan == TimeSpan.Zero) return ct; // Or could throw an ArgumentException
+		//	if (ct == ClockTime.MinValue || ct == ClockTime.MaxValue) return ct; // do not modify "guard" values
+		//	return ct.AddTicks(-(ct.Ticks % timeSpan.Ticks));
+		//}
+
+		public ClockTime AddTicks(long t) => ToClockTime_MakeUnspecified(_clock_time.AddTicks(t));
+
+		private static ClockTime ToClockTime_MakeUnspecified(DateTime t) => ToClockTime(DateTime.SpecifyKind(t, DateTimeKind.Unspecified));
 
 		public ClockTime(ZoneTime zoned)
 		{

@@ -73,6 +73,22 @@ namespace CosmosTime
 
 		//		public long UtcTicks => _utc.Ticks;
 
+		/// <summary>
+		/// clock time's TimeOfDay 
+		/// </summary>
+		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(ClockDateTime_KindUnspecified);
+
+		/// <summary>
+		///  clock time's Date
+		/// </summary>
+		public DateOnly Date => DateOnly.FromDateTime(ClockDateTime_KindUnspecified);
+
+		/// <summary>
+		/// Add ticks
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
+		public OffsetTime AddTicks(long t) => new OffsetTime(Ticks + t, Offset);
 
 		/// <summary>
 		/// The specified time is clock time (not utc)
@@ -82,6 +98,15 @@ namespace CosmosTime
 		//	throw new NotImplementedException();
 		//}
 
+
+		/// <summary>
+		/// ticks in Clock time
+		/// </summary>
+		public OffsetTime(long ticks, TimeSpan offset)
+		{
+			var dt = new DateTime(ticks, DateTimeKind.Unspecified);
+			Init(dt.ToUtcTime(offset), offset);
+		}
 
 		/// <summary>
 		/// year, month, day, etc. in Clock time
@@ -267,7 +292,7 @@ namespace CosmosTime
 			// can not use Local kind as DTO will validate the offset against current local offset...
 			// "DateTimeOffset Error: UTC offset of local dateTime does not match the offset argument"
 			// KE?? but why not use the utc time directly?? It is not possible, must be unspecified time.
-			return new DateTimeOffset(ClockDateTime_KindUnspecified, TimeSpan.FromMinutes(_offsetMinutes));
+			return new DateTimeOffset(ClockDateTime_KindUnspecified, Offset);
 		}
 
 		// TODO: remove this?

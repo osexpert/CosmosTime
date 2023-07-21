@@ -236,11 +236,11 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void UtcTime_Parse_Unspec()
 		{
-			var r1 = UtcTime.TryParse("2020-01-20", out var v1, dt => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin"));
+			var r1 = UtcTime.TryParse("2020-01-20", out var v1, dto => IanaTimeZone.GetTimeZoneInfo("Europe/Berlin").GetUtcOffset(dto));
 			Assert.True(r1);
 			Assert.Equal("2020-01-19T23:00:00Z", v1.ToString());
 
-			var r2 = UtcTime.TryParse("2020-01-20", out var v2, dt => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"));
+			var r2 = UtcTime.TryParse("2020-01-20", out var v2, dto => IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa").GetUtcOffset(dto));
 			Assert.True(r2);
 			Assert.Equal("2020-01-19T21:00:00Z", v2.ToString());
 		}
@@ -538,12 +538,12 @@ namespace CosmosTime.UnitTests
 			var z = new ZoneTime(new ClockTime(2017, 10, 29, 1, 45, 0), IanaTimeZone.GetTimeZoneInfo("Europe/Dublin"), TimeSpan.FromHours(1));
 			Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", z.ToString());
 
-			var zAfter = z + TimeSpan.FromHours(1);
+			var zAfter = z.AddUtc(TimeSpan.FromHours(1));
 			// passed DST, same time, offset changed
 			Assert.Equal("2017-10-29T01:45:00+00:00[Europe/London]", zAfter.ToString());
 
 			// pretty weird, but this time is ambigous, so standard time offset is chosen.
-			var zBack = zAfter - TimeSpan.FromHours(1);
+			var zBack = zAfter.SubtractUtc(TimeSpan.FromHours(1));
 			Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", zBack.ToString());
 
 		}
@@ -656,23 +656,23 @@ namespace CosmosTime.UnitTests
 			var zt = new ZoneTime(2022, 11, 6, 0, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
 			Assert.Equal("2022-11-06T00:30:00-05:00[America/Chicago]", zt.ToString());
 
-			var ztplus1h = zt.AddHours(1);
+			var ztplus1h = zt.AddUtcHours(1);
 			Assert.Equal("2022-11-06T01:30:00-05:00[America/Chicago]", ztplus1h.ToString());
-			var ztplus11h = ztplus1h.AddHours(1);
+			var ztplus11h = ztplus1h.AddUtcHours(1);
 			Assert.Equal("2022-11-06T01:30:00-06:00[America/Chicago]", ztplus11h.ToString());
-			var ztplus111h = ztplus11h.AddHours(1);
+			var ztplus111h = ztplus11h.AddUtcHours(1);
 			Assert.Equal("2022-11-06T02:30:00-06:00[America/Chicago]", ztplus111h.ToString());
-			var ztplus1111h = ztplus111h.AddHours(1);
+			var ztplus1111h = ztplus111h.AddUtcHours(1);
 			Assert.Equal("2022-11-06T03:30:00-06:00[America/Chicago]", ztplus1111h.ToString());
 
 			//λ > --We naively add 4 hours to the local time.
 			//λ > t2 = addLocalTime(secondsToNominalDiffTime 4 * 60 * 60) t1
 			//λ > t2
 			//2022 - 11 - 06 04:30:00
-			var ztplus4h = zt.AddHours(4);
+			var ztplus4h = zt.AddUtcHours(4);
 			Assert.Equal(ztplus4h, ztplus1111h);
 
-			var diff = ztplus4h - zt;
+			var diff = ztplus4h.SubtractUtc(zt);
 			Assert.Equal(4, diff.TotalHours);
 			//λ > --Let's use the `tz` package to convert these times to UTC and
 			//λ > --see how many hours have actually passed between t1 and t2.
@@ -688,7 +688,7 @@ namespace CosmosTime.UnitTests
 			//λ > t1 = LocalTime(YearMonthDay 2022 3 12)(TimeOfDay 23 30 0)
 			var zt2 = new ZoneTime(2022, 3, 12, 23, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
 			//λ > --Convert to UTC, add 1 day, convert back to our time zone.
-			var zt2plus1day = zt2.AddHours(24);
+			var zt2plus1day = zt2.AddUtcHours(24);
 			// yes...we did end up on day 14..
 			Assert.Equal("2022-03-14T00:30:00-05:00[America/Chicago]", zt2plus1day.ToString());
 
@@ -732,12 +732,58 @@ namespace CosmosTime.UnitTests
 			// Yes, we moved 1 day forward on the clock (imagine an analog circular clock)
 			Assert.Equal("2022-03-13T23:30:00-05:00[America/Chicago]", zt3.ToString());
 			// in global time, we moved only 23h
-			Assert.Equal(23, (zt3 - zt2).TotalHours);
+			Assert.Equal(23, (zt3.SubtractUtc(zt2)).TotalHours);
 
 			// clock time moved 24h
 			Assert.Equal(24, (ctplus1day - ct).TotalHours);
 
 			
+		}
+
+		[Fact]
+		public void ZonedTime_AddClock2()
+		{
+			var t = new ZoneTime(2022, 3, 12, 23, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
+			Assert.Equal("2022-03-12T23:30:00-06:00[America/Chicago]", t.ToString());
+			//λ > --Convert to UTC, add 1 day, convert back to our time zone.
+			//var zt2plus1day = zt2.AddClockDays(1);
+
+			var tplus1utcday = t.AddUtcHours(24);
+			var tplus1clockday = t.AddClockDays(1);
+			// 1 day in utc ends up 2 days ahead
+			Assert.Equal("2022-03-14T00:30:00-05:00[America/Chicago]", tplus1utcday.ToString());
+			// 1 day in clock ends up 1 day (obviously, since time part of the iso string is clock time)
+			Assert.Equal("2022-03-13T23:30:00-05:00[America/Chicago]", tplus1clockday.ToString());
+
+			var s1 = tplus1utcday.SubtractUtc(t);
+			var s2 = tplus1utcday.SubtractClock(t);
+
+			var s3 = tplus1clockday.SubtractUtc(t);
+			var s4 = tplus1clockday.SubtractClock(t);
+
+			// comparing utc agains utc and clock agains clock give 1 day
+			Assert.Equal(TimeSpan.FromDays(1), s1);
+			Assert.Equal(TimeSpan.FromDays(1), s4);
+
+			// but we see we loose or gain 1 hour here...
+			Assert.Equal(new TimeSpan(1, 1, 0, 0), s2);
+			Assert.Equal(TimeSpan.FromHours(23), s3);
+
+			//var s2 = ctplus1day.ToString();
+			//Assert.Equal("2022-03-13T23:30:00", s2.ToString());
+
+			//var zt3 = ctplus1day.ToZoneTime(zt2.Zone);
+
+			// NO...we did not end up on day 14. So now we moved 1 day locally, but not globally...
+			// Yes, we moved 1 day forward on the clock (imagine an analog circular clock)
+			//Assert.Equal("2022-03-13T23:30:00-05:00[America/Chicago]", zt3.ToString());
+			// in global time, we moved only 23h
+			//Assert.Equal(23, (zt3.SubtractUtc(zt2)).TotalHours);
+
+			// clock time moved 24h
+			//Assert.Equal(24, (ctplus1day - ct).TotalHours);
+
+
 		}
 	}
 }

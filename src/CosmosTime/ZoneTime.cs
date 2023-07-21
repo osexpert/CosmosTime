@@ -40,7 +40,7 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// Zone time ticks
+		/// Clock time ticks
 		/// </summary>
 		public long Ticks => _offset_time.Ticks;
 
@@ -87,11 +87,19 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Zone time
+		/// Both tz and offset? Yes, in case you want to choose offset..
 		/// </summary>
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset)
 		{
 			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
 			Init(dt.ToUtcTime(tz, offset).ToOffsetTime(offset), tz);
+		}
+
+		public ZoneTime(UtcTime time, TimeZoneInfo tz)
+		{
+			if (tz == null)
+				throw new ArgumentNullException(nameof(tz));
+			Init(time.ToOffsetTime(tz.GetUtcOffset(time.UtcDateTime)), tz);
 		}
 
 		public ZoneTime(OffsetTime time, TimeZoneInfo tz)
@@ -109,7 +117,7 @@ namespace CosmosTime
 			//var ianaIdDummy = IanaTimeZone.GetIanaId(tz);
 
 			if (tz.IsInvalidTime(offsetTime.ClockDateTime))
-				throw new ArgumentException($"Invalid time: '{offsetTime}' is invalid in '{GetIanaId()}'");
+				throw new ArgumentException($"Invalid time: '{offsetTime}' is invalid in '{GetIanaTzId()}'");
 
 			(var ok, var msg) = Shared.ValidateOffset(tz, offsetTime.ClockDateTime, offsetTime.Offset);
 			if (!ok)
@@ -118,7 +126,7 @@ namespace CosmosTime
 			_offset_time = offsetTime;
 		}
 
-		private string GetIanaId()
+		private string GetIanaTzId()
 		{
 			if (IanaTimeZone.TryGetIanaId(_tz, out var ianaId))
 				return ianaId;
@@ -220,12 +228,14 @@ namespace CosmosTime
 
 			if (tzk == TimeZoneKind.None)
 			{
-				// use default offset
+				// use default tz offset
 				var offset = tz.GetUtcOffset(dto.DateTime);
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
-				zoned = new ZoneTime(new OffsetTime(new UtcTime(dto.DateTime, tz), offset), tz);
+
+
+				zoned = new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset), offset), tz);
 			}
 			else
 			{
@@ -234,7 +244,7 @@ namespace CosmosTime
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
-				zoned = new ZoneTime(new OffsetTime(new UtcTime(dto.DateTime, tz), dto.Offset), tz);
+				zoned = new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dto.DateTime, dto.Offset), dto.Offset), tz);
 			}
 
 			return true;
@@ -271,7 +281,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return $"{_offset_time.ToString(_tz == TimeZoneInfo.Utc)}[{GetIanaId()}]";
+			return $"{_offset_time.ToString(_tz == TimeZoneInfo.Utc)}[{GetIanaTzId()}]";
 		}
 
 		/// <summary>
@@ -293,16 +303,57 @@ namespace CosmosTime
 			return CompareTo((ZoneTime)obj);
 		}
 
-		public static ZoneTime operator +(ZoneTime d, TimeSpan t)
+		public ZoneTime AddUtc(TimeSpan t)
 		{
-			var adj = d._offset_time.UtcTime + t;
-			return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			var adj = _offset_time.UtcTime + t;
+			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
+			return adj.ToZoneTime(_tz);
 		}
-		public static ZoneTime operator -(ZoneTime d, TimeSpan t)
+		public ZoneTime AddClock(TimeSpan t)
 		{
-			var adj = d._offset_time.UtcTime - t;
-			return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			var adj = _offset_time.ClockDateTime + t;
+			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			return adj.ToZoneTime(_tz);
 		}
+
+		public ZoneTime SubtractUtc(TimeSpan t)
+		{
+			var adj = _offset_time.UtcTime - t;
+			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
+			return adj.ToZoneTime(_tz);
+		}
+		public ZoneTime SubtractClock(TimeSpan t)
+		{
+			var adj = _offset_time.ClockDateTime - t;
+			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			return adj.ToZoneTime(_tz);
+		}
+
+		public TimeSpan SubtractUtc(ZoneTime t)
+		{
+			//var adj = _offset_time.UtcTime - t;
+			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
+			//return adj.ToZoneTime(_tz);
+			return _offset_time - t._offset_time;
+		}
+		public TimeSpan SubtractClock(ZoneTime t)
+		{
+			//var adj = _offset_time.ClockDateTime - t;
+			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+			//return adj.ToZoneTime(_tz);
+			return _offset_time.ClockDateTime - t._offset_time.ClockDateTime;
+		}
+
+		//public static ZoneTime operator +(ZoneTime d, TimeSpan t)
+		//{
+		//	var adj = d._offset_time.UtcTime + t;
+		//	return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+		//}
+		//public static ZoneTime operator -(ZoneTime d, TimeSpan t)
+		//{
+		//	var adj = d._offset_time.UtcTime - t;
+		//	return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
+		//}
 
 		private ZoneTime Adjust(TimeSpan adjustment, bool add)
 		{
@@ -339,8 +390,9 @@ namespace CosmosTime
 
 
 
-		public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
+		//public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
 
+		// Equality and ordering is always in Utc
 		public static bool operator ==(ZoneTime a, ZoneTime b) => a._offset_time == b._offset_time;
 		public static bool operator !=(ZoneTime a, ZoneTime b) => a._offset_time != b._offset_time;
 		public static bool operator <(ZoneTime a, ZoneTime b) => a._offset_time < b._offset_time;
@@ -348,13 +400,20 @@ namespace CosmosTime
 		public static bool operator <=(ZoneTime a, ZoneTime b) => a._offset_time <= b._offset_time;
 		public static bool operator >=(ZoneTime a, ZoneTime b) => a._offset_time >= b._offset_time;
 
-		public ZoneTime AddSeconds(double sec) => this + TimeSpan.FromSeconds(sec);
-		public ZoneTime AddMinutes(double min) => this + TimeSpan.FromMinutes(min);
-		public ZoneTime AddHours(double h) => this + TimeSpan.FromHours(h);
-
+		public ZoneTime AddUtcSeconds(double sec) => AddUtc(TimeSpan.FromSeconds(sec));
+		public ZoneTime AddUtcMinutes(double min) => AddUtc(TimeSpan.FromMinutes(min));
+		public ZoneTime AddUtcHours(double h) => AddUtc(TimeSpan.FromHours(h));
 		// Adding days may not always work, DST will make some days more or less than 24h.
 		// You can still add 24 hours, but then it may be clearer that you are not adding days.
-		//public ZonedTime AddDays(double days) => this + TimeSpan.FromDays(days);
+//		public ZoneTime AddUtcDays(double days) => AddUtc(TimeSpan.FromDays(days));
+
+
+
+		public ZoneTime AddClockSeconds(double sec) => AddClock(TimeSpan.FromSeconds(sec));
+		public ZoneTime AddClockMinutes(double min) => AddClock(TimeSpan.FromMinutes(min));
+		public ZoneTime AddClockHours(double h) => AddClock(TimeSpan.FromHours(h));
+		public ZoneTime AddClockDays(double days) => AddClock(TimeSpan.FromDays(days));
+
 
 
 

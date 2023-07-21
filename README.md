@@ -1,5 +1,9 @@
 # CosmosTime
-A restricted set of time structs, UtcTime and UtcOffsetTime, trying to fix some of the problems with DateTime\DateTimeOffset and be nice to CosmosDB that require a specific fixed length format ("yyyy-MM-ddTHH:mm:ss.fffffffZ") for range queries to work. New date and time system functions in Azure Cosmos DB return this fixed length format (but unfortunately they allow parsing various length formats with\without Z, opening up for hiding bugs).
+A restricted set of time structs, UtcTime, OffsetTime, ZoneTime, ClockTime, trying to fix some of the problems with DateTime\DateTimeOffset and be nice to CosmosDB that require a specific fixed length format ("yyyy-MM-ddTHH:mm:ss.fffffffZ") for range queries to work. New date and time system functions in Azure Cosmos DB return this fixed length format (but unfortunately they allow parsing various length formats with\without Z, opening up for hiding bugs).
+Unlike eg. NodaTime that implement all things from scratch, here try to wrap the .NET types as much as possible and build on existing DateTime, DateTimeOffset, TimeZoneInfo etc.
+Parsing and formatting is always in Iso format, and try to stay away from anything "local" (LocalDateTime, LocalTime), since most stuff today run in clouds where local time make no sense.
+Parsing "local" times are never allowed without also providing the offset\time zone. Converting from DateTime etc. are never allower without also providing the offset\time zone.
+Basically, it means that "local" time\"local" time zone is never used for any logic in CosmosTime.
 
 Point also to only support only ISO 8601 with CultureInfo.InvariantCulture for parse and formatting.  
 
@@ -24,7 +28,7 @@ you must use UtcOffsetTimeCosmosDbJsonConverter that will format like this:
 "myTime":
 {  
  "timeUtc": "2009-06-15T13:45:30.0000000Z",  
- "offsetMins": 30
+ "offsetMinutes": 30
 }  
 
 Some collected links with info\problems about times in Newtonsoft\CosmosDb:
