@@ -30,7 +30,7 @@
  	  <Authors>osexpert</Authors>
 	  <Copyright>2022 osexpert</Copyright>
     
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>0.0.2</VersionPrefix>
     <PackageTags>time iso8601 utc cosmosdb iana</PackageTags>
     <Description>Yet another time library born when working with Cosmos DB. Focus on Utc and ISO8601.</Description>        
 		        
@@ -51,7 +51,7 @@
   <ItemGroup>
     <None Include="$(RepoRootPath)README.md" Pack="true" PackagePath="\"/>
     
-        <PackageReference Include="DefaultDocumentation" Version="0.8.2">
+    <PackageReference Include="DefaultDocumentation" Version="0.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
