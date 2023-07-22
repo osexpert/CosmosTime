@@ -14,7 +14,7 @@
     <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
     <PackageOutputPath>$(RepoRootPath)bin\Packages\$(Configuration)\NuGet\</PackageOutputPath>
 
- 	  <DefaultDocumentationLogLevel>Trace</DefaultDocumentationLogLevel>
+<!-- 	  <DefaultDocumentationLogLevel>Trace</DefaultDocumentationLogLevel> -->
 	  <DefaultDocumentationFolder>$(RepoRootPath)\ApiDocsMd\$(MSBuildProjectName)</DefaultDocumentationFolder>
 	  <DefaultDocumentationGeneratedAccessModifiers>Public</DefaultDocumentationGeneratedAccessModifiers>
     <DefaultDocumentationConfigurationFile>$(RepoRootPath)\src\DefaultDocumentation.json</DefaultDocumentationConfigurationFile>
