@@ -5,13 +5,19 @@
  	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
  	  <LangVersion>Latest</LangVersion>
  	  
- 	  <NoWarn>1701;1702;1591;1573</NoWarn>
+	  
+ 	  <!-- <NoWarn>1701;1702;1591;1573</NoWarn> -->
 <!--
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\keypair.key</AssemblyOriginatorKeyFile>
     -->
     <RepoRootPath>$(MSBuildThisFileDirectory)</RepoRootPath>
     <PackageOutputPath>$(RepoRootPath)bin\Packages\$(Configuration)\NuGet\</PackageOutputPath>
+
+ 	  <DefaultDocumentationLogLevel>Trace</DefaultDocumentationLogLevel>
+	  <DefaultDocumentationFolder>$(RepoRootPath)\ApiDocsMd\$(MSBuildProjectName)</DefaultDocumentationFolder>
+	  <DefaultDocumentationGeneratedAccessModifiers>Public</DefaultDocumentationGeneratedAccessModifiers>
+    <DefaultDocumentationConfigurationFile>$(RepoRootPath)\src\DefaultDocumentation.json</DefaultDocumentationConfigurationFile>
 
     <PackageProjectUrl>https://github.com/osexpert/CosmosTime</PackageProjectUrl>
     <PackageLicenseUrl></PackageLicenseUrl>
@@ -44,6 +50,12 @@
 
   <ItemGroup>
     <None Include="$(RepoRootPath)README.md" Pack="true" PackagePath="\"/>
+    
+        <PackageReference Include="DefaultDocumentation" Version="0.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    
   </ItemGroup>
     
 </Project>

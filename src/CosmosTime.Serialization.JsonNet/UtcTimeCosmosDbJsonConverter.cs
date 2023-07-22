@@ -10,6 +10,7 @@ namespace CosmosTime.Serialization.JsonNet
 	/// </summary>
 	public class UtcTimeCosmosDbJsonConverter : JsonConverter<UtcTime>
 	{
+		/// <inheritdoc/>
 		public override UtcTime ReadJson(JsonReader reader, Type objectType, UtcTime existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)
@@ -18,6 +19,7 @@ namespace CosmosTime.Serialization.JsonNet
 			return UtcTime.ParseCosmosDb((string)reader.Value);
 		}
 
+		/// <inheritdoc/>
 		public override void WriteJson(JsonWriter writer, UtcTime value, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)

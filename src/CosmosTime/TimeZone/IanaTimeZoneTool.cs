@@ -8,8 +8,15 @@ using System.Xml.Linq;
 
 namespace CosmosTime.TimeZone
 {
+	/// <summary>
+	/// TODO
+	/// </summary>
 	public class IanaTimeZoneTool
 	{
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="timeZoneMapFileToWrite"></param>
 		public static void Generate(string timeZoneMapFileToWrite)
 		{
 			// Embed time zone map so we don't have to take dependency on a nuget package for this simple task.

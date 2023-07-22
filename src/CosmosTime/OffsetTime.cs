@@ -54,18 +54,38 @@ namespace CosmosTime
 			}
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="utcTime"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
 		public static OffsetTime FromUtcDateTime(DateTime utcTime, TimeSpan offset)
 		{
 			var ot = new OffsetTime();
 			ot.Init(UtcTime.FromUtcDateTime(utcTime), offset);
 			return ot;
 		}
+		
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="localTime"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
 		public static OffsetTime FromLocalDateTime(DateTime localTime, TimeSpan offset)
 		{
 			var ot = new OffsetTime();
 			ot.Init(UtcTime.FromLocalDateTime(localTime), offset);
 			return ot;
 		}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="unspecifiedTime"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
 		public static OffsetTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeSpan offset)
 		{
 			var ot = new OffsetTime();
@@ -73,9 +93,18 @@ namespace CosmosTime
 			return ot;
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static readonly OffsetTime MinValue = DateTimeOffset.MinValue.ToOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static readonly OffsetTime MaxValue = DateTimeOffset.MaxValue.ToOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
 
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public UtcTime UtcTime => _utc;
 
 		/// <summary>
@@ -92,7 +121,7 @@ namespace CosmosTime
 		//		public long UtcTicks => _utc.Ticks;
 
 		/// <summary>
-		/// clock time's TimeOfDay 
+		/// clock time's TimeOfDay
 		/// </summary>
 		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(ClockDateTime_KindUnspecified);
 
@@ -108,9 +137,9 @@ namespace CosmosTime
 		/// <returns></returns>
 		public OffsetTime AddTicks(long t) => new OffsetTime(Ticks + t, Offset);
 
-		/// <summary>
-		/// The specified time is clock time (not utc)
-		/// </summary>
+		// <summary>
+		// The specified time is clock time (not utc)
+		// </summary>
 		//public UtcOffsetTime(ClockTime ct, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
 		//{
 		//	throw new NotImplementedException();
@@ -174,7 +203,7 @@ namespace CosmosTime
 		{
 			uo = default;
 
-			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var offsetKind) && offsetKind != OffsetKind.None)
 			{
 				uo = dto.ToOffsetTime();
 				return true;
@@ -196,9 +225,9 @@ namespace CosmosTime
 
 			uo = default;
 
-			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var tzk))
+			if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var offsetKind))
 			{
-				if (tzk == TimeZoneKind.None)
+				if (offsetKind == OffsetKind.None)
 				{
 					var offset = getOffsetOfNone(dto);
 					var utc = UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset);
@@ -217,9 +246,9 @@ namespace CosmosTime
 		}
 
 
-		/// <summary>
-		///
-		/// </summary>
+		// <summary>
+		//
+		// </summary>
 		//public UtcOffsetTime(DateTimeOffset dto)
 		//{
 		//	// what about dto.ToUniversalTime? versus  dto.UtcDateTime ???
@@ -235,8 +264,6 @@ namespace CosmosTime
 		/// <summary>
 		/// offsetMinutes: utc+offsetMinutes=local
 		/// </summary>
-		/// <param name="utcs"></param>
-		/// <param name="offsetMinutes"></param>
 		/// <exception cref="ArgumentException"></exception>
 		public OffsetTime(UtcTime utc, TimeSpan offset)
 		{
@@ -263,10 +290,14 @@ namespace CosmosTime
 		/// </summary>
 		public DateTime ClockDateTime => ClockDateTime_KindUnspecified;
 
+		/// <summary>
+		/// Utc Kind
+		/// </summary>
 		public DateTime UtcDateTime => _utc.UtcDateTime;
 
 		/// <summary>
-		/// Variable length local[+-]offset
+		/// Iso format.
+		/// {local}+|-{offset}
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString() => ToString(false);
@@ -303,6 +334,9 @@ namespace CosmosTime
 			return new OffsetTime(utcs, offset);
 		}
 
+		/// <summary>
+		/// Returns DateTimeOffset...
+		/// </summary>
 		public DateTimeOffset ToDateTimeOffset()
 		{
 			//return _dto;
@@ -317,18 +351,26 @@ namespace CosmosTime
 		// TODO: remove this?
 		//public DateTime ToLocalDateTime() => _utc.ToLocalDateTime();
 
+		/// <inheritdoc/>
 		public override int GetHashCode() => _utc.GetHashCode();
-		
+
+		/// <inheritdoc/>
 		public override bool Equals(object obj) => obj is OffsetTime other && Equals(other);
 
 		/// <summary>
 		/// Equal if the Utc time is equal.
-		/// The offset is ignored, it is only used to make local times.
+		/// So there can be two OffsetTime's with same Utc time but different Offsets, and they will be equal.
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
 		public bool Equals(OffsetTime other) => this._utc == other._utc;
-		
+
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public int CompareTo(OffsetTime other) => this._utc.CompareTo(other._utc);
 
 		int IComparable.CompareTo(object obj)
@@ -340,16 +382,76 @@ namespace CosmosTime
 			return CompareTo((OffsetTime)obj);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static TimeSpan operator -(OffsetTime a, OffsetTime b) => a._utc - b._utc;
 
-		public static OffsetTime operator +(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc + t, d.Offset); 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
+		public static OffsetTime operator +(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc + t, d.Offset);
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public static OffsetTime operator -(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc - t, d.Offset);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator ==(OffsetTime a, OffsetTime b) => a._utc == b._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator !=(OffsetTime a, OffsetTime b) => a._utc != b._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <(OffsetTime a, OffsetTime b) => a._utc < b._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >(OffsetTime a, OffsetTime b) => a._utc > b._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <=(OffsetTime a, OffsetTime b) => a._utc <= b._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >=(OffsetTime a, OffsetTime b) => a._utc >= b._utc;
 
 	}

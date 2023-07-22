@@ -18,8 +18,13 @@ namespace CosmosTime
 	[TypeConverter(typeof(ClockTimeTypeConverter))]
 	public struct ClockTime : IEquatable<ClockTime>, IComparable<ClockTime>, IComparable
 	{
-
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static readonly ClockTime MinValue = ToClockTime(new DateTime(0L, DateTimeKind.Unspecified));
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static readonly ClockTime MaxValue = ToClockTime(new DateTime(DateTime.MaxValue.Ticks, DateTimeKind.Unspecified));
 
 		DateTime _clock_time;
@@ -32,11 +37,22 @@ namespace CosmosTime
 		//public UtcTime ToUtcTime() => _clock_time.ToUtcTime();
 
 
-
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static ClockTime LocalNow => Now(TimeZoneInfo.Local);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static ClockTime UtcNow => Now(TimeZoneInfo.Utc);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static ClockTime Now(TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -58,8 +74,14 @@ namespace CosmosTime
 
 
 
+		/// <summary>
+		/// TimeOfDay
+		/// </summary>
 		public TimeOnly TimeOfDay => TimeOnly.FromDateTime(_clock_time);
 
+		/// <summary>
+		/// Date
+		/// </summary>
 		public DateOnly Date => DateOnly.FromDateTime(_clock_time);
 
 		//public static ClockTime Truncate(ClockTime ct, TimeSpan timeSpan)
@@ -69,6 +91,11 @@ namespace CosmosTime
 		//	return ct.AddTicks(-(ct.Ticks % timeSpan.Ticks));
 		//}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public ClockTime AddTicks(long t) => ToClockTime(_clock_time.AddTicks(t));
 
 		private static ClockTime ToClockTime_MakeUnspecified(DateTime t) => ToClockTime(DateTime.SpecifyKind(t, DateTimeKind.Unspecified));
@@ -85,29 +112,64 @@ namespace CosmosTime
 			return new ClockTime { _clock_time = unspecTime };
 		}
 
+		/// <summary>
+		/// Ticks in Clock time
+		/// </summary>
 		public long Ticks => _clock_time.Ticks;
 
-
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="year"></param>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
 		public ClockTime(int year, int month, int day) : this()
 		{
 			_clock_time = new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="year"></param>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
+		/// <param name="hour"></param>
+		/// <param name="minute"></param>
+		/// <param name="second"></param>
 		public ClockTime(int year, int month, int day, int hour, int minute, int second) : this()
 		{
 			_clock_time = new DateTime(year, month, day, hour, minute, second, DateTimeKind.Unspecified);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="year"></param>
+		/// <param name="month"></param>
+		/// <param name="day"></param>
+		/// <param name="hour"></param>
+		/// <param name="minute"></param>
+		/// <param name="second"></param>
+		/// <param name="millis"></param>
 		public ClockTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
 		{
 			_clock_time = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="anyTime"></param>
 		public ClockTime(DateTime anyTime)
 		{
 			_clock_time = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="ticks"></param>
 		public ClockTime(long ticks)
 		{
 			_clock_time = new DateTime(ticks, DateTimeKind.Unspecified);
@@ -128,30 +190,117 @@ namespace CosmosTime
 		//		return other;
 		//}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static TimeSpan operator -(ClockTime a, ClockTime b) => a._clock_time - b._clock_time;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public static ClockTime operator +(ClockTime d, TimeSpan t) => ToClockTime(d._clock_time + t);
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public static ClockTime operator -(ClockTime d, TimeSpan t) => ToClockTime(d._clock_time - t);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator ==(ClockTime a, ClockTime b) => a._clock_time == b._clock_time;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator !=(ClockTime a, ClockTime b) => a._clock_time != b._clock_time;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <(ClockTime a, ClockTime b) => a._clock_time < b._clock_time;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >(ClockTime a, ClockTime b) => a._clock_time > b._clock_time;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <=(ClockTime a, ClockTime b) => a._clock_time <= b._clock_time;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >=(ClockTime a, ClockTime b) => a._clock_time >= b._clock_time;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="sec"></param>
+		/// <returns></returns>
 		public ClockTime AddSeconds(double sec) => ToClockTime(_clock_time.AddSeconds(sec));
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="min"></param>
+		/// <returns></returns>
 		public ClockTime AddMinutes(double min) => ToClockTime(_clock_time.AddMinutes(min));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="h"></param>
+		/// <returns></returns>
 		public ClockTime AddHours(double h) => ToClockTime(_clock_time.AddHours(h));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="days"></param>
+		/// <returns></returns>
 		public ClockTime AddDays(double days) => ToClockTime(_clock_time.AddDays(days));
 
-
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(ClockTime other) => _clock_time.Equals(other._clock_time);
 
+		/// <inheritdoc/>
 		public override bool Equals(object obj) => obj is ClockTime other && Equals(other);
 
+		/// <inheritdoc/>
 		public override int GetHashCode() => _clock_time.GetHashCode();
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public int CompareTo(ClockTime other) => _clock_time.CompareTo(other._clock_time);
 
 		int IComparable.CompareTo(object obj)
@@ -163,8 +312,18 @@ namespace CosmosTime
 			return CompareTo((ClockTime)obj);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString() => _clock_time.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="clockTime"></param>
+		/// <returns></returns>
 		public static bool TryParse(string str, out ClockTime clockTime)
 		{
 			clockTime = default;
@@ -178,6 +337,12 @@ namespace CosmosTime
 			return false;
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		/// <exception cref="FormatException"></exception>
 		public static ClockTime Parse(string str)
 		{
 			if (TryParse(str, out var ct))

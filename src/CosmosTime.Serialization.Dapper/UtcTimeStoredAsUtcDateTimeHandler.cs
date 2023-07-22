@@ -13,11 +13,13 @@ namespace CosmosTime.Serialization.Dapper
 	/// </summary>
 	public class UtcTimeStoredAsUtcDateTimeHandler : SqlMapper.TypeHandler<UtcTime>
 	{
+		/// <inheritdoc/>
 		public override void SetValue(IDbDataParameter parameter, UtcTime value)
 		{
 			parameter.Value = value.UtcDateTime;
 		}
 
+		/// <inheritdoc/>
 		public override UtcTime Parse(object value)
 		{
 			var dt = (DateTime)value;

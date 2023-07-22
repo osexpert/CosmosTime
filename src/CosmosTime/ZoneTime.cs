@@ -10,6 +10,7 @@ namespace CosmosTime
 {
 	/// <summary>
 	/// Store utc + offset + tz
+	/// 
 	/// If storing a clock time in the future and the tz-database changes, the clock time may be wrong since we calculate clock time from utc.
 	/// tz-database changes: updated regularly, so for utc time in the future, we can't know for sure what the offset will be in a zone.
 	/// I guess if we wanted a struct with focus on clock times, and where the utc\global time would change in the future, if tz-db changes,
@@ -21,27 +22,44 @@ namespace CosmosTime
 		OffsetTime _offset_time;
 		TimeZoneInfo _tz;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public OffsetTime OffsetTime => _offset_time;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public TimeZoneInfo Zone => _tz;
 
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
 		/// TODO: why not allow Local?? Does now.
 		/// </summary>
-		/// <param name="utcOrLocalTime"></param>
 		public static ZoneTime FromUtcDateTime(DateTime utcTime)
 		{
 			TimeZoneInfo tz = TimeZoneInfo.Utc;
 			return new ZoneTime(new OffsetTime(UtcTime.FromUtcDateTime(utcTime), tz.GetUtcOffset(utcTime)), tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="localTime"></param>
+		/// <returns></returns>
 		public static ZoneTime FromLocalDateTime(DateTime localTime)
 		{
 			TimeZoneInfo tz = TimeZoneInfo.Local;
 			return new ZoneTime(new OffsetTime(UtcTime.FromLocalDateTime(localTime), tz.GetUtcOffset(localTime)), tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="unspecTime"></param>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -124,6 +142,12 @@ namespace CosmosTime
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="time"></param>
+		/// <param name="tz"></param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public ZoneTime(UtcTime time, TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -131,6 +155,11 @@ namespace CosmosTime
 			Init(time.ToOffsetTime(tz.GetUtcOffset(time.UtcDateTime)), tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="time"></param>
+		/// <param name="tz"></param>
 		public ZoneTime(OffsetTime time, TimeZoneInfo tz)
 		{
 			Init(time, tz);
@@ -251,12 +280,12 @@ namespace CosmosTime
 			if (!IanaTimeZone.TryGetTimeZoneInfo(tzPart, out TimeZoneInfo tz))
 				return false;
 
-			if (!IsoTimeParser.TryParseAsIso(timePart, out DateTimeOffset dto, out TimeZoneKind tzk))
+			if (!IsoTimeParser.TryParseAsIso(timePart, out DateTimeOffset dto, out OffsetKind offsetKind))
 				return false;
 
 			// dto.DateTime: ClockTime, Kind unspecified (even for Utc)
 
-			if (tzk == TimeZoneKind.None)
+			if (offsetKind == OffsetKind.None)
 			{
 				TimeSpan offset;
 				if (chooseOffsetIfAmbigous == null)
@@ -289,18 +318,24 @@ namespace CosmosTime
 		}
 
 
-//		public static readonly UtcOffsetZoneTime MinValue = DateTimeOffset.MinValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
-	//	public static readonly UtcOffsetZoneTime MaxValue = DateTimeOffset.MaxValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
+		//		public static readonly UtcOffsetZoneTime MinValue = DateTimeOffset.MinValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
+		//	public static readonly UtcOffsetZoneTime MaxValue = DateTimeOffset.MaxValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
 
-//		public UtcTime UtcTime => _utc;
+		//		public UtcTime UtcTime => _utc;
+
+
 
 		/// <summary>
-		/// Offset from Utc
+		/// TODO
 		/// </summary>
-
-
+		/// <returns></returns>
 		public override int GetHashCode() => _offset_time.GetHashCode();
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(object obj) => obj is ZoneTime other && Equals(other);
 
 
@@ -325,11 +360,17 @@ namespace CosmosTime
 		/// <summary>
 		/// Equal if the Utc time is equal.
 		/// The offset is ignored, it is only used to make local times.
+		/// The tz is ignored, Utc is valid on its own
 		/// </summary>
 		/// <param name="other"></param>
 		/// <returns></returns>
 		public bool Equals(ZoneTime other) => this._offset_time.Equals(other._offset_time);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public int CompareTo(ZoneTime other) => this._offset_time.CompareTo(other._offset_time);
 
 		int IComparable.CompareTo(object obj)
@@ -341,12 +382,24 @@ namespace CosmosTime
 			return CompareTo((ZoneTime)obj);
 		}
 
+		
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public ZoneTime AddUtc(TimeSpan t)
 		{
 			var adj = _offset_time.UtcTime + t;
 			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			return adj.ToZoneTime(_tz);
 		}
+		
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public ZoneTime AddClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime + t;
@@ -354,12 +407,23 @@ namespace CosmosTime
 			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public ZoneTime SubtractUtc(TimeSpan t)
 		{
 			var adj = _offset_time.UtcTime - t;
 			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			return adj.ToZoneTime(_tz);
 		}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public ZoneTime SubtractClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime - t;
@@ -367,6 +431,11 @@ namespace CosmosTime
 			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public TimeSpan SubtractUtc(ZoneTime t)
 		{
 			//var adj = _offset_time.UtcTime - t;
@@ -374,6 +443,12 @@ namespace CosmosTime
 			//return adj.ToZoneTime(_tz);
 			return _offset_time - t._offset_time;
 		}
+		
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public TimeSpan SubtractClock(ZoneTime t)
 		{
 			//var adj = _offset_time.ClockDateTime - t;
@@ -432,43 +507,126 @@ namespace CosmosTime
 		//public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
 
 		// Equality and ordering is always in Utc
+
+		/// <summary>
+		/// Equality and ordering is always in Utc
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator ==(ZoneTime a, ZoneTime b) => a._offset_time == b._offset_time;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator !=(ZoneTime a, ZoneTime b) => a._offset_time != b._offset_time;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <(ZoneTime a, ZoneTime b) => a._offset_time < b._offset_time;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >(ZoneTime a, ZoneTime b) => a._offset_time > b._offset_time;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <=(ZoneTime a, ZoneTime b) => a._offset_time <= b._offset_time;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >=(ZoneTime a, ZoneTime b) => a._offset_time >= b._offset_time;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="sec"></param>
+		/// <returns></returns>
 		public ZoneTime AddUtcSeconds(double sec) => AddUtc(TimeSpan.FromSeconds(sec));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="min"></param>
+		/// <returns></returns>
 		public ZoneTime AddUtcMinutes(double min) => AddUtc(TimeSpan.FromMinutes(min));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="h"></param>
+		/// <returns></returns>
 		public ZoneTime AddUtcHours(double h) => AddUtc(TimeSpan.FromHours(h));
 		// Adding days may not always work, DST will make some days more or less than 24h.
 		// You can still add 24 hours, but then it may be clearer that you are not adding days.
-//		public ZoneTime AddUtcDays(double days) => AddUtc(TimeSpan.FromDays(days));
+		//		public ZoneTime AddUtcDays(double days) => AddUtc(TimeSpan.FromDays(days));
 
 
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="sec"></param>
+		/// <returns></returns>
 		public ZoneTime AddClockSeconds(double sec) => AddClock(TimeSpan.FromSeconds(sec));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="min"></param>
+		/// <returns></returns>
 		public ZoneTime AddClockMinutes(double min) => AddClock(TimeSpan.FromMinutes(min));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="h"></param>
+		/// <returns></returns>
 		public ZoneTime AddClockHours(double h) => AddClock(TimeSpan.FromHours(h));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="days"></param>
+		/// <returns></returns>
 		public ZoneTime AddClockDays(double days) => AddClock(TimeSpan.FromDays(days));
 
 
 
 
-		/// <summary>
-		/// Not sure if having these it a good design. Possibly should require converting to ClockTime, performing operations there, then converting back...
-		/// ClockTime would wrap a DateTime kind unspeficied.
-		/// maybe could manipulate via using?
-		/// 
-		/// using (var ct = zoned.AdjustClockTime())
-		/// {
-		///		
-		///		
-		/// }
-		/// </summary>
-		/// <param name="h"></param>
-		/// <returns></returns>
+		// <summary>
+		// Not sure if having these it a good design. Possibly should require converting to ClockTime, performing operations there, then converting back...
+		// ClockTime would wrap a DateTime kind unspeficied.
+		// maybe could manipulate via using?
+		// 
+		// using (var ct = zoned.AdjustClockTime())
+		// {
+		//		
+		//		
+		// }
+		// </summary>
+		// <param name="h"></param>
+		// <returns></returns>
 		//public ZonedTime AddClockHours(double h) => AddClock(TimeSpan.FromHours(h));
 
 

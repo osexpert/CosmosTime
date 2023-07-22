@@ -8,13 +8,18 @@ using System.Text;
 
 namespace CosmosTime
 {
-
+	/// <summary>
+	/// TODO
+	/// </summary>
 	[TypeConverter(typeof(UtcTimeTypeConverter))]
 	public struct UtcTime : IEquatable<UtcTime>, IComparable<UtcTime>, IComparable
 	{
 
-
+		/// <summary>
+		/// TODO
+		/// </summary>
 		public static readonly UtcTime MinValue = UtcTime.FromUtcDateTime(new DateTime(0L, DateTimeKind.Utc));
+
 		/// <summary>
 		/// Seems like a bug in DateTime: 
 		/// DateTime.MaxValue.ToUniversalTime().Ticks				  -> 3155378939999999999 // no...not UTC max (its lower)
@@ -47,9 +52,9 @@ namespace CosmosTime
 		public DateOnly Date => DateOnly.FromDateTime(_utc);
 
 
-		/// <summary>
-		/// Date part in Utc
-		/// </summary>
+		// <summary>
+		// Date part in Utc
+		// </summary>
 		//public UtcTime DatePart => _utc.Date.ToUtcTime();
 
 		/// <summary>
@@ -203,6 +208,14 @@ namespace CosmosTime
 			 return new UtcTime { _utc = DateTime.SpecifyKind(unspecifiedTime - offset, DateTimeKind.Utc) };
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="unspecifiedTime"></param>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		public static UtcTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
@@ -266,30 +279,120 @@ namespace CosmosTime
 		//		return other;
 		//}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public static UtcTime operator +(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc + t);
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="t"></param>
+		/// <returns></returns>
 		public static UtcTime operator -(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc - t);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator ==(UtcTime a, UtcTime b) => a._utc == b._utc;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator !=(UtcTime a, UtcTime b) => a._utc != b._utc;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <(UtcTime a, UtcTime b) => a._utc < b._utc;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >(UtcTime a, UtcTime b) => a._utc > b._utc;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator <=(UtcTime a, UtcTime b) => a._utc <= b._utc;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static bool operator >=(UtcTime a, UtcTime b) => a._utc >= b._utc;
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="sec"></param>
+		/// <returns></returns>
 		public UtcTime AddSeconds(double sec) => UtcTime.FromUtcDateTime(_utc.AddSeconds(sec));
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="min"></param>
+		/// <returns></returns>
 		public UtcTime AddMinutes(double min) => UtcTime.FromUtcDateTime(_utc.AddMinutes(min));
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="h"></param>
+		/// <returns></returns>
 		public UtcTime AddHours(double h) => UtcTime.FromUtcDateTime(_utc.AddHours(h));
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="days"></param>
+		/// <returns></returns>
 		public UtcTime AddDays(double days) => UtcTime.FromUtcDateTime(_utc.AddDays(days));
 
-		// kind of both is utc
+		/// <summary>
+		/// TODO
+		/// kind of both is utc 
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public bool Equals(UtcTime other) => _utc.Equals(other._utc);
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(object obj) => obj is UtcTime other && Equals(other);
 
+		/// <inheritdoc/>
 		public override int GetHashCode() => _utc.GetHashCode();
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
 		public int CompareTo(UtcTime other) => _utc.CompareTo(other._utc);
 
 		int IComparable.CompareTo(object obj)
@@ -328,6 +431,13 @@ namespace CosmosTime
 			throw new FormatException("Format must be {utc}Z or {local}[+-]{offset}");
 		}
 
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="getOffsetIfNone"></param>
+		/// <returns></returns>
+		/// <exception cref="FormatException"></exception>
 		public static UtcTime Parse(string str, Func<DateTimeOffset, TimeSpan> getOffsetIfNone)
 		{
 			if (TryParse(str, out var ut, getOffsetIfNone))
@@ -354,7 +464,7 @@ namespace CosmosTime
 		{
 			utc = default;
 
-			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk) && tzk != TimeZoneKind.None)
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind) && offsetKind != OffsetKind.None)
 			{
 				utc = UtcTime.FromUtcDateTime(dto.UtcDateTime);
 				return true;
@@ -363,7 +473,14 @@ namespace CosmosTime
 			return false;
 		}
 
-
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="utc"></param>
+		/// <param name="getOffsetIfNone"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static bool TryParse(string str, out UtcTime utc, Func<DateTimeOffset, TimeSpan> getOffsetIfNone)
 		{
 			if (getOffsetIfNone == null)
@@ -371,9 +488,9 @@ namespace CosmosTime
 
 			utc = default;
 
-			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk))
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind))
 			{
-				if (tzk == TimeZoneKind.None)
+				if (offsetKind == OffsetKind.None)
 				{
 					var offset = getOffsetIfNone(dto);
 					utc = UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset);

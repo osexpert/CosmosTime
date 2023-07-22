@@ -54,15 +54,15 @@ namespace CosmosTime
 		//private static bool TryParseAsIso(string source, out DateTime value, out TimeZoneKind tzk)
 		//	=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out tzk);
 
-		public static bool TryParseAsIso(string source, out DateTimeOffset value, out TimeZoneKind tzk)
-			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out tzk );
+		public static bool TryParseAsIso(string source, out DateTimeOffset value, out OffsetKind offsetKind)
+			=> TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out offsetKind);
 
-		/// <summary>
-		/// Parse the given UTF-8 <paramref name="source"/> as extended ISO 8601 format.
-		/// </summary>
-		/// <param name="source">UTF-8 source to parse.</param>
-		/// <param name="value">The parsed <see cref="DateTime"/> if successful.</param>
-		/// <returns>"true" if successfully parsed.</returns>
+		// <summary>
+		// Parse the given UTF-8 <paramref name="source"/> as extended ISO 8601 format.
+		// </summary>
+		// <param name="source">UTF-8 source to parse.</param>
+		// <param name="value">The parsed <see cref="DateTime"/> if successful.</param>
+		// <returns>"true" if successfully parsed.</returns>
 		//public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateTime value, out TimeZoneKind tzk)
 		//{
 		//	tzk = TimeZoneKind.None;
@@ -103,12 +103,13 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="source">UTF-8 source to parse.</param>
 		/// <param name="dtoValue">The parsed <see cref="DateTimeOffset"/> if successful.</param>
+		/// <param name="offsetKind">Offset kind</param>
 		/// <returns>"true" if successfully parsed.</returns>
-		public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateTimeOffset dtoValue, out TimeZoneKind tzk)
+		public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateTimeOffset dtoValue, out OffsetKind offsetKind)
 		{
 			//dtValue = default;
 
-			tzk = TimeZoneKind.None;
+			offsetKind = OffsetKind.None;
 
 			if (!TryParseDateTimeOffset(source, out DateTimeParseData parseData))
 			{
@@ -119,7 +120,7 @@ namespace CosmosTime
 			if (parseData.OffsetToken == JsonConstants.UtcOffsetToken || // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
 				parseData.OffsetToken == JsonConstants.Plus || parseData.OffsetToken == JsonConstants.Hyphen)
 			{
-				tzk = parseData.OffsetToken == JsonConstants.UtcOffsetToken ? TimeZoneKind.Utc : TimeZoneKind.Offset;
+				offsetKind = parseData.OffsetToken == JsonConstants.UtcOffsetToken ? OffsetKind.Zulu : OffsetKind.PlusMinus;
 			//	return TryCreateDateTimeOffset(ref parseData, out dtoValue);
 			}
 
@@ -716,7 +717,7 @@ namespace CosmosTime
 		public const int UnboxedParameterCountThreshold = 4;
 	}
 
-	internal enum TimeZoneKind
+	internal enum OffsetKind
 	{
 		/// <summary>
 		/// {time}
@@ -727,11 +728,11 @@ namespace CosmosTime
 		/// {time}Z
 		/// DateTimeOffset is set
 		/// </summary>
-		Utc,
+		Zulu,
 		/// <summary>
 		/// {time}+|-hh[:mm]
 		/// DateTimeOffset is set
 		/// </summary>
-		Offset,
+		PlusMinus,
 	}
 }

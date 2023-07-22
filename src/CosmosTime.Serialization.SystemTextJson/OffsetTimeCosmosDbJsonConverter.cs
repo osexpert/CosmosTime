@@ -17,6 +17,7 @@ namespace CosmosTime.Serialization.SystemTextJson
 	/// </summary>
 	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
 	{
+		/// <inheritdoc/>
 		public override OffsetTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			//var obj = JObject.Load(reader);
@@ -25,6 +26,7 @@ namespace CosmosTime.Serialization.SystemTextJson
 			return OffsetTime.ParseCosmosDb((string)obj["timeUtc"], TimeSpan.FromMinutes((short)obj["offsetMinutes"]));
 		}
 
+		/// <inheritdoc/>
 		public override void Write(Utf8JsonWriter writer, OffsetTime value, JsonSerializerOptions options)
 		{
 		

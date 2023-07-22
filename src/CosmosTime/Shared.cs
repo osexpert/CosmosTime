@@ -5,6 +5,9 @@ using System.Text;
 
 namespace CosmosTime
 {
+	/// <summary>
+	/// TODO
+	/// </summary>
 	public static class Shared
 	{
 		//internal static (bool Ok, string Msg) ValidateOffset(ZonedTime zoned, short offsetMinutes)
@@ -61,6 +64,13 @@ namespace CosmosTime
 		//		throw new Exception("fractions lost in offset");
 		//	return res;
 		//}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="timeSpan"></param>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
 		public static short GetWholeMinutes(TimeSpan timeSpan)
 		{
 			var mins = timeSpan.TotalMinutes;

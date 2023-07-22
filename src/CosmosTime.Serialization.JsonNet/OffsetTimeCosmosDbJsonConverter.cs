@@ -15,6 +15,7 @@ namespace CosmosTime.Serialization.JsonNet
 	/// </summary>
 	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
 	{
+		/// <inheritdoc/>
 		public override OffsetTime ReadJson(JsonReader reader, Type objectType, OffsetTime existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)
@@ -24,6 +25,7 @@ namespace CosmosTime.Serialization.JsonNet
 			return OffsetTime.ParseCosmosDb(obj["timeUtc"].Value<string>(), TimeSpan.FromMinutes(obj["offsetMinutes"].Value<short>()));
 		}
 
+		/// <inheritdoc/>
 		public override void WriteJson(JsonWriter writer, OffsetTime value, JsonSerializer serializer)
 		{
 			if (serializer.DateParseHandling != DateParseHandling.None)

@@ -14,6 +14,7 @@ namespace CosmosTime.Serialization.Dapper
 	/// </summary>
 	public class DateTimeStoredAsUtcDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 	{
+		/// <inheritdoc/>
 		public override void SetValue(IDbDataParameter parameter, DateTime value)
 		{
 			// deny unspec time, we don't know what it is?
@@ -24,6 +25,7 @@ namespace CosmosTime.Serialization.Dapper
 			parameter.Value = value.ToUniversalTime();
 		}
 
+		/// <inheritdoc/>
 		public override DateTime Parse(object value)
 		{
 			var dt = (DateTime)value;

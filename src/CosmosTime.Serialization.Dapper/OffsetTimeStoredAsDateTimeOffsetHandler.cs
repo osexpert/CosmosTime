@@ -13,11 +13,13 @@ namespace CosmosTime.Serialization.Dapper
 	/// </summary>
 	public class OffsetTimeStoredAsDateTimeOffsetHandler : SqlMapper.TypeHandler<OffsetTime>
 	{
+		/// <inheritdoc/>
 		public override void SetValue(IDbDataParameter parameter, OffsetTime value)
 		{
 			parameter.Value = value.ToDateTimeOffset();
 		}
 
+		/// <inheritdoc/>
 		public override OffsetTime Parse(object value)
 		{
 			var dto = (DateTimeOffset)value;
