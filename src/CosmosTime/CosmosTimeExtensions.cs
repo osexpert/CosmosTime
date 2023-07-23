@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace CosmosTime
@@ -229,6 +231,26 @@ namespace CosmosTime
 			{
 				return tz.GetUtcOffset(dto);
 			}
+		}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="timeOnly"></param>
+		/// <returns></returns>
+		public static string ToIsoString(this TimeOnly timeOnly)
+		{
+			return timeOnly.ToString("o", CultureInfo.InvariantCulture);
+		}
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="dateOnly"></param>
+		/// <returns></returns>
+		public static string ToIsoString(this DateOnly dateOnly)
+		{
+			return dateOnly.ToString("o", CultureInfo.InvariantCulture);
 		}
 	}
 }

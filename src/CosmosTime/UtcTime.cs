@@ -205,7 +205,9 @@ namespace CosmosTime
 			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
 				throw new ArgumentException("Kind must be unspecified");
 
-			 return new UtcTime { _utc = DateTime.SpecifyKind(unspecifiedTime - offset, DateTimeKind.Utc) };
+			Shared.ValidateOffset(offset);
+
+			return new UtcTime { _utc = DateTime.SpecifyKind(unspecifiedTime - offset, DateTimeKind.Utc) };
 		}
 
 		/// <summary>

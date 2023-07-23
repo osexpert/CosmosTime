@@ -118,6 +118,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Zone time
+		/// Both tz and offset? Yes, in case you want to choose offset if ambigous time (or you simply know it up front)
 		/// </summary>
 		public ZoneTime(int year, int month, int day, TimeZoneInfo tz, TimeSpan offset)
 			: this(year, month, day, 0, 0, 0, 0, tz, offset)
@@ -126,6 +127,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Clock time
+		/// Both tz and offset? Yes, in case you want to choose offset if ambigous time (or you simply know it up front)
 		/// </summary>
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz, TimeSpan offset)
 			: this(year, month, day, hour, minute, second, 0, tz, offset)
@@ -134,7 +136,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Zone time
-		/// Both tz and offset? Yes, in case you want to choose offset (or you simply know it up front)
+		/// Both tz and offset? Yes, in case you want to choose offset if ambigous time (or you simply know it up front)
 		/// </summary>
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset)
 		{

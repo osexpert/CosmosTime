@@ -158,6 +158,32 @@ namespace CosmosTime
 		/// <summary>
 		/// year, month, day, etc. in Clock time
 		/// </summary>
+		public OffsetTime(int year, int month, int day, TimeSpan offset)
+			: this(year, month, day, 0, 0, 0, 0, offset)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, TimeSpan offset)
+			: this(year, month, day, hour, minute, second, 0, offset)
+		{
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// </summary>
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeSpan offset)
+		{
+			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
+		}
+
+		/// <summary>
+		/// year, month, day, etc. in Clock time
+		/// Will pick the offset from the tz
+		/// </summary>
 		public OffsetTime(int year, int month, int day, TimeZoneInfo tz)
 			: this(year, month, day, 0, 0, 0, 0, tz)
 		{
@@ -165,6 +191,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Clock time
+		/// Will pick the offset from the tz
 		/// </summary>
 		public OffsetTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz)
 			: this(year, month, day, hour, minute, second, 0, tz)
@@ -173,6 +200,7 @@ namespace CosmosTime
 
 		/// <summary>
 		/// year, month, day, etc. in Clock time
+		/// Will pick the offset from the tz
 		/// </summary>
 		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) 
 		{
@@ -272,9 +300,7 @@ namespace CosmosTime
 
 		private void Init(UtcTime utc, TimeSpan offset)
 		{
-			_offsetMinutes = Shared.GetWholeMinutes(offset);
-			if (_offsetMinutes < -840 || _offsetMinutes > 840)
-				throw new ArgumentException("offset must be max [+-] 14 hours");
+			_offsetMinutes = Shared.ValidateOffset(offset);
 			_utc = utc;
 		}
 

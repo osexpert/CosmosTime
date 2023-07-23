@@ -1,6 +1,7 @@
 ﻿using CosmosTime.TimeZone;
 using FakeTimeZone;
 using NodaTime;
+using System.Globalization;
 using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Xml.Linq;
@@ -813,6 +814,46 @@ namespace CosmosTime.UnitTests
 			Assert.Equal(p1, p2);
 			Assert.Equal(p1, p3);
 			Assert.Equal("2020-01-02T03:04:05", p1.ToString());
+		}
+
+		[Fact]
+		public void UTcTime_DateAndTimeOnly()
+		{
+			var t = new UtcTime(2020, 4, 6, 7, 8, 42);
+			var d = t.Date;
+			var tod = t.TimeOfDay;
+			Assert.Equal("2020-04-06", d.ToIsoString());
+			Assert.Equal("07:08:42.0000000", tod.ToIsoString());
+		}
+
+		[Fact]
+		public void OFfsetTime_DateAndTimeOnly()
+		{
+			var t = new OffsetTime(2020, 4, 6, 7, 8, 42, TimeSpan.FromMinutes(42));
+			var d = t.Date;
+			var tod = t.TimeOfDay;
+			Assert.Equal("2020-04-06", d.ToIsoString());
+			Assert.Equal("07:08:42.0000000", tod.ToIsoString());
+		}
+
+		[Fact]
+		public void ZoneTime_DateAndTimeOnly()
+		{
+			var t = new ZoneTime(2020, 4, 6, 7, 8, 42, TimeZoneInfo.Utc);
+			var d = t.Date;
+			var tod = t.TimeOfDay;
+			Assert.Equal("2020-04-06", d.ToIsoString());
+			Assert.Equal("07:08:42.0000000", tod.ToIsoString());
+		}
+
+		[Fact]
+		public void ClockTime_DateAndTimeOnly()
+		{
+			var t = new ClockTime(2020, 4, 6, 7, 8, 42);
+			var d = t.Date;
+			var tod = t.TimeOfDay;
+			Assert.Equal("2020-04-06", d.ToIsoString());
+			Assert.Equal("07:08:42.0000000", tod.ToIsoString());
 		}
 	}
 }

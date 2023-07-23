@@ -31,7 +31,7 @@ you must use UtcOffsetTimeCosmosDbJsonConverter that will format like this:
  "offsetMinutes": 30
 }  
 
-Documentation (mostly TODO) is it the wiki: https://github.com/osexpert/CosmosTime/wiki/CosmosTime
+Documentation (mostly TODO) is it the wiki: https://github.com/osexpert/CosmosTime/wiki
 Made with: https://github.com/Doraku/DefaultDocumentation
 
 Some collected links with info\problems about times in Newtonsoft\CosmosDb:

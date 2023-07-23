@@ -36,10 +36,7 @@ namespace CosmosTime
 			// zonedDateTime should never be Local kind
 			// zonedDateTime should be Kind Utc if tz is Utc
 
-			var offsetMinutes = Shared.GetWholeMinutes(offset);
-
-			if (offsetMinutes < -840 || offsetMinutes > 840)
-				return (false, "offset must be max [+-] 14 hours");
+			var offsetMinutes = Shared.ValidateOffset(offset);
 
 			// FIXME: is there an easier\more effective way to validate this?
 			if (tz.IsAmbiguousTime(zonedDateTime))
@@ -91,6 +88,14 @@ namespace CosmosTime
 			{
 				return new[] { tz.GetUtcOffset(time) };
 			}
+		}
+
+		internal static short ValidateOffset(TimeSpan offset)
+		{
+			var offsetMinutes = Shared.GetWholeMinutes(offset);
+			if (offsetMinutes < -840 || offsetMinutes > 840)
+				throw new ArgumentException("offset must be max [+-] 14 hours");
+			return offsetMinutes;
 		}
 
 		//internal static TimeZoneInfo GetTimeZoneFromKindUtcOrLocal(DateTime utcOrLocalTime)
