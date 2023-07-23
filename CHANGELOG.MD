@@ -1,4 +1,4 @@
-0.0.2
+# 0.0.2
 Renamed UtcOffsetTime -> OffsetTime
 Renamed ZonedTime -> ZoneTime
 Added ClockTime
@@ -8,6 +8,6 @@ Added DateOnly\TimeOnly support via "Portable.System.DateTimeOnly"
 Added type converters for all classes.
 Start adding docs.
 
-0.0.1
+# 0.0.1
 First release.
 Much of the basic stuff should be there.
