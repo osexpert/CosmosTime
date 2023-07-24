@@ -2,7 +2,6 @@
 using FakeTimeZone;
 using NodaTime;
 using System.Globalization;
-using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Xml.Linq;
 using Xunit.Sdk;
@@ -374,11 +373,15 @@ namespace CosmosTime.UnitTests
 				}
 				else if (tz.Id == "Mid-Atlantic Standard Time")
 				{
+#if NET6_0_OR_GREATER
 					Assert.False(tz.HasIanaId);
+#endif
 				}
 				else if (tz.Id == "Kamchatka Standard Time")
 				{
+#if NET6_0_OR_GREATER
 					Assert.False(tz.HasIanaId);
+#endif
 				}
 				else
 				{
@@ -597,7 +600,11 @@ namespace CosmosTime.UnitTests
 			{
 				var zdt = new ZonedDateTime(dt, utcMinus8, Offset.FromHours(-8));
 			});
+#if NET6_0_OR_GREATER
 			Assert.Equal("Offset -08 is invalid for local date and time 10.03.2013 02:34:56 in time zone America/Vancouver (Parameter 'offset')", ae1.Message);
+#else
+			Assert.Equal("Offset -08 is invalid for local date and time 10.03.2013 02:34:56 in time zone America/Vancouver\r\nParameter name: offset", ae1.Message);
+#endif
 
 			var ae2 = Assert.Throws<ArgumentException>(() =>
 			{
