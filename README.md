@@ -1,11 +1,10 @@
 # CosmosTime
 A restricted set of time structs, UtcTime, OffsetTime, ZoneTime, ClockTime, trying to fix some of the problems with DateTime\DateTimeOffset and be nice to CosmosDB that require a specific fixed length format ("yyyy-MM-ddTHH:mm:ss.fffffffZ") for range queries to work. New date and time system functions in Azure Cosmos DB return this fixed length format (but unfortunately they allow parsing various length formats with\without Z, opening up for hiding bugs).
-Unlike eg. NodaTime that implement all things from scratch, here try to wrap the .NET types as much as possible and build on existing DateTime, DateTimeOffset, TimeZoneInfo etc.
 Parsing and formatting is always in Iso format, and try to stay away from anything "local" (LocalDateTime, LocalTime), since most stuff today run in clouds where local time make no sense.
 Parsing "local" times are never allowed without also providing the offset\time zone. Converting from DateTime etc. are never allower without also providing the offset\time zone.
 Basically, it means that "local" time\"local" time zone is never used for any logic in CosmosTime.
 
-Point also to only support only ISO 8601 with CultureInfo.InvariantCulture for parse and formatting.  
+Point also to only support ISO 8601 for parse and formatting.  
 
 Also a goal is to make parsing and formatting more restricted:  
 
@@ -17,14 +16,14 @@ UtcTime: only allow parsing formats in Zulu or with local+UtcOffset:
 Do not allow parsing formats in local\unspecified time:  
 2020-10-27T10:59:54 -> Kind.Unspecified  
   
-UtcOffsetTime: only allow parsing formats in Zulu or with local+UtcOffset:  
+OffsetTime: only allow parsing formats in Zulu or with local+UtcOffset:  
 2020-10-27T10:59:54Z -> offset 0  
 2020-10-27T10:59:54+00:10  -> offset 10min  
 Do not allow parsing formats in local\unspecified time:  
 2020-10-27T10:59:54  
   
 Formats with local+UtcOffset does not work in CosmosDB because of lexical search, so to format for CosmosDB  
-you must use UtcOffsetTimeCosmosDbJsonConverter that will format like this:  
+you must use OffsetTimeCosmosDbJsonConverter that will format like this:  
 "myTime":
 {  
  "timeUtc": "2009-06-15T13:45:30.0000000Z",  
@@ -33,6 +32,18 @@ you must use UtcOffsetTimeCosmosDbJsonConverter that will format like this:
 
 Documentation (mostly TODO) is it the wiki: https://github.com/osexpert/CosmosTime/wiki
 Made with: https://github.com/Doraku/DefaultDocumentation
+
+DateTime vs. Time:
+For me, DateTime allways sounded strange. Time is "the indefinite continued progress of existence and events in the past, present, and future regarded as a whole", so a time will IMO always have a date.
+So time with a date is simply Time, not DateTime.
+Time without a date is a TimeOfDay.
+For this reason, CosmosTime does not have any types named DateTime, only Time.
+
+Compared to NodaTime:
+NodaTime implement all things from scratch, CosmosTime try to wrap\reuse the .NET types as much as possible and build on existing DateTime, DateTimeOffset, TimeZoneInfo, TimeOnly, DateOnly etc.
+Using Portable.System.DateTimeOnly to enable DateOnly Date and TomeOnly TomeOfDay, even if netstandard 2.0.
+Try to prevent problem like NodaTime's ZonedDateTime, where +- operators, Plus, Minus etc. manupulate the Utc-time, creating problems with the Clock time. In CosmosTime's ZoneTime you must choose explicit if you want to manipulate the Utc or the Clock time.
+CosmosTime's ZoneTime implement IComparable (comparing the Utc component), while NodaTime ZonedDateTime does not implement IComparable (allthou it originally did and then worked the same way, comparing the Instant).
 
 Some collected links with info\problems about times in Newtonsoft\CosmosDb:
 
