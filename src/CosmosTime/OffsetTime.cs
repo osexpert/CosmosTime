@@ -133,10 +133,9 @@ namespace CosmosTime
 		/// <summary>
 		/// Add ticks
 		/// </summary>
-		/// <param name="t"></param>
+		/// <param name="ticks"></param>
 		/// <returns></returns>
-		public OffsetTime AddTicks(long t) => new OffsetTime(Ticks + t, Offset);
-
+		public OffsetTime AddTicks(long ticks) => new OffsetTime(Ticks + t, Offset);
 		// <summary>
 		// The specified time is clock time (not utc)
 		// </summary>
@@ -407,6 +406,13 @@ namespace CosmosTime
 			}
 			return CompareTo((OffsetTime)obj);
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="t"></param>
+		/// <returns></returns>
+		public OffsetTime Add(TimeSpan t) => new OffsetTime(_utc + t, Offset);
 
 		/// <summary>
 		/// TODO

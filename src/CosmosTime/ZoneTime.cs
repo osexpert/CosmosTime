@@ -562,6 +562,13 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
+		/// <param name="ticks"></param>
+		/// <returns></returns>
+		public ZoneTime AddUtcTicks(long ticks) => AddUtc(TimeSpan.FromTicks(ticks));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
 		/// <param name="sec"></param>
 		/// <returns></returns>
 		public ZoneTime AddUtcSeconds(double sec) => AddUtc(TimeSpan.FromSeconds(sec));
@@ -583,6 +590,13 @@ namespace CosmosTime
 		// You can still add 24 hours, but then it may be clearer that you are not adding days.
 		//		public ZoneTime AddUtcDays(double days) => AddUtc(TimeSpan.FromDays(days));
 
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="ticks"></param>
+		/// <returns></returns>
+		public ZoneTime AddClockTicks(long ticks) => AddClock(TimeSpan.FromTicks(ticks));
 
 
 		/// <summary>
