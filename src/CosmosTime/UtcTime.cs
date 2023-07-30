@@ -52,11 +52,6 @@ namespace CosmosTime
 		public DateOnly Date => DateOnly.FromDateTime(_utc);
 
 
-		// <summary>
-		// Date part in Utc
-		// </summary>
-		//public UtcTime DatePart => _utc.Date.ToUtcTime();
-
 		/// <summary>
 		/// Fixed length (28 chars) Iso format in Utc.
 		/// Example: 2020-01-20T12:13:14.0000000Z
@@ -67,15 +62,15 @@ namespace CosmosTime
 			return _utc.ToString(Constants.FixedLengthIsoFormatWithZ, CultureInfo.InvariantCulture);
 		}
 
-		/// <summary>
-		/// Invariant culture
-		/// </summary>
-		/// <param name="format"></param>
-		/// <returns></returns>
-		public string ToString(string format)
-		{
-			return _utc.ToString(format, CultureInfo.InvariantCulture);
-		}
+		// <summary>
+		// Invariant culture
+		// </summary>
+		// <param name="format"></param>
+		// <returns></returns>
+		//public string ToString(string format)
+		//{
+		//	return _utc.ToString(format, CultureInfo.InvariantCulture);
+		//}
 
 		/// <summary>
 		/// Iso format with variable length milliseconds in utc (Z)
@@ -96,7 +91,7 @@ namespace CosmosTime
 		public static UtcTime FromUtcDateTime(DateTime utcTime)
 		{
 			if (utcTime.Kind != DateTimeKind.Utc)
-				throw new ArgumentException("kind must be utc");
+				throw new ArgumentException("DateTime.Kind must be DateTimeKind.Utc");
 
 			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
 			return new UtcTime { _utc = utcTime };
@@ -108,7 +103,7 @@ namespace CosmosTime
 		public static UtcTime FromLocalDateTime(DateTime localTime)
 		{
 			if (localTime.Kind != DateTimeKind.Local)
-				throw new ArgumentException("kind must be local");
+				throw new ArgumentException("DateTime.Kind must be DateTimeKind.Local");
 
 			// Since Kind now is either Utc or Local, ToUniversalTime is predictable.
 			return new UtcTime { _utc = localTime.ToUniversalTime() };
@@ -203,7 +198,7 @@ namespace CosmosTime
 		public static UtcTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeSpan offset)
 		{
 			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
-				throw new ArgumentException("Kind must be unspecified");
+				throw new ArgumentException("DateTime.Kind must be DateTimeKind.Unspecified");
 
 			Shared.ValidateOffset(offset);
 
@@ -224,7 +219,7 @@ namespace CosmosTime
 				throw new ArgumentNullException();
 
 			if (unspecifiedTime.Kind != DateTimeKind.Unspecified)
-				throw new ArgumentException("Kind must be unspecified");
+				throw new ArgumentException("DateTime.Kind must be DateTimeKind.Unspecified");
 
 			
 			// ConvertTimeToUtc will verify the time is valid in the zone
@@ -422,7 +417,7 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// Only allows {utc}Z or {local}[+-]{offset}
+		/// Only allows Iso formats {utc}Z or {local}[+-]{offset}
 		/// </summary>
 		/// <param name="str"></param>
 		/// <returns></returns>

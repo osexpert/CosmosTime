@@ -96,7 +96,7 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="t"></param>
 		/// <returns></returns>
-		public ClockTime AddTicks(long t) => ToClockTime(_clock_time.AddTicks(t));
+		public ClockTime AddTicks(long ticks) => ToClockTime(_clock_time.AddTicks(ticks));
 
 		private static ClockTime ToClockTime_MakeUnspecified(DateTime t) => ToClockTime(DateTime.SpecifyKind(t, DateTimeKind.Unspecified));
 
@@ -108,7 +108,7 @@ namespace CosmosTime
 		private static ClockTime ToClockTime(DateTime unspecTime)
 		{
 			if (unspecTime.Kind != DateTimeKind.Unspecified)
-				throw new ArgumentException("Unspecified kind required");
+				throw new ArgumentException("DateTimeKind.Unspecified is required");
 			return new ClockTime { _clock_time = unspecTime };
 		}
 
