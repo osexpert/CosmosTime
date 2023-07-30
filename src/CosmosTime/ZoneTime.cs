@@ -368,6 +368,18 @@ namespace CosmosTime
 		/// <returns></returns>
 		public bool Equals(ZoneTime other) => this._offset_time.Equals(other._offset_time);
 
+
+		/// <summary>
+		/// Also check that offset and zone is the same
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool EqualsExact(ZoneTime other)
+		{
+			return _offset_time.EqualsExact(other._offset_time) && _tz == other._tz;
+		}
+
+
 		/// <summary>
 		/// TODO
 		/// </summary>

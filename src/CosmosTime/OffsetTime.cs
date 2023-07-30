@@ -135,7 +135,8 @@ namespace CosmosTime
 		/// </summary>
 		/// <param name="ticks"></param>
 		/// <returns></returns>
-		public OffsetTime AddTicks(long ticks) => new OffsetTime(Ticks + t, Offset);
+		public OffsetTime AddTicks(long ticks) => new OffsetTime(Ticks + ticks, Offset);
+
 		// <summary>
 		// The specified time is clock time (not utc)
 		// </summary>
@@ -390,6 +391,16 @@ namespace CosmosTime
 		/// <returns></returns>
 		public bool Equals(OffsetTime other) => this._utc == other._utc;
 
+
+		/// <summary>
+		/// Also check that offset is the same
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public bool EqualsExact(OffsetTime other)
+		{
+			return _utc == other._utc && _offsetMinutes == other._offsetMinutes;
+		}
 
 		/// <summary>
 		/// TODO
