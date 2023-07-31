@@ -113,24 +113,22 @@ namespace CosmosTime
 
 		/// <summary>
 		/// TODO
-		/// DateOnly?
 		/// </summary>
 		/// <returns></returns>
-		public DateTime GetFirstDate()
+		public DateOnly GetFirstDate()
 		{
 			//return DateOnly.FromDateTime(ISOWeek.ToDateTime(Year, Number, DayOfWeek.Monday));
-			return ISOWeek.ToDateTime(Year, Number, DayOfWeek.Monday);
+			return DateOnly.FromDateTime(ISOWeek.ToDateTime(Year, Number, DayOfWeek.Monday));
 		}
 
 		/// <summary>
 		/// TODO
-		/// DateOnly?
 		/// </summary>
 		/// <returns></returns>
-		public DateTime GetLastDate()
+		public DateOnly GetLastDate()
 		{
 			//return DateOnly.FromDateTime(
-			return ISOWeek.ToDateTime(Year, Number, DayOfWeek.Sunday);
+			return DateOnly.FromDateTime(ISOWeek.ToDateTime(Year, Number, DayOfWeek.Sunday));
 		}
 
 		/// <summary>

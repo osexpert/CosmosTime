@@ -1,0 +1,255 @@
+﻿CosmosTime.ClockTime
+CosmosTime.ClockTime.AddDays(double days) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddHours(double h) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddMinutes(double min) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddSeconds(double sec) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddTicks(long ticks) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.ClockDateTime.get -> System.DateTime
+CosmosTime.ClockTime.ClockTime() -> void
+CosmosTime.ClockTime.ClockTime(int year, int month, int day) -> void
+CosmosTime.ClockTime.ClockTime(int year, int month, int day, int hour, int minute, int second) -> void
+CosmosTime.ClockTime.ClockTime(int year, int month, int day, int hour, int minute, int second, int millis) -> void
+CosmosTime.ClockTime.ClockTime(long ticks) -> void
+CosmosTime.ClockTime.ClockTime(System.DateTime anyTime) -> void
+CosmosTime.ClockTime.CompareTo(CosmosTime.ClockTime other) -> int
+CosmosTime.ClockTime.Date.get -> System.DateOnly
+CosmosTime.ClockTime.Equals(CosmosTime.ClockTime other) -> bool
+CosmosTime.ClockTime.Ticks.get -> long
+CosmosTime.ClockTime.TimeOfDay.get -> System.TimeOnly
+CosmosTime.ClockTimeTypeConverter
+CosmosTime.ClockTimeTypeConverter.ClockTimeTypeConverter() -> void
+CosmosTime.CosmosTimeExtensions
+CosmosTime.IsoWeek
+CosmosTime.IsoWeek.CompareTo(CosmosTime.IsoWeek other) -> int
+CosmosTime.IsoWeek.CompareTo(object obj) -> int
+CosmosTime.IsoWeek.Equals(CosmosTime.IsoWeek other) -> bool
+CosmosTime.IsoWeek.GetFirstDate() -> System.DateOnly
+CosmosTime.IsoWeek.GetLastDate() -> System.DateOnly
+CosmosTime.IsoWeek.GetNext() -> CosmosTime.IsoWeek
+CosmosTime.IsoWeek.GetPrevious() -> CosmosTime.IsoWeek
+CosmosTime.IsoWeek.IsoWeek() -> void
+CosmosTime.IsoWeek.IsoWeek(int year, int number) -> void
+CosmosTime.IsoWeek.Number.get -> int
+CosmosTime.IsoWeek.Year.get -> int
+CosmosTime.OffsetTime
+CosmosTime.OffsetTime.Add(System.TimeSpan t) -> CosmosTime.OffsetTime
+CosmosTime.OffsetTime.AddTicks(long ticks) -> CosmosTime.OffsetTime
+CosmosTime.OffsetTime.ClockDateTime.get -> System.DateTime
+CosmosTime.OffsetTime.CompareTo(CosmosTime.OffsetTime other) -> int
+CosmosTime.OffsetTime.Date.get -> System.DateOnly
+CosmosTime.OffsetTime.Equals(CosmosTime.OffsetTime other) -> bool
+CosmosTime.OffsetTime.EqualsExact(CosmosTime.OffsetTime other) -> bool
+CosmosTime.OffsetTime.Offset.get -> System.TimeSpan
+CosmosTime.OffsetTime.OffsetTime() -> void
+CosmosTime.OffsetTime.OffsetTime(CosmosTime.UtcTime utc, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, System.TimeZoneInfo tz) -> void
+CosmosTime.OffsetTime.OffsetTime(long ticks, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.Ticks.get -> long
+CosmosTime.OffsetTime.TimeOfDay.get -> System.TimeOnly
+CosmosTime.OffsetTime.ToDateTimeOffset() -> System.DateTimeOffset
+CosmosTime.OffsetTime.UtcDateTime.get -> System.DateTime
+CosmosTime.OffsetTime.UtcTime.get -> CosmosTime.UtcTime
+CosmosTime.OffsetTimeTypeConverter
+CosmosTime.OffsetTimeTypeConverter.OffsetTimeTypeConverter() -> void
+CosmosTime.Shared
+CosmosTime.TimeZone.IanaTimeZone
+CosmosTime.TimeZone.IanaTimeZoneTool
+CosmosTime.TimeZone.IanaTimeZoneTool.IanaTimeZoneTool() -> void
+CosmosTime.UtcTime
+CosmosTime.UtcTime.AddDays(double days) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddHours(double h) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddMinutes(double min) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddSeconds(double sec) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.CompareTo(CosmosTime.UtcTime other) -> int
+CosmosTime.UtcTime.Date.get -> System.DateOnly
+CosmosTime.UtcTime.Equals(CosmosTime.UtcTime other) -> bool
+CosmosTime.UtcTime.Ticks.get -> long
+CosmosTime.UtcTime.TimeOfDay.get -> System.TimeOnly
+CosmosTime.UtcTime.ToCosmosDb() -> string
+CosmosTime.UtcTime.UtcDateTime.get -> System.DateTime
+CosmosTime.UtcTime.UtcTime() -> void
+CosmosTime.UtcTime.UtcTime(int year, int month, int day) -> void
+CosmosTime.UtcTime.UtcTime(int year, int month, int day, int hour, int minute, int second) -> void
+CosmosTime.UtcTime.UtcTime(int year, int month, int day, int hour, int minute, int second, int millis) -> void
+CosmosTime.UtcTimeTypeConverter
+CosmosTime.UtcTimeTypeConverter.UtcTimeTypeConverter() -> void
+CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClock(System.TimeSpan t) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockDays(double days) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockHours(double h) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockMinutes(double min) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockSeconds(double sec) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockTicks(long ticks) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtc(System.TimeSpan t) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcHours(double h) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcMinutes(double min) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcSeconds(double sec) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcTicks(long ticks) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.CompareTo(CosmosTime.ZoneTime other) -> int
+CosmosTime.ZoneTime.Date.get -> System.DateOnly
+CosmosTime.ZoneTime.Equals(CosmosTime.ZoneTime other) -> bool
+CosmosTime.ZoneTime.EqualsExact(CosmosTime.ZoneTime other) -> bool
+CosmosTime.ZoneTime.OffsetTime.get -> CosmosTime.OffsetTime
+CosmosTime.ZoneTime.SubtractClock(CosmosTime.ZoneTime t) -> System.TimeSpan
+CosmosTime.ZoneTime.SubtractClock(System.TimeSpan t) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.SubtractUtc(CosmosTime.ZoneTime t) -> System.TimeSpan
+CosmosTime.ZoneTime.SubtractUtc(System.TimeSpan t) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.Ticks.get -> long
+CosmosTime.ZoneTime.TimeOfDay.get -> System.TimeOnly
+CosmosTime.ZoneTime.Zone.get -> System.TimeZoneInfo
+CosmosTime.ZoneTime.ZoneTime() -> void
+CosmosTime.ZoneTime.ZoneTime(CosmosTime.ClockTime clockTime, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(CosmosTime.ClockTime clockTime, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
+CosmosTime.ZoneTime.ZoneTime(CosmosTime.OffsetTime time, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(CosmosTime.UtcTime time, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
+CosmosTime.ZoneTimeTypeConverter
+CosmosTime.ZoneTimeTypeConverter.ZoneTimeTypeConverter() -> void
+override CosmosTime.ClockTime.Equals(object obj) -> bool
+override CosmosTime.ClockTime.GetHashCode() -> int
+override CosmosTime.ClockTime.ToString() -> string
+override CosmosTime.ClockTimeTypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+override CosmosTime.ClockTimeTypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+override CosmosTime.ClockTimeTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+override CosmosTime.IsoWeek.Equals(object obj) -> bool
+override CosmosTime.IsoWeek.GetHashCode() -> int
+override CosmosTime.IsoWeek.ToString() -> string
+override CosmosTime.OffsetTime.Equals(object obj) -> bool
+override CosmosTime.OffsetTime.GetHashCode() -> int
+override CosmosTime.OffsetTime.ToString() -> string
+override CosmosTime.OffsetTimeTypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+override CosmosTime.OffsetTimeTypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+override CosmosTime.OffsetTimeTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+override CosmosTime.UtcTime.Equals(object obj) -> bool
+override CosmosTime.UtcTime.GetHashCode() -> int
+override CosmosTime.UtcTime.ToString() -> string
+override CosmosTime.UtcTimeTypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+override CosmosTime.UtcTimeTypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+override CosmosTime.UtcTimeTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+override CosmosTime.ZoneTime.Equals(object obj) -> bool
+override CosmosTime.ZoneTime.GetHashCode() -> int
+override CosmosTime.ZoneTime.ToString() -> string
+override CosmosTime.ZoneTimeTypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+override CosmosTime.ZoneTimeTypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+override CosmosTime.ZoneTimeTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+static CosmosTime.ClockTime.LocalNow.get -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.Now(System.TimeZoneInfo tz) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.operator !=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator +(CosmosTime.ClockTime d, System.TimeSpan t) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> System.TimeSpan
+static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime d, System.TimeSpan t) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.operator <(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator <=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator ==(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator >(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator >=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.Parse(string str) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.TryParse(string str, out CosmosTime.ClockTime clockTime) -> bool
+static CosmosTime.ClockTime.UtcNow.get -> CosmosTime.ClockTime
+static CosmosTime.CosmosTimeExtensions.GetUtcOffset(this System.TimeZoneInfo tz, System.DateTime dt, System.Func<System.TimeSpan[], System.TimeSpan> chooseOffsetIfAmbigous) -> System.TimeSpan
+static CosmosTime.CosmosTimeExtensions.GetUtcOffset(this System.TimeZoneInfo tz, System.DateTimeOffset dto, System.Func<System.TimeSpan[], System.TimeSpan> chooseOffsetIfAmbigous) -> System.TimeSpan
+static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.OffsetTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.UtcTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.ZoneTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.CosmosTimeExtensions.GetWeek(this System.DateTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.CosmosTimeExtensions.ToClockTime(this CosmosTime.ZoneTime zoned) -> CosmosTime.ClockTime
+static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.DateOnly dateOnly) -> string
+static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.TimeOnly timeOnly) -> string
+static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this CosmosTime.UtcTime utc, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this System.DateTimeOffset dto) -> CosmosTime.OffsetTime
+static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this System.DateTimeOffset? dto) -> CosmosTime.OffsetTime?
+static CosmosTime.CosmosTimeExtensions.ToUtcDateTime(this CosmosTime.UtcTime? utc) -> System.DateTime?
+static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.ClockTime ct, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.ClockTime ct, System.TimeZoneInfo tz, System.TimeSpan offset) -> CosmosTime.ZoneTime
+static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.OffsetTime offsetTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.UtcTime utcTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.IsoWeek.GetWeek(System.DateTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.IsoWeek.GetWeeksInRangeIterator(System.DateTime from, System.DateTime to) -> System.Collections.Generic.IEnumerable<CosmosTime.IsoWeek>
+static CosmosTime.IsoWeek.GetWeeksInYear(int year) -> int
+static CosmosTime.IsoWeek.GetWeeksInYearIterator(int year) -> System.Collections.Generic.IEnumerable<CosmosTime.IsoWeek>
+static CosmosTime.IsoWeek.operator !=(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.IsoWeek.operator <(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.IsoWeek.operator <=(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.IsoWeek.operator ==(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.IsoWeek.operator >(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.IsoWeek.operator >=(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
+static CosmosTime.OffsetTime.FromLocalDateTime(System.DateTime localTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.FromUtcDateTime(System.DateTime utcTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.LocalNow.get -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.Now(System.TimeZoneInfo tz) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.operator !=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator +(CosmosTime.OffsetTime d, System.TimeSpan t) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> System.TimeSpan
+static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime d, System.TimeSpan t) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.operator <(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator <=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator ==(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator >(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator >=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.Parse(string str) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.ParseCosmosDb(string utc, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.TryParse(string utcOffsetString, out CosmosTime.OffsetTime uo) -> bool
+static CosmosTime.OffsetTime.TryParse(string utcOffsetString, out CosmosTime.OffsetTime uo, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetOfNone) -> bool
+static CosmosTime.OffsetTime.UtcNow.get -> CosmosTime.OffsetTime
+static CosmosTime.Shared.GetWholeMinutes(System.TimeSpan timeSpan) -> short
+static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(string windows_or_Iana_Id) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(System.TimeZoneInfo tz) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetIanaIds() -> System.Collections.Generic.IEnumerable<string>
+static CosmosTime.TimeZone.IanaTimeZone.GetTimeZoneInfo(string ianaId) -> System.TimeZoneInfo
+static CosmosTime.TimeZone.IanaTimeZone.GetWindowsId(string ianaId) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetWindowsIds() -> System.Collections.Generic.IEnumerable<string>
+static CosmosTime.TimeZone.IanaTimeZone.LocalIanaId.get -> string
+static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(string windows_or_Iana_Id, out string ianaId) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(System.TimeZoneInfo tz, out string ianaId) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.TryGetTimeZoneInfo(string ianaId, out System.TimeZoneInfo tz) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.TryGetWindowsId(string ianaId, out string winId) -> bool
+static CosmosTime.TimeZone.IanaTimeZoneTool.Generate(string timeZoneMapFileToWrite) -> void
+static CosmosTime.UtcTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.Now.get -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.operator !=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator +(CosmosTime.UtcTime d, System.TimeSpan t) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> System.TimeSpan
+static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime d, System.TimeSpan t) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.operator <(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator <=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator ==(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator >(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator >=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.Parse(string str) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.Parse(string str, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetIfNone) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.ParseCosmosDb(string utc) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.TryParse(string str, out CosmosTime.UtcTime utc) -> bool
+static CosmosTime.UtcTime.TryParse(string str, out CosmosTime.UtcTime utc, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetIfNone) -> bool
+static CosmosTime.ZoneTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.FromUnspecifiedDateTime(System.DateTime unspecTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.LocalNow.get -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.Now(System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.operator !=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator <(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator <=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator ==(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator >(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator >=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.TryParse(string time, out CosmosTime.ZoneTime zoned, System.Func<System.TimeSpan[], System.TimeSpan> chooseOffsetIfAmbigous = null) -> bool
+static CosmosTime.ZoneTime.UtcNow.get -> CosmosTime.ZoneTime
+static readonly CosmosTime.ClockTime.MaxValue -> CosmosTime.ClockTime
+static readonly CosmosTime.ClockTime.MinValue -> CosmosTime.ClockTime
+static readonly CosmosTime.OffsetTime.MaxValue -> CosmosTime.OffsetTime
+static readonly CosmosTime.OffsetTime.MinValue -> CosmosTime.OffsetTime
+static readonly CosmosTime.UtcTime.MaxValue -> CosmosTime.UtcTime
+static readonly CosmosTime.UtcTime.MinValue -> CosmosTime.UtcTime

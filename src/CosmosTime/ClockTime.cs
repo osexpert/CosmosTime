@@ -94,7 +94,7 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="t"></param>
+		/// <param name="ticks"></param>
 		/// <returns></returns>
 		public ClockTime AddTicks(long ticks) => ToClockTime(_clock_time.AddTicks(ticks));
 
