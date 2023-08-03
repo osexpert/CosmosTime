@@ -203,17 +203,15 @@ static CosmosTime.OffsetTime.TryParse(string utcOffsetString, out CosmosTime.Off
 static CosmosTime.OffsetTime.TryParse(string utcOffsetString, out CosmosTime.OffsetTime uo, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetOfNone) -> bool
 static CosmosTime.OffsetTime.UtcNow.get -> CosmosTime.OffsetTime
 static CosmosTime.Shared.GetWholeMinutes(System.TimeSpan timeSpan) -> short
-static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(string windows_or_Iana_Id) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(string ianaId_or_windowsId) -> string
 static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(System.TimeZoneInfo tz) -> string
-static CosmosTime.TimeZone.IanaTimeZone.GetIanaIds() -> System.Collections.Generic.IEnumerable<string>
 static CosmosTime.TimeZone.IanaTimeZone.GetTimeZoneInfo(string ianaId) -> System.TimeZoneInfo
 static CosmosTime.TimeZone.IanaTimeZone.GetWindowsId(string ianaId) -> string
-static CosmosTime.TimeZone.IanaTimeZone.GetWindowsIds() -> System.Collections.Generic.IEnumerable<string>
 static CosmosTime.TimeZone.IanaTimeZone.LocalIanaId.get -> string
-static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(string windows_or_Iana_Id, out string ianaId) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(string ianaId_or_windowsId, out string ianaId) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(System.TimeZoneInfo tz, out string ianaId) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.TryGetTimeZoneInfo(string ianaId, out System.TimeZoneInfo tz) -> bool
-static CosmosTime.TimeZone.IanaTimeZone.TryGetWindowsId(string ianaId, out string winId) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.TryGetWindowsId(string ianaId, out string windowsId) -> bool
 static CosmosTime.TimeZone.IanaTimeZoneTool.Generate(string timeZoneMapFileToWrite) -> void
 static CosmosTime.UtcTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.UtcTime

@@ -348,7 +348,7 @@ namespace CosmosTime.UnitTests
 			var zof2_ = new ClockTime(2020, 1, 20, 4, 5, 6, 7).ToZoneTime(IanaTimeZone.GetTimeZoneInfo("Africa/Addis_Ababa"), TimeSpan.FromMinutes(180));
 			Assert.Equal(zof2, zof2_);
 
-			Assert.Equal("2020-01-20T04:05:06.007+03:00[Africa/Nairobi]", zof2.ToString());
+			Assert.Equal($"2020-01-20T04:05:06.007+03:00[{(Net6 ? "Africa/Addis_Ababa" : "Africa/Nairobi")}]", zof2.ToString());
 			var dto_utfo = zof2.OffsetTime.ToDateTimeOffset().ToOffsetTime();
 			Assert.Equal("2020-01-20T04:05:06.007+03:00", dto_utfo.ToString());
 			var utfo = zof2.OffsetTime;
@@ -368,8 +368,20 @@ namespace CosmosTime.UnitTests
 			{
 				if (IanaTimeZone.TryGetIanaId(tz, out var ianaid))
 				{
+#if NET6_0_OR_GREATER
+					if (tz.HasIanaId)
+					{
+						Assert.Equal(tz.Id, ianaid);
+					}
+#endif
+
 					var reverse = IanaTimeZone.GetTimeZoneInfo(ianaid);
+#if NET6_0_OR_GREATER
+					Assert.True(reverse.HasIanaId);
+					Assert.Equal(reverse.Id, ianaid);
+#else
 					Assert.Equal(tz, reverse);
+#endif
 				}
 				else if (tz.Id == "Mid-Atlantic Standard Time")
 				{
@@ -473,18 +485,18 @@ namespace CosmosTime.UnitTests
 
 			var b1_ok = ZoneTime.TryParse("2020-01-20T04:05:06.007+01:00[Europe/Oslo]", out var p1_ok);
 			Assert.True(b1_ok); // ok offset
-			Assert.Equal("2020-01-20T04:05:06.007+01:00[Europe/Berlin]", p1_ok.ToString());
+			Assert.Equal($"2020-01-20T04:05:06.007+01:00[{(Net6 ? "Europe/Oslo" : "Europe/Berlin")}]", p1_ok.ToString());
 
 			var b2 = ZoneTime.TryParse("2020-01-20T04:05:06.007[Europe/Oslo]", out var p2);
 			Assert.True(b2);
-			Assert.Equal("2020-01-20T04:05:06.007+01:00[Europe/Berlin]", p2.ToString());
+			Assert.Equal($"2020-01-20T04:05:06.007+01:00[{(Net6 ? "Europe/Oslo" : "Europe/Berlin")}]", p2.ToString());
 
 			var b3 = ZoneTime.TryParse("2020-01-20T04:05:06.007Z[Europe/Oslo]", out var p3);
 			Assert.False(b3); // Z and tz conflict
 
 			var b4 = ZoneTime.TryParse("2020-01-20T04:05:06.007Z[UTC]", out var p4);
 			Assert.True(b4); // Z and tz match
-			Assert.Equal("2020-01-20T04:05:06.007Z[Etc/UTC]", p4.ToString());
+			Assert.Equal("2020-01-20T04:05:06.007Z[UTC]", p4.ToString());
 		}
 
 
@@ -504,30 +516,30 @@ namespace CosmosTime.UnitTests
 
 			var b1_ok = ZoneTime.TryParse("2020-01-20T04:05:06.007+01:00[Europe/Oslo]", out var p1_ok);
 			Assert.True(b1_ok); // ok offset
-			Assert.Equal("2020-01-20T04:05:06.007+01:00[Europe/Berlin]", p1_ok.ToString());
+			Assert.Equal($"2020-01-20T04:05:06.007+01:00[{(Net6 ? "Europe/Oslo" : "Europe/Berlin")}]", p1_ok.ToString());
 
 			var b2 = ZoneTime.TryParse("2020-01-20T04:05:06.007[Europe/Oslo]", out var p2);
 			Assert.True(b2);
-			Assert.Equal("2020-01-20T04:05:06.007+01:00[Europe/Berlin]", p2.ToString());
+			Assert.Equal($"2020-01-20T04:05:06.007+01:00[{(Net6 ? "Europe/Oslo" : "Europe/Berlin")}]", p2.ToString());
 
 			var b3 = ZoneTime.TryParse("2020-01-20T04:05:06.007Z[Europe/Oslo]", out var p3);
 			Assert.False(b3); // Z and tz conflict
 
 			var b4 = ZoneTime.TryParse("2020-01-20T04:05:06.007Z[UTC]", out var p4);
 			Assert.True(b4); // 
-			Assert.Equal("2020-01-20T04:05:06.007Z[Etc/UTC]", p4.ToString());
+			Assert.Equal("2020-01-20T04:05:06.007Z[UTC]", p4.ToString());
 
 			var b5 = ZoneTime.TryParse("2020-01-20T04:05:06.007+00:00[UTC]", out var p5);
 			Assert.True(b5); // +00:00 ok
-			Assert.Equal("2020-01-20T04:05:06.007Z[Etc/UTC]", p5.ToString());
+			Assert.Equal("2020-01-20T04:05:06.007Z[UTC]", p5.ToString());
 
 			var b6 = ZoneTime.TryParse("2020-01-20T04:05:06.007-00:00[UTC]", out var p6);
 			Assert.True(b6); // -00:00 ok
-			Assert.Equal("2020-01-20T04:05:06.007Z[Etc/UTC]", p6.ToString());
+			Assert.Equal("2020-01-20T04:05:06.007Z[UTC]", p6.ToString());
 
 			var b7 = ZoneTime.TryParse("2020-01-20T04:05:06.007[UTC]", out var p7);
 			Assert.True(b7); // ok
-			Assert.Equal("2020-01-20T04:05:06.007Z[Etc/UTC]", p7.ToString());
+			Assert.Equal("2020-01-20T04:05:06.007Z[UTC]", p7.ToString());
 		}
 
 		/// <summary>
@@ -538,15 +550,15 @@ namespace CosmosTime.UnitTests
 		public void ZonedTime_Pass_dst_Transition()
 		{
 			var z = new ZoneTime(new ClockTime(2017, 10, 29, 1, 45, 0), IanaTimeZone.GetTimeZoneInfo("Europe/Dublin"), TimeSpan.FromHours(1));
-			Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", z.ToString());
+			Assert.Equal($"2017-10-29T01:45:00+01:00[{(Net6 ? "Europe/Dublin" : "Europe/London")}]", z.ToString());
 
 			var zAfter = z.AddUtc(TimeSpan.FromHours(1));
 			// passed DST, same time, offset changed
-			Assert.Equal("2017-10-29T01:45:00+00:00[Europe/London]", zAfter.ToString());
+			Assert.Equal($"2017-10-29T01:45:00+00:00[{(Net6 ? "Europe/Dublin" : "Europe/London")}]", zAfter.ToString());
 
 			// pretty weird, but this time is ambigous, so standard time offset is chosen.
 			var zBack = zAfter.SubtractUtc(TimeSpan.FromHours(1));
-			Assert.Equal("2017-10-29T01:45:00+01:00[Europe/London]", zBack.ToString());
+			Assert.Equal($"2017-10-29T01:45:00+01:00[{(Net6 ? "Europe/Dublin" : "Europe/London")}]", zBack.ToString());
 
 		}
 
@@ -610,7 +622,7 @@ namespace CosmosTime.UnitTests
 			{
 				var zt = new ZoneTime(2013, 3, 10, 2, 34, 56, tz);
 			});
-			Assert.Equal("Invalid time: '2013-03-10T02:34:56-08:00' is invalid in 'America/Los_Angeles'", ae2.Message);
+			Assert.Equal($"Invalid time: '2013-03-10T02:34:56-08:00' is invalid in '{(Net6 ? "America/Vancouver" : "America/Los_Angeles")}'", ae2.Message);
 
 			using (var ftz = new FakeLocalTimeZone(tz))
 			{
@@ -619,7 +631,7 @@ namespace CosmosTime.UnitTests
 				{
 					var zt = ZoneTime.FromLocalDateTime(local);
 				});
-				Assert.Equal("Invalid time: '2013-03-10T02:34:56-08:00' is invalid in 'America/Los_Angeles'", ae3.Message);
+				Assert.Equal($"Invalid time: '2013-03-10T02:34:56-08:00' is invalid in '{(Net6 ? "America/Vancouver" : "America/Los_Angeles")}'", ae3.Message);
 			};
 
 
@@ -637,16 +649,16 @@ namespace CosmosTime.UnitTests
 			//λ > t1
 			//2022 - 11 - 06 00:30:00
 			var zt = new ZoneTime(2022, 11, 6, 0, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
-			Assert.Equal("2022-11-06T00:30:00-05:00[America/Chicago]", zt.ToString());
+			Assert.Equal($"2022-11-06T00:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", zt.ToString());
 
 			var ztplus1h = zt.AddUtcHours(1);
-			Assert.Equal("2022-11-06T01:30:00-05:00[America/Chicago]", ztplus1h.ToString());
+			Assert.Equal($"2022-11-06T01:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", ztplus1h.ToString());
 			var ztplus11h = ztplus1h.AddUtcHours(1);
-			Assert.Equal("2022-11-06T01:30:00-06:00[America/Chicago]", ztplus11h.ToString());
+			Assert.Equal($"2022-11-06T01:30:00-06:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", ztplus11h.ToString());
 			var ztplus111h = ztplus11h.AddUtcHours(1);
-			Assert.Equal("2022-11-06T02:30:00-06:00[America/Chicago]", ztplus111h.ToString());
+			Assert.Equal($"2022-11-06T02:30:00-06:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", ztplus111h.ToString());
 			var ztplus1111h = ztplus111h.AddUtcHours(1);
-			Assert.Equal("2022-11-06T03:30:00-06:00[America/Chicago]", ztplus1111h.ToString());
+			Assert.Equal($"2022-11-06T03:30:00-06:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", ztplus1111h.ToString());
 
 			//λ > --We naively add 4 hours to the local time.
 			//λ > t2 = addLocalTime(secondsToNominalDiffTime 4 * 60 * 60) t1
@@ -673,7 +685,7 @@ namespace CosmosTime.UnitTests
 			//λ > --Convert to UTC, add 1 day, convert back to our time zone.
 			var zt2plus1day = zt2.AddUtcHours(24);
 			// yes...we did end up on day 14..
-			Assert.Equal("2022-03-14T00:30:00-05:00[America/Chicago]", zt2plus1day.ToString());
+			Assert.Equal($"2022-03-14T00:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", zt2plus1day.ToString());
 
 			//λ > TZ.LTUUnique t1utc _ = TZ.localTimeToUTCFull tz t1
 			//λ > t2utc = addUTCTime nominalDay t1utc
@@ -691,6 +703,13 @@ namespace CosmosTime.UnitTests
 			Assert.Equal(24, (after - before).TotalHours);
 
 		}
+
+#if NET6_0_OR_GREATER
+		const bool Net6 = true;
+#else
+		const bool Net6 = false;
+#endif
+
 
 		[Fact]
 		public void ZonedTime_AddClock()
@@ -713,7 +732,7 @@ namespace CosmosTime.UnitTests
 
 			// NO...we did not end up on day 14. So now we moved 1 day locally, but not globally...
 			// Yes, we moved 1 day forward on the clock (imagine an analog circular clock)
-			Assert.Equal("2022-03-13T23:30:00-05:00[America/Chicago]", zt3.ToString());
+			Assert.Equal($"2022-03-13T23:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", zt3.ToString());
 			// in global time, we moved only 23h
 			Assert.Equal(23, (zt3.SubtractUtc(zt2)).TotalHours);
 
@@ -727,16 +746,16 @@ namespace CosmosTime.UnitTests
 		public void ZonedTime_AddClock2()
 		{
 			var t = new ZoneTime(2022, 3, 12, 23, 30, 0, IanaTimeZone.GetTimeZoneInfo("America/Winnipeg"));
-			Assert.Equal("2022-03-12T23:30:00-06:00[America/Chicago]", t.ToString());
+			Assert.Equal($"2022-03-12T23:30:00-06:00[{(Net6? "America/Winnipeg" : "America/Chicago")}]", t.ToString());
 			//λ > --Convert to UTC, add 1 day, convert back to our time zone.
 			//var zt2plus1day = zt2.AddClockDays(1);
 
 			var tplus1utcday = t.AddUtcHours(24);
 			var tplus1clockday = t.AddClockDays(1);
 			// 1 day in utc ends up 2 days ahead
-			Assert.Equal("2022-03-14T00:30:00-05:00[America/Chicago]", tplus1utcday.ToString());
+			Assert.Equal($"2022-03-14T00:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", tplus1utcday.ToString());
 			// 1 day in clock ends up 1 day (obviously, since time part of the iso string is clock time)
-			Assert.Equal("2022-03-13T23:30:00-05:00[America/Chicago]", tplus1clockday.ToString());
+			Assert.Equal($"2022-03-13T23:30:00-05:00[{(Net6 ? "America/Winnipeg" : "America/Chicago")}]", tplus1clockday.ToString());
 
 			var s1 = tplus1utcday.SubtractUtc(t);
 			var s2 = tplus1utcday.SubtractClock(t);

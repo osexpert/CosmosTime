@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Serialization.Sy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Serialization.Dapper", "CosmosTime.Serialization.Dapper\CosmosTime.Serialization.Dapper.csproj", "{B6232C12-A268-4283-ABBD-CE7A145909EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test7", "test7\test7.csproj", "{27352170-7F31-405E-A97F-620BCBEE5B3C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{B6232C12-A268-4283-ABBD-CE7A145909EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6232C12-A268-4283-ABBD-CE7A145909EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6232C12-A268-4283-ABBD-CE7A145909EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27352170-7F31-405E-A97F-620BCBEE5B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27352170-7F31-405E-A97F-620BCBEE5B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27352170-7F31-405E-A97F-620BCBEE5B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27352170-7F31-405E-A97F-620BCBEE5B3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
