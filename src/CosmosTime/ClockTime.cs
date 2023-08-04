@@ -1,4 +1,5 @@
 ﻿
+using CosmosTime.TimeZone;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,7 +61,7 @@ namespace CosmosTime
 
 			if (tz == TimeZoneInfo.Local)
 				return ToClockTime_MakeUnspecified(DateTime.Now);
-			else if (tz == TimeZoneInfo.Utc)
+			else if (tz.IsUtc())
 				return ToClockTime_MakeUnspecified(DateTime.UtcNow);
 			else // convert to time in the zone
 			{

@@ -356,7 +356,7 @@ namespace CosmosTime
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return $"{_offset_time.ToString(_tz == TimeZoneInfo.Utc)}[{GetIanaTzId()}]";
+			return $"{_offset_time.ToString(_tz.IsUtc())}[{GetIanaTzId()}]";
 		}
 
 		/// <summary>

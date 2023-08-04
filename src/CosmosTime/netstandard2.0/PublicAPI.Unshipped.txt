@@ -60,6 +60,7 @@ CosmosTime.Shared
 CosmosTime.TimeZone.IanaTimeZone
 CosmosTime.TimeZone.IanaTimeZoneTool
 CosmosTime.TimeZone.IanaTimeZoneTool.IanaTimeZoneTool() -> void
+CosmosTime.TimeZone.TimeZoneExtensions
 CosmosTime.UtcTime
 CosmosTime.UtcTime.AddDays(double days) -> CosmosTime.UtcTime
 CosmosTime.UtcTime.AddHours(double h) -> CosmosTime.UtcTime
@@ -162,6 +163,8 @@ static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.OffsetTime dt) ->
 static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.UtcTime dt) -> CosmosTime.IsoWeek
 static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.ZoneTime dt) -> CosmosTime.IsoWeek
 static CosmosTime.CosmosTimeExtensions.GetWeek(this System.DateTime dt) -> CosmosTime.IsoWeek
+static CosmosTime.CosmosTimeExtensions.HasIanaId(this System.TimeZoneInfo tz) -> bool
+static CosmosTime.CosmosTimeExtensions.IsUtc(this System.TimeZoneInfo tz) -> bool
 static CosmosTime.CosmosTimeExtensions.ToClockTime(this CosmosTime.ZoneTime zoned) -> CosmosTime.ClockTime
 static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.DateOnly dateOnly) -> string
 static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.TimeOnly timeOnly) -> string
@@ -207,12 +210,16 @@ static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(string ianaId_or_windowsId) ->
 static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(System.TimeZoneInfo tz) -> string
 static CosmosTime.TimeZone.IanaTimeZone.GetTimeZoneInfo(string ianaId) -> System.TimeZoneInfo
 static CosmosTime.TimeZone.IanaTimeZone.GetWindowsId(string ianaId) -> string
+static CosmosTime.TimeZone.IanaTimeZone.HasIanaId(System.TimeZoneInfo tz) -> bool
+static CosmosTime.TimeZone.IanaTimeZone.IsUtc(System.TimeZoneInfo tz) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.LocalIanaId.get -> string
 static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(string ianaId_or_windowsId, out string ianaId) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.TryGetIanaId(System.TimeZoneInfo tz, out string ianaId) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.TryGetTimeZoneInfo(string ianaId, out System.TimeZoneInfo tz) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.TryGetWindowsId(string ianaId, out string windowsId) -> bool
 static CosmosTime.TimeZone.IanaTimeZoneTool.Generate(string timeZoneMapFileToWrite) -> void
+static CosmosTime.TimeZone.TimeZoneExtensions.HasIanaId(this System.TimeZoneInfo tz) -> bool
+static CosmosTime.TimeZone.TimeZoneExtensions.IsUtc(this System.TimeZoneInfo tz) -> bool
 static CosmosTime.UtcTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.UtcTime

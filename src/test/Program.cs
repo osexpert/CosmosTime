@@ -16,6 +16,14 @@ namespace test
 	{
 		static void Main(string[] args)
 		{
+			//TimeZoneInfo.GetSystemTimeZones();
+
+			var poison = TimeZoneInfo.FindSystemTimeZoneById("uTc");
+
+			var list = TimeZoneInfo.GetSystemTimeZones().Where(tz => tz.DisplayName == "(UTC) Coordinated Universal Time" || tz.DisplayName == "UTC").ToList();
+			var tz1 = list.Single(); // tz1.DisplayName: "(UTC) Coordinated Universal Time"
+			var tz2 = TimeZoneInfo.Utc; // tz1.DisplayName: "UTC"
+			var eq = tz1 == tz2; // false
 
 			//var w = new DateTime();
 
@@ -51,7 +59,7 @@ namespace test
 			//λ > modifyLocal(addCalendarClip(calendarDays 1)) t1
 			//2022 - 03 - 13 23:30:00 - 05:00[America / Winnipeg]
 
-			var tz2 = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
+			var tz22 = IanaTimeZone.GetTimeZoneInfo("America/Winnipeg");
 			var tiemInZone2 = new ZoneTime(new ClockTime(2022, 3, 12, 23, 30, 0, 0), tz);
 			var newTime2 = tiemInZone.AddUtc(TimeSpan.FromDays(1));
 

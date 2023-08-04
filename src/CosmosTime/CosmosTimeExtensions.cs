@@ -252,5 +252,6 @@ namespace CosmosTime
 		{
 			return dateOnly.ToString("o", CultureInfo.InvariantCulture);
 		}
+
 	}
 }

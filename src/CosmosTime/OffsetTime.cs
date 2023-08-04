@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CosmosTime.TimeZone;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -43,7 +44,7 @@ namespace CosmosTime
 
 			if (tz == TimeZoneInfo.Local)
 				return DateTimeOffset.Now.ToOffsetTime();
-			else if (tz == TimeZoneInfo.Utc)
+			else if (tz.IsUtc())
 				return DateTimeOffset.UtcNow.ToOffsetTime();
 			else // convert to time in the zone
 			{
