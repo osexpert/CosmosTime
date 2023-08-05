@@ -12,7 +12,7 @@ namespace CosmosTime.Serialization.SystemTextJson
 	/// Format\parse composite format 
 	/// { 
 	///   "timeUtc": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
-	///   "offsetMins": -30
+	///   "offsetMinutes": -30
 	/// }
 	/// </summary>
 	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
