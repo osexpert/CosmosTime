@@ -797,11 +797,35 @@ namespace CosmosTime.TimeZone
 			{"Tonga Standard Time", "Pacific/Tongatapu"},
 		};
 
-		internal static IEnumerable<string> GetIanaIds()
-			=> _ianaToWindows.Keys;
 
-		internal static IEnumerable<string> GetWindowsIds()
-			=> _windowsToIana.Keys;
+		/// <summary>
+		/// TODO
+		/// </summary>
+		public struct Mapping
+		{
+			/// <summary>
+			/// TODO
+			/// </summary>
+			public string IanaId { get; internal set; }
+			/// <summary>
+			/// TODO
+			/// </summary>
+			public string WindowsId { get; internal set; }
+		}
+
+		/// <summary>
+		/// Get mappings from iana to windows
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<Mapping> GetIanaMappings()
+			=> _ianaToWindows.Select(m => new Mapping() { IanaId = m.Key, WindowsId = m.Value });
+
+		/// <summary>
+		/// Get mappings from windows to iana
+		/// </summary>
+		/// <returns></returns>
+		public static IEnumerable<Mapping> GetWindowsMappings()
+			=> _windowsToIana.Select(m => new Mapping() { WindowsId = m.Key, IanaId = m.Value });
 
 		/// <summary>
 		/// TODO
@@ -977,6 +1001,9 @@ namespace CosmosTime.TimeZone
 		/// <returns></returns>
 		public static bool HasIanaId(TimeZoneInfo tz)
 		{
+			if (_customIanaTimeZones.TryGetValue(tz.Id, out _))
+				return true;
+
 			if (_hasIanaId.Value != null)
 				return _hasIanaId.Value(tz);
 			else

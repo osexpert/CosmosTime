@@ -397,23 +397,23 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void TimeZones_Iana()
 		{
-			var ianaIds = IanaTimeZone.GetIanaIds().ToList();
+			var ianaIds = IanaTimeZone.GetIanaMappings().ToList();
 			foreach (var ianaId in ianaIds)
 			{
-				var tz = IanaTimeZone.GetTimeZoneInfo(ianaId);
+				var tz = IanaTimeZone.GetTimeZoneInfo(ianaId.IanaId);
 				Assert.NotNull(tz);
 
-				var winid = IanaTimeZone.GetWindowsId(ianaId);
+				var winid = IanaTimeZone.GetWindowsId(ianaId.IanaId);
 				Assert.NotNull(winid);
 			}
 
-			var winids = IanaTimeZone.GetWindowsIds().ToList();
+			var winids = IanaTimeZone.GetWindowsMappings().ToList();
 			foreach (var wid in winids)
 			{
-				var tz = TimeZoneInfo.FindSystemTimeZoneById(wid);
+				var tz = TimeZoneInfo.FindSystemTimeZoneById(wid.WindowsId);
 				Assert.NotNull(tz);
 
-				var iana = IanaTimeZone.GetIanaId(wid);
+				var iana = IanaTimeZone.GetIanaId(wid.WindowsId);
 				Assert.NotNull(iana);
 			}
 		}
@@ -875,6 +875,17 @@ namespace CosmosTime.UnitTests
 		}
 
 		[Fact]
+		public void CheckHasInanaId()
+		{
+			foreach (var ii in IanaTimeZone.GetIanaMappings())
+			{
+				var tz = IanaTimeZone.GetTimeZoneInfo(ii.IanaId);
+				Assert.True(tz.HasIanaId());
+			}
+		}
+
+
+		[Fact]
 		public void AlwaysTimeZoneInfoUtc()
 		{
 			if (Net6)
@@ -913,12 +924,12 @@ namespace CosmosTime.UnitTests
 			if (Net6)
 			{
 				List<string> tzu = new();
-				foreach (var ii in IanaTimeZone.GetIanaIds())
+				foreach (var ii in IanaTimeZone.GetIanaMappings())
 				{
 					try
 					{
 
-						var t = TimeZoneInfo.FindSystemTimeZoneById(ii);
+						var t = TimeZoneInfo.FindSystemTimeZoneById(ii.IanaId);
 						if (t.DisplayName == "(UTC) Coordinated Universal Time" || t.DisplayName == "UTC")
 							tzu.Add(t.Id);
 					}
@@ -928,12 +939,12 @@ namespace CosmosTime.UnitTests
 			}
 
 			List<string> tzu2 = new();
-			foreach (var ii in IanaTimeZone.GetIanaIds())
+			foreach (var ii in IanaTimeZone.GetIanaMappings())
 			{
 				try
 				{
 
-					var t = IanaTimeZone.GetTimeZoneInfo(ii);
+					var t = IanaTimeZone.GetTimeZoneInfo(ii.IanaId);
 					if (t.DisplayName == "(UTC) Coordinated Universal Time" || t.DisplayName == "UTC")
 						tzu2.Add(t.Id);
 				}

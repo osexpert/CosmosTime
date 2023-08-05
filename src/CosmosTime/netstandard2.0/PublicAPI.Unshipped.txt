@@ -58,6 +58,10 @@ CosmosTime.OffsetTimeTypeConverter
 CosmosTime.OffsetTimeTypeConverter.OffsetTimeTypeConverter() -> void
 CosmosTime.Shared
 CosmosTime.TimeZone.IanaTimeZone
+CosmosTime.TimeZone.IanaTimeZone.Mapping
+CosmosTime.TimeZone.IanaTimeZone.Mapping.IanaId.get -> string
+CosmosTime.TimeZone.IanaTimeZone.Mapping.Mapping() -> void
+CosmosTime.TimeZone.IanaTimeZone.Mapping.WindowsId.get -> string
 CosmosTime.TimeZone.IanaTimeZoneTool
 CosmosTime.TimeZone.IanaTimeZoneTool.IanaTimeZoneTool() -> void
 CosmosTime.TimeZone.TimeZoneExtensions
@@ -208,8 +212,10 @@ static CosmosTime.OffsetTime.UtcNow.get -> CosmosTime.OffsetTime
 static CosmosTime.Shared.GetWholeMinutes(System.TimeSpan timeSpan) -> short
 static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(string ianaId_or_windowsId) -> string
 static CosmosTime.TimeZone.IanaTimeZone.GetIanaId(System.TimeZoneInfo tz) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetIanaMappings() -> System.Collections.Generic.IEnumerable<CosmosTime.TimeZone.IanaTimeZone.Mapping>
 static CosmosTime.TimeZone.IanaTimeZone.GetTimeZoneInfo(string ianaId) -> System.TimeZoneInfo
 static CosmosTime.TimeZone.IanaTimeZone.GetWindowsId(string ianaId) -> string
+static CosmosTime.TimeZone.IanaTimeZone.GetWindowsMappings() -> System.Collections.Generic.IEnumerable<CosmosTime.TimeZone.IanaTimeZone.Mapping>
 static CosmosTime.TimeZone.IanaTimeZone.HasIanaId(System.TimeZoneInfo tz) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.IsUtc(System.TimeZoneInfo tz) -> bool
 static CosmosTime.TimeZone.IanaTimeZone.LocalIanaId.get -> string
