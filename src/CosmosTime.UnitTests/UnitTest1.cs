@@ -397,23 +397,23 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void TimeZones_Iana()
 		{
-			var ianaIds = IanaTimeZone.GetIanaMappings().ToList();
+			var ianaIds = IanaTimeZone.GetIanaIds().ToList();
 			foreach (var ianaId in ianaIds)
 			{
-				var tz = IanaTimeZone.GetTimeZoneInfo(ianaId.IanaId);
+				var tz = IanaTimeZone.GetTimeZoneInfo(ianaId);
 				Assert.NotNull(tz);
 
-				var winid = IanaTimeZone.GetWindowsId(ianaId.IanaId);
+				var winid = IanaTimeZone.GetWindowsId(ianaId);
 				Assert.NotNull(winid);
 			}
 
-			var winids = IanaTimeZone.GetWindowsMappings().ToList();
+			var winids = IanaTimeZone.GetWindowsIds().ToList();
 			foreach (var wid in winids)
 			{
-				var tz = TimeZoneInfo.FindSystemTimeZoneById(wid.WindowsId);
+				var tz = TimeZoneInfo.FindSystemTimeZoneById(wid);
 				Assert.NotNull(tz);
 
-				var iana = IanaTimeZone.GetIanaId(wid.WindowsId);
+				var iana = IanaTimeZone.GetIanaId(wid);
 				Assert.NotNull(iana);
 			}
 		}
@@ -877,9 +877,9 @@ namespace CosmosTime.UnitTests
 		[Fact]
 		public void CheckHasInanaId()
 		{
-			foreach (var ii in IanaTimeZone.GetIanaMappings())
+			foreach (var ii in IanaTimeZone.GetIanaIds())
 			{
-				var tz = IanaTimeZone.GetTimeZoneInfo(ii.IanaId);
+				var tz = IanaTimeZone.GetTimeZoneInfo(ii);
 				Assert.True(tz.HasIanaId());
 			}
 		}
@@ -924,12 +924,12 @@ namespace CosmosTime.UnitTests
 			if (Net6)
 			{
 				List<string> tzu = new();
-				foreach (var ii in IanaTimeZone.GetIanaMappings())
+				foreach (var ii in IanaTimeZone.GetIanaIds())
 				{
 					try
 					{
 
-						var t = TimeZoneInfo.FindSystemTimeZoneById(ii.IanaId);
+						var t = TimeZoneInfo.FindSystemTimeZoneById(ii);
 						if (t.DisplayName == "(UTC) Coordinated Universal Time" || t.DisplayName == "UTC")
 							tzu.Add(t.Id);
 					}
@@ -939,18 +939,40 @@ namespace CosmosTime.UnitTests
 			}
 
 			List<string> tzu2 = new();
-			foreach (var ii in IanaTimeZone.GetIanaMappings())
+			foreach (var ii in IanaTimeZone.GetIanaIds())
 			{
 				try
 				{
 
-					var t = IanaTimeZone.GetTimeZoneInfo(ii.IanaId);
+					var t = IanaTimeZone.GetTimeZoneInfo(ii);
 					if (t.DisplayName == "(UTC) Coordinated Universal Time" || t.DisplayName == "UTC")
 						tzu2.Add(t.Id);
 				}
 				catch { }
 			}
 			Assert.Equal(18, tzu2.Count);
+		}
+
+
+		[Fact]
+		public void Can_Convert_Kyiv_To_Windows()
+		{
+			var result = IanaTimeZone.GetWindowsId("Europe/Kyiv");
+			Assert.Equal("FLE Standard Time", result);
+		}
+
+		[Fact]
+		public void Can_Convert_Kiev_To_Windows()
+		{
+			var result = IanaTimeZone.GetWindowsId("Europe/Kiev");
+			Assert.Equal("FLE Standard Time", result);
+		}
+
+		[Fact]
+		public void TrollNeverWorks()
+		{
+			Assert.Throws<TimeZoneNotFoundException>(() => TimeZoneInfo.FindSystemTimeZoneById("Antarctica/Troll"));
+			Assert.Throws<TimeZoneNotFoundException>(() => IanaTimeZone.GetTimeZoneInfo("Antarctica/Troll"));
 		}
 	}
 }
