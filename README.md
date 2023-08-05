@@ -4,9 +4,9 @@ Parsing and formatting is always in Iso format, and try to stay away from anythi
 Parsing "local" times are never allowed without also providing the offset\time zone. Converting from DateTime etc. are never allower without also providing the offset\time zone.
 Basically, it means that "local" time\"local" time zone is never used for any logic in CosmosTime.
 
-Point also to only support ISO 8601 for parse and formatting.  
+Aim to only support ISO 8601 for parse and formatting.  
 
-Also a goal is to make parsing and formatting more restricted:  
+Aim to make parsing and formatting more restricted:  
 
 Parsing:
 
@@ -44,6 +44,10 @@ NodaTime implement all things from scratch, CosmosTime try to wrap\reuse the .NE
 Using Portable.System.DateTimeOnly to enable DateOnly Date and TomeOnly TomeOfDay, even if netstandard 2.0.
 Try to prevent problem like NodaTime's ZonedDateTime, where +- operators, Plus, Minus etc. manupulate the Utc-time, creating problems with the Clock time. In CosmosTime's ZoneTime you must choose explicit if you want to manipulate the Utc or the Clock time.
 CosmosTime's ZoneTime implement IComparable (comparing the Utc component), while NodaTime ZonedDateTime does not implement IComparable (allthou it originally did and then worked the same way, comparing the Instant).
+
+Bonus:
+* IsoWeek struct
+* IanaTimeZone class, for supporting Iana on pre-NET6.
 
 Some collected links with info\problems about times in Newtonsoft\CosmosDb:
 
