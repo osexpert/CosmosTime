@@ -639,6 +639,18 @@ namespace CosmosTime
 		/// <returns></returns>
 		public ZoneTime AddClockDays(double days) => AddClock(TimeSpan.FromDays(days));
 
+		/// <summary>
+		/// Parse fixed length utc time
+		/// </summary>
+		/// <param name="utcTime"></param>
+		/// <param name="offset"></param>
+		/// <param name="ianaId"></param>
+		/// <returns></returns>
+		public static ZoneTime ParseCosmosDb(string utcTime, TimeSpan offset, string ianaId)
+		{
+			return new(OffsetTime.ParseCosmosDb(utcTime, offset), IanaTimeZone.GetTimeZoneInfo(ianaId));
+		}
+
 
 
 

@@ -821,7 +821,8 @@ namespace CosmosTime.TimeZone
 		/// </summary>
 		/// <param name="tz"></param>
 		/// <returns></returns>
-		public static string GetIanaId(TimeZoneInfo tz) => GetIanaId(tz.Id);
+		public static string GetIanaId(TimeZoneInfo tz)
+			=> tz.HasIanaId() ? tz.Id : GetIanaId(tz.Id);
 
 		/// <summary>
 		/// TODO
@@ -830,7 +831,15 @@ namespace CosmosTime.TimeZone
 		/// <param name="ianaId"></param>
 		/// <returns></returns>
 		public static bool TryGetIanaId(TimeZoneInfo tz, out string ianaId)
-			=> TryGetIanaId(tz.Id, out ianaId);
+		{
+			if (tz.HasIanaId())
+			{
+				ianaId = tz.Id;
+				return true;
+			}
+
+			return TryGetIanaId(tz.Id, out ianaId);
+		}
 
 		/// <summary>
 		/// TODO
@@ -985,6 +994,7 @@ namespace CosmosTime.TimeZone
 		/// <returns></returns>
 		public static bool HasIanaId(TimeZoneInfo tz)
 		{
+			// Must check this first in case we create custom tz on net6+ too, in case we have more up to date mapping than net6...
 			if (_customIanaTimeZones.TryGetValue(tz.Id, out _))
 				return true;
 
@@ -1010,7 +1020,7 @@ namespace CosmosTime.TimeZone
 		private static bool IsUtc(string ianaId)
 		{
 			// Comparing agains TimeZoneInfo.Utc is no longer reliable...
-			// List from Win10, NET7 where DisplayName == "(UTC) Coordinated Universal Time"
+			// List from Win10, NET7 where StandardName == "Coordinated Universal Time" || "UTC"
 			return ianaId switch
 			{
 				"Etc/GMT" => true,

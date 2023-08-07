@@ -17,13 +17,27 @@ namespace CosmosTime.Serialization.SystemTextJson
 	/// </summary>
 	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
 	{
-		/// <inheritdoc/>
-		public override OffsetTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+		string _timeUtcName;
+		string _offsetMinutesName;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="timeUtcName"></param>
+		/// <param name="offsetMinutesName"></param>
+		public OffsetTimeCosmosDbJsonConverter(string timeUtcName = "timeUtc", string offsetMinutesName = "offsetMinutes")
+        {
+			_timeUtcName = timeUtcName;
+			_offsetMinutesName = offsetMinutesName;
+		}
+
+        /// <inheritdoc/>
+        public override OffsetTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			//var obj = JObject.Load(reader);
 			var obj = JsonObject.Parse(ref reader);
 			
-			return OffsetTime.ParseCosmosDb((string)obj["timeUtc"], TimeSpan.FromMinutes((short)obj["offsetMinutes"]));
+			return OffsetTime.ParseCosmosDb((string)obj[_timeUtcName], TimeSpan.FromMinutes((short)obj[_offsetMinutesName]));
 		}
 
 		/// <inheritdoc/>
@@ -34,10 +48,10 @@ namespace CosmosTime.Serialization.SystemTextJson
 
 			writer.WriteStartObject();
 
-			writer.WritePropertyName("timeUtc");
+			writer.WritePropertyName(_timeUtcName);
 			writer.WriteStringValue(rr.UtcTime.ToCosmosDb());
 
-			writer.WritePropertyName("offsetMinutes");
+			writer.WritePropertyName(_offsetMinutesName);
 			writer.WriteNumberValue(Shared.GetWholeMinutes(rr.Offset));
 
 			writer.WriteEndObject();

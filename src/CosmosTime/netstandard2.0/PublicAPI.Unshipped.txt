@@ -256,6 +256,7 @@ static CosmosTime.ZoneTime.operator <=(CosmosTime.ZoneTime a, CosmosTime.ZoneTim
 static CosmosTime.ZoneTime.operator ==(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
 static CosmosTime.ZoneTime.operator >(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
 static CosmosTime.ZoneTime.operator >=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.ParseCosmosDb(string utcTime, System.TimeSpan offset, string ianaId) -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.TryParse(string time, out CosmosTime.ZoneTime zoned, System.Func<System.TimeSpan[], System.TimeSpan> chooseOffsetIfAmbigous = null) -> bool
 static CosmosTime.ZoneTime.UtcNow.get -> CosmosTime.ZoneTime
 static readonly CosmosTime.ClockTime.MaxValue -> CosmosTime.ClockTime
