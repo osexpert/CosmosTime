@@ -58,7 +58,8 @@ namespace CosmosTime.TimeZone
 			try
 			{
 				// net6
-				return CreateGetFieldDelegate<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>(typeof(TimeZoneInfo), "_adjustmentRules");
+				if (typeof(TimeZoneInfo).GetField("_adjustmentRules", BindingFlags.NonPublic) != null)
+					return CreateGetFieldDelegate<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>(typeof(TimeZoneInfo), "_adjustmentRules");
 			}
 			catch
 			{
@@ -67,7 +68,8 @@ namespace CosmosTime.TimeZone
 			try
 			{
 				// net48
-				return CreateGetFieldDelegate<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>(typeof(TimeZoneInfo), "m_adjustmentRules");
+				if (typeof(TimeZoneInfo).GetField("m_adjustmentRules", BindingFlags.NonPublic) != null)
+					return CreateGetFieldDelegate<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>(typeof(TimeZoneInfo), "m_adjustmentRules");
 			}
 			catch
 			{
