@@ -1,3 +1,6 @@
+## 0.0.3
+* Iana improvements, will now roundtrip by creating custom time zones
+
 ## 0.0.2
 * Renamed UtcOffsetTime -> OffsetTime
 * Renamed ZonedTime -> ZoneTime

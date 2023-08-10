@@ -30,7 +30,7 @@
  	  <Authors>osexpert</Authors>
 	  <Copyright>2022 osexpert</Copyright>
     
-    <VersionPrefix>0.0.2</VersionPrefix>
+    <VersionPrefix>0.0.3</VersionPrefix>
     <PackageTags>time iso8601 utc cosmosdb iana</PackageTags>
     <Description>Yet another time library born when working with Cosmos DB. Focus on Utc and ISO8601.</Description>        
 		        
