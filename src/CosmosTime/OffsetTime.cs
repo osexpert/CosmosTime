@@ -175,9 +175,9 @@ namespace CosmosTime
 		/// <summary>
 		/// year, month, day, etc. in Clock time
 		/// </summary>
-		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeSpan offset)
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeSpan offset)
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
 		}
 
@@ -203,9 +203,9 @@ namespace CosmosTime
 		/// year, month, day, etc. in Clock time
 		/// Will pick the offset from the tz
 		/// </summary>
-		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz) 
+		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz) 
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
 			var offset = tz.GetUtcOffset(dt);
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
 		}
@@ -429,74 +429,74 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static TimeSpan operator -(OffsetTime a, OffsetTime b) => a._utc - b._utc;
+		public static TimeSpan operator -(OffsetTime t1, OffsetTime t2) => t1._utc - t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static OffsetTime operator +(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc + t, d.Offset);
+		public static OffsetTime operator +(OffsetTime t, TimeSpan ts) => new OffsetTime(t._utc + ts, t.Offset);
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static OffsetTime operator -(OffsetTime d, TimeSpan t) => new OffsetTime(d._utc - t, d.Offset);
+		public static OffsetTime operator -(OffsetTime t, TimeSpan ts) => new OffsetTime(t._utc - ts, t.Offset);
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator ==(OffsetTime a, OffsetTime b) => a._utc == b._utc;
+		public static bool operator ==(OffsetTime t1, OffsetTime t2) => t1._utc == t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator !=(OffsetTime a, OffsetTime b) => a._utc != b._utc;
+		public static bool operator !=(OffsetTime t1, OffsetTime t2) => t1._utc != t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <(OffsetTime a, OffsetTime b) => a._utc < b._utc;
+		public static bool operator <(OffsetTime t1, OffsetTime t2) => t1._utc < t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >(OffsetTime a, OffsetTime b) => a._utc > b._utc;
+		public static bool operator >(OffsetTime t1, OffsetTime t2) => t1._utc > t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <=(OffsetTime a, OffsetTime b) => a._utc <= b._utc;
+		public static bool operator <=(OffsetTime t1, OffsetTime t2) => t1._utc <= t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >=(OffsetTime a, OffsetTime b) => a._utc >= b._utc;
+		public static bool operator >=(OffsetTime t1, OffsetTime t2) => t1._utc >= t2._utc;
 
 	}
 }

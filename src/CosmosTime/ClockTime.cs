@@ -152,10 +152,10 @@ namespace CosmosTime
 		/// <param name="hour"></param>
 		/// <param name="minute"></param>
 		/// <param name="second"></param>
-		/// <param name="millis"></param>
-		public ClockTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
+		/// <param name="millisecond"></param>
+		public ClockTime(int year, int month, int day, int hour, int minute, int second, int millisecond) : this()
 		{
-			_clock_time = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			_clock_time = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
 		}
 
 		/// <summary>
@@ -194,88 +194,88 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static TimeSpan operator -(ClockTime a, ClockTime b) => a._clock_time - b._clock_time;
+		public static TimeSpan operator -(ClockTime t1, ClockTime t2) => t1._clock_time - t2._clock_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static ClockTime operator +(ClockTime d, TimeSpan t) => ToClockTime(d._clock_time + t);
+		public static ClockTime operator +(ClockTime t, TimeSpan ts) => ToClockTime(t._clock_time + ts);
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static ClockTime operator -(ClockTime d, TimeSpan t) => ToClockTime(d._clock_time - t);
+		public static ClockTime operator -(ClockTime t, TimeSpan ts) => ToClockTime(t._clock_time - ts);
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator ==(ClockTime a, ClockTime b) => a._clock_time == b._clock_time;
+		public static bool operator ==(ClockTime t1, ClockTime t2) => t1._clock_time == t2._clock_time;
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator !=(ClockTime a, ClockTime b) => a._clock_time != b._clock_time;
+		public static bool operator !=(ClockTime t1, ClockTime t2) => t1._clock_time != t2._clock_time;
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <(ClockTime a, ClockTime b) => a._clock_time < b._clock_time;
+		public static bool operator <(ClockTime t1, ClockTime t2) => t1._clock_time < t2._clock_time;
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >(ClockTime a, ClockTime b) => a._clock_time > b._clock_time;
+		public static bool operator >(ClockTime t1, ClockTime t2) => t1._clock_time > t2._clock_time;
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <=(ClockTime a, ClockTime b) => a._clock_time <= b._clock_time;
+		public static bool operator <=(ClockTime t1, ClockTime t2) => t1._clock_time <= t2._clock_time;
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >=(ClockTime a, ClockTime b) => a._clock_time >= b._clock_time;
+		public static bool operator >=(ClockTime t1, ClockTime t2) => t1._clock_time >= t2._clock_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="sec"></param>
+		/// <param name="seconds"></param>
 		/// <returns></returns>
-		public ClockTime AddSeconds(double sec) => ToClockTime(_clock_time.AddSeconds(sec));
+		public ClockTime AddSeconds(double seconds) => ToClockTime(_clock_time.AddSeconds(seconds));
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="min"></param>
+		/// <param name="minutes"></param>
 		/// <returns></returns>
-		public ClockTime AddMinutes(double min) => ToClockTime(_clock_time.AddMinutes(min));
+		public ClockTime AddMinutes(double minutes) => ToClockTime(_clock_time.AddMinutes(minutes));
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="h"></param>
+		/// <param name="hours"></param>
 		/// <returns></returns>
-		public ClockTime AddHours(double h) => ToClockTime(_clock_time.AddHours(h));
+		public ClockTime AddHours(double hours) => ToClockTime(_clock_time.AddHours(hours));
 
 		/// <summary>
 		/// TODO

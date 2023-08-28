@@ -256,9 +256,9 @@ namespace CosmosTime
 		/// <summary>
 		/// year, month, day, etc. is time in Utc
 		/// </summary>
-		public UtcTime(int year, int month, int day, int hour, int minute, int second, int millis) : this()
+		public UtcTime(int year, int month, int day, int hour, int minute, int second, int millisecond) : this()
 		{
-			_utc = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Utc);
+			_utc = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Utc);
 		}
 
 		//public UtcTime Min(UtcTime other)
@@ -279,87 +279,96 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static TimeSpan operator -(UtcTime a, UtcTime b) => a._utc - b._utc;
+		public static TimeSpan operator -(UtcTime t1, UtcTime t2) => t1._utc - t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static UtcTime operator +(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc + t);
+		public static UtcTime operator +(UtcTime t, TimeSpan ts) => UtcTime.FromUtcDateTime(t._utc + ts);
+
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="d"></param>
 		/// <param name="t"></param>
+		/// <param name="ts"></param>
 		/// <returns></returns>
-		public static UtcTime operator -(UtcTime d, TimeSpan t) => UtcTime.FromUtcDateTime(d._utc - t);
+		public static UtcTime operator -(UtcTime t, TimeSpan ts) => UtcTime.FromUtcDateTime(t._utc - ts);
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator ==(UtcTime a, UtcTime b) => a._utc == b._utc;
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static bool operator !=(UtcTime a, UtcTime b) => a._utc != b._utc;
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static bool operator <(UtcTime a, UtcTime b) => a._utc < b._utc;
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static bool operator >(UtcTime a, UtcTime b) => a._utc > b._utc;
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static bool operator <=(UtcTime a, UtcTime b) => a._utc <= b._utc;
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
-		/// <returns></returns>
-		public static bool operator >=(UtcTime a, UtcTime b) => a._utc >= b._utc;
+		public static bool operator ==(UtcTime t1, UtcTime t2) => t1._utc == t2._utc;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="sec"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public UtcTime AddSeconds(double sec) => UtcTime.FromUtcDateTime(_utc.AddSeconds(sec));
+		public static bool operator !=(UtcTime t1, UtcTime t2) => t1._utc != t2._utc;
+
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="min"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public UtcTime AddMinutes(double min) => UtcTime.FromUtcDateTime(_utc.AddMinutes(min));
+		public static bool operator <(UtcTime t1, UtcTime t2) => t1._utc < t2._utc;
+
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="h"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public UtcTime AddHours(double h) => UtcTime.FromUtcDateTime(_utc.AddHours(h));
+		public static bool operator >(UtcTime t1, UtcTime t2) => t1._utc > t2._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
+		/// <returns></returns>
+		public static bool operator <=(UtcTime t1, UtcTime t2) => t1._utc <= t2._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
+		/// <returns></returns>
+		public static bool operator >=(UtcTime t1, UtcTime t2) => t1._utc >= t2._utc;
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="seconds"></param>
+		/// <returns></returns>
+		public UtcTime AddSeconds(double seconds) => UtcTime.FromUtcDateTime(_utc.AddSeconds(seconds));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="minutes"></param>
+		/// <returns></returns>
+		public UtcTime AddMinutes(double minutes) => UtcTime.FromUtcDateTime(_utc.AddMinutes(minutes));
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="hours"></param>
+		/// <returns></returns>
+		public UtcTime AddHours(double hours) => UtcTime.FromUtcDateTime(_utc.AddHours(hours));
+
 		/// <summary>
 		/// TODO
 		/// </summary>

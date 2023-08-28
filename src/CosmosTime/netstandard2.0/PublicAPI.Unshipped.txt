@@ -1,14 +1,14 @@
 ﻿CosmosTime.ClockTime
 CosmosTime.ClockTime.AddDays(double days) -> CosmosTime.ClockTime
-CosmosTime.ClockTime.AddHours(double h) -> CosmosTime.ClockTime
-CosmosTime.ClockTime.AddMinutes(double min) -> CosmosTime.ClockTime
-CosmosTime.ClockTime.AddSeconds(double sec) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddHours(double hours) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddMinutes(double minutes) -> CosmosTime.ClockTime
+CosmosTime.ClockTime.AddSeconds(double seconds) -> CosmosTime.ClockTime
 CosmosTime.ClockTime.AddTicks(long ticks) -> CosmosTime.ClockTime
 CosmosTime.ClockTime.ClockDateTime.get -> System.DateTime
 CosmosTime.ClockTime.ClockTime() -> void
 CosmosTime.ClockTime.ClockTime(int year, int month, int day) -> void
 CosmosTime.ClockTime.ClockTime(int year, int month, int day, int hour, int minute, int second) -> void
-CosmosTime.ClockTime.ClockTime(int year, int month, int day, int hour, int minute, int second, int millis) -> void
+CosmosTime.ClockTime.ClockTime(int year, int month, int day, int hour, int minute, int second, int millisecond) -> void
 CosmosTime.ClockTime.ClockTime(long ticks) -> void
 CosmosTime.ClockTime.ClockTime(System.DateTime anyTime) -> void
 CosmosTime.ClockTime.CompareTo(CosmosTime.ClockTime other) -> int
@@ -42,8 +42,8 @@ CosmosTime.OffsetTime.EqualsExact(CosmosTime.OffsetTime other) -> bool
 CosmosTime.OffsetTime.Offset.get -> System.TimeSpan
 CosmosTime.OffsetTime.OffsetTime() -> void
 CosmosTime.OffsetTime.OffsetTime(CosmosTime.UtcTime utc, System.TimeSpan offset) -> void
-CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeSpan offset) -> void
-CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millisecond, System.TimeSpan offset) -> void
+CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, int millisecond, System.TimeZoneInfo tz) -> void
 CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, System.TimeSpan offset) -> void
 CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz) -> void
 CosmosTime.OffsetTime.OffsetTime(int year, int month, int day, System.TimeSpan offset) -> void
@@ -67,9 +67,9 @@ CosmosTime.TimeZone.IanaTimeZoneTool.IanaTimeZoneTool() -> void
 CosmosTime.TimeZone.TimeZoneExtensions
 CosmosTime.UtcTime
 CosmosTime.UtcTime.AddDays(double days) -> CosmosTime.UtcTime
-CosmosTime.UtcTime.AddHours(double h) -> CosmosTime.UtcTime
-CosmosTime.UtcTime.AddMinutes(double min) -> CosmosTime.UtcTime
-CosmosTime.UtcTime.AddSeconds(double sec) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddHours(double hours) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddMinutes(double minutes) -> CosmosTime.UtcTime
+CosmosTime.UtcTime.AddSeconds(double seconds) -> CosmosTime.UtcTime
 CosmosTime.UtcTime.CompareTo(CosmosTime.UtcTime other) -> int
 CosmosTime.UtcTime.Date.get -> System.DateOnly
 CosmosTime.UtcTime.Equals(CosmosTime.UtcTime other) -> bool
@@ -80,20 +80,20 @@ CosmosTime.UtcTime.UtcDateTime.get -> System.DateTime
 CosmosTime.UtcTime.UtcTime() -> void
 CosmosTime.UtcTime.UtcTime(int year, int month, int day) -> void
 CosmosTime.UtcTime.UtcTime(int year, int month, int day, int hour, int minute, int second) -> void
-CosmosTime.UtcTime.UtcTime(int year, int month, int day, int hour, int minute, int second, int millis) -> void
+CosmosTime.UtcTime.UtcTime(int year, int month, int day, int hour, int minute, int second, int millisecond) -> void
 CosmosTime.UtcTimeTypeConverter
 CosmosTime.UtcTimeTypeConverter.UtcTimeTypeConverter() -> void
 CosmosTime.ZoneTime
 CosmosTime.ZoneTime.AddClock(System.TimeSpan t) -> CosmosTime.ZoneTime
 CosmosTime.ZoneTime.AddClockDays(double days) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddClockHours(double h) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddClockMinutes(double min) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddClockSeconds(double sec) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockHours(double hours) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockMinutes(double minutes) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddClockSeconds(double seconds) -> CosmosTime.ZoneTime
 CosmosTime.ZoneTime.AddClockTicks(long ticks) -> CosmosTime.ZoneTime
 CosmosTime.ZoneTime.AddUtc(System.TimeSpan t) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddUtcHours(double h) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddUtcMinutes(double min) -> CosmosTime.ZoneTime
-CosmosTime.ZoneTime.AddUtcSeconds(double sec) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcHours(double hours) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcMinutes(double minutes) -> CosmosTime.ZoneTime
+CosmosTime.ZoneTime.AddUtcSeconds(double seconds) -> CosmosTime.ZoneTime
 CosmosTime.ZoneTime.AddUtcTicks(long ticks) -> CosmosTime.ZoneTime
 CosmosTime.ZoneTime.CompareTo(CosmosTime.ZoneTime other) -> int
 CosmosTime.ZoneTime.Date.get -> System.DateOnly
@@ -112,8 +112,8 @@ CosmosTime.ZoneTime.ZoneTime(CosmosTime.ClockTime clockTime, System.TimeZoneInfo
 CosmosTime.ZoneTime.ZoneTime(CosmosTime.ClockTime clockTime, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
 CosmosTime.ZoneTime.ZoneTime(CosmosTime.OffsetTime time, System.TimeZoneInfo tz) -> void
 CosmosTime.ZoneTime.ZoneTime(CosmosTime.UtcTime time, System.TimeZoneInfo tz) -> void
-CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz) -> void
-CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, System.TimeZoneInfo tz) -> void
+CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
 CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz) -> void
 CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, int hour, int minute, int second, System.TimeZoneInfo tz, System.TimeSpan offset) -> void
 CosmosTime.ZoneTime.ZoneTime(int year, int month, int day, System.TimeZoneInfo tz) -> void
@@ -149,15 +149,15 @@ override CosmosTime.ZoneTimeTypeConverter.ConvertFrom(System.ComponentModel.ITyp
 override CosmosTime.ZoneTimeTypeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
 static CosmosTime.ClockTime.LocalNow.get -> CosmosTime.ClockTime
 static CosmosTime.ClockTime.Now(System.TimeZoneInfo tz) -> CosmosTime.ClockTime
-static CosmosTime.ClockTime.operator !=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
-static CosmosTime.ClockTime.operator +(CosmosTime.ClockTime d, System.TimeSpan t) -> CosmosTime.ClockTime
-static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> System.TimeSpan
-static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime d, System.TimeSpan t) -> CosmosTime.ClockTime
-static CosmosTime.ClockTime.operator <(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
-static CosmosTime.ClockTime.operator <=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
-static CosmosTime.ClockTime.operator ==(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
-static CosmosTime.ClockTime.operator >(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
-static CosmosTime.ClockTime.operator >=(CosmosTime.ClockTime a, CosmosTime.ClockTime b) -> bool
+static CosmosTime.ClockTime.operator !=(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
+static CosmosTime.ClockTime.operator +(CosmosTime.ClockTime t, System.TimeSpan ts) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime t, System.TimeSpan ts) -> CosmosTime.ClockTime
+static CosmosTime.ClockTime.operator -(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> System.TimeSpan
+static CosmosTime.ClockTime.operator <(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
+static CosmosTime.ClockTime.operator <=(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
+static CosmosTime.ClockTime.operator ==(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
+static CosmosTime.ClockTime.operator >(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
+static CosmosTime.ClockTime.operator >=(CosmosTime.ClockTime t1, CosmosTime.ClockTime t2) -> bool
 static CosmosTime.ClockTime.Parse(string str) -> CosmosTime.ClockTime
 static CosmosTime.ClockTime.TryParse(string str, out CosmosTime.ClockTime clockTime) -> bool
 static CosmosTime.ClockTime.UtcNow.get -> CosmosTime.ClockTime
@@ -195,15 +195,15 @@ static CosmosTime.OffsetTime.FromUnspecifiedDateTime(System.DateTime unspecified
 static CosmosTime.OffsetTime.FromUtcDateTime(System.DateTime utcTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.LocalNow.get -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.Now(System.TimeZoneInfo tz) -> CosmosTime.OffsetTime
-static CosmosTime.OffsetTime.operator !=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
-static CosmosTime.OffsetTime.operator +(CosmosTime.OffsetTime d, System.TimeSpan t) -> CosmosTime.OffsetTime
-static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> System.TimeSpan
-static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime d, System.TimeSpan t) -> CosmosTime.OffsetTime
-static CosmosTime.OffsetTime.operator <(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
-static CosmosTime.OffsetTime.operator <=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
-static CosmosTime.OffsetTime.operator ==(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
-static CosmosTime.OffsetTime.operator >(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
-static CosmosTime.OffsetTime.operator >=(CosmosTime.OffsetTime a, CosmosTime.OffsetTime b) -> bool
+static CosmosTime.OffsetTime.operator !=(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
+static CosmosTime.OffsetTime.operator +(CosmosTime.OffsetTime t, System.TimeSpan ts) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime t, System.TimeSpan ts) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.operator -(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> System.TimeSpan
+static CosmosTime.OffsetTime.operator <(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
+static CosmosTime.OffsetTime.operator <=(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
+static CosmosTime.OffsetTime.operator ==(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
+static CosmosTime.OffsetTime.operator >(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
+static CosmosTime.OffsetTime.operator >=(CosmosTime.OffsetTime t1, CosmosTime.OffsetTime t2) -> bool
 static CosmosTime.OffsetTime.Parse(string str) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.ParseCosmosDb(string utc, System.TimeSpan offset) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.TryParse(string utcOffsetString, out CosmosTime.OffsetTime uo) -> bool
@@ -231,15 +231,15 @@ static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTim
 static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.Now.get -> CosmosTime.UtcTime
-static CosmosTime.UtcTime.operator !=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
-static CosmosTime.UtcTime.operator +(CosmosTime.UtcTime d, System.TimeSpan t) -> CosmosTime.UtcTime
-static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> System.TimeSpan
-static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime d, System.TimeSpan t) -> CosmosTime.UtcTime
-static CosmosTime.UtcTime.operator <(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
-static CosmosTime.UtcTime.operator <=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
-static CosmosTime.UtcTime.operator ==(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
-static CosmosTime.UtcTime.operator >(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
-static CosmosTime.UtcTime.operator >=(CosmosTime.UtcTime a, CosmosTime.UtcTime b) -> bool
+static CosmosTime.UtcTime.operator !=(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
+static CosmosTime.UtcTime.operator +(CosmosTime.UtcTime t, System.TimeSpan ts) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime t, System.TimeSpan ts) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.operator -(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> System.TimeSpan
+static CosmosTime.UtcTime.operator <(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
+static CosmosTime.UtcTime.operator <=(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
+static CosmosTime.UtcTime.operator ==(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
+static CosmosTime.UtcTime.operator >(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
+static CosmosTime.UtcTime.operator >=(CosmosTime.UtcTime t1, CosmosTime.UtcTime t2) -> bool
 static CosmosTime.UtcTime.Parse(string str) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.Parse(string str, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetIfNone) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.ParseCosmosDb(string utc) -> CosmosTime.UtcTime
@@ -250,12 +250,12 @@ static CosmosTime.ZoneTime.FromUnspecifiedDateTime(System.DateTime unspecTime, S
 static CosmosTime.ZoneTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.LocalNow.get -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.Now(System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
-static CosmosTime.ZoneTime.operator !=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
-static CosmosTime.ZoneTime.operator <(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
-static CosmosTime.ZoneTime.operator <=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
-static CosmosTime.ZoneTime.operator ==(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
-static CosmosTime.ZoneTime.operator >(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
-static CosmosTime.ZoneTime.operator >=(CosmosTime.ZoneTime a, CosmosTime.ZoneTime b) -> bool
+static CosmosTime.ZoneTime.operator !=(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
+static CosmosTime.ZoneTime.operator <(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
+static CosmosTime.ZoneTime.operator <=(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
+static CosmosTime.ZoneTime.operator ==(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
+static CosmosTime.ZoneTime.operator >(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
+static CosmosTime.ZoneTime.operator >=(CosmosTime.ZoneTime t1, CosmosTime.ZoneTime t2) -> bool
 static CosmosTime.ZoneTime.ParseCosmosDb(string utcTime, System.TimeSpan offset, string ianaId) -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.TryParse(string time, out CosmosTime.ZoneTime zoned, System.Func<System.TimeSpan[], System.TimeSpan> chooseOffsetIfAmbigous = null) -> bool
 static CosmosTime.ZoneTime.UtcNow.get -> CosmosTime.ZoneTime

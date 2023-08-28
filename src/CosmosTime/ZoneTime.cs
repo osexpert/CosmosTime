@@ -109,9 +109,9 @@ namespace CosmosTime
 		/// <summary>
 		/// year, month, day, etc. in Zone time
 		/// </summary>
-		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz)
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz)
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
 			var offset = tz.GetUtcOffset(dt);
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
 		}
@@ -138,9 +138,9 @@ namespace CosmosTime
 		/// year, month, day, etc. in Zone time
 		/// Both tz and offset? Yes, in case you want to choose offset if ambigous time (or you simply know it up front)
 		/// </summary>
-		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millis, TimeZoneInfo tz, TimeSpan offset)
+		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz, TimeSpan offset)
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millis, DateTimeKind.Unspecified);
+			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
 		}
 
@@ -526,50 +526,50 @@ namespace CosmosTime
 		/// Equality and ordering is always in Utc
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator ==(ZoneTime a, ZoneTime b) => a._offset_time == b._offset_time;
+		public static bool operator ==(ZoneTime t1, ZoneTime t2) => t1._offset_time == t2._offset_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator !=(ZoneTime a, ZoneTime b) => a._offset_time != b._offset_time;
+		public static bool operator !=(ZoneTime t1, ZoneTime t2) => t1._offset_time != t2._offset_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <(ZoneTime a, ZoneTime b) => a._offset_time < b._offset_time;
+		public static bool operator <(ZoneTime t1, ZoneTime t2) => t1._offset_time < t2._offset_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >(ZoneTime a, ZoneTime b) => a._offset_time > b._offset_time;
+		public static bool operator >(ZoneTime t1, ZoneTime t2) => t1._offset_time > t2._offset_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator <=(ZoneTime a, ZoneTime b) => a._offset_time <= b._offset_time;
+		public static bool operator <=(ZoneTime t1, ZoneTime t2) => t1._offset_time <= t2._offset_time;
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="a"></param>
-		/// <param name="b"></param>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static bool operator >=(ZoneTime a, ZoneTime b) => a._offset_time >= b._offset_time;
+		public static bool operator >=(ZoneTime t1, ZoneTime t2) => t1._offset_time >= t2._offset_time;
 
 		/// <summary>
 		/// TODO
@@ -581,23 +581,23 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="sec"></param>
+		/// <param name="seconds"></param>
 		/// <returns></returns>
-		public ZoneTime AddUtcSeconds(double sec) => AddUtc(TimeSpan.FromSeconds(sec));
+		public ZoneTime AddUtcSeconds(double seconds) => AddUtc(TimeSpan.FromSeconds(seconds));
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="min"></param>
+		/// <param name="minutes"></param>
 		/// <returns></returns>
-		public ZoneTime AddUtcMinutes(double min) => AddUtc(TimeSpan.FromMinutes(min));
+		public ZoneTime AddUtcMinutes(double minutes) => AddUtc(TimeSpan.FromMinutes(minutes));
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="h"></param>
+		/// <param name="hours"></param>
 		/// <returns></returns>
-		public ZoneTime AddUtcHours(double h) => AddUtc(TimeSpan.FromHours(h));
+		public ZoneTime AddUtcHours(double hours) => AddUtc(TimeSpan.FromHours(hours));
 		// Adding days may not always work, DST will make some days more or less than 24h.
 		// You can still add 24 hours, but then it may be clearer that you are not adding days.
 		//		public ZoneTime AddUtcDays(double days) => AddUtc(TimeSpan.FromDays(days));
@@ -614,23 +614,23 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="sec"></param>
+		/// <param name="seconds"></param>
 		/// <returns></returns>
-		public ZoneTime AddClockSeconds(double sec) => AddClock(TimeSpan.FromSeconds(sec));
+		public ZoneTime AddClockSeconds(double seconds) => AddClock(TimeSpan.FromSeconds(seconds));
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="min"></param>
+		/// <param name="minutes"></param>
 		/// <returns></returns>
-		public ZoneTime AddClockMinutes(double min) => AddClock(TimeSpan.FromMinutes(min));
+		public ZoneTime AddClockMinutes(double minutes) => AddClock(TimeSpan.FromMinutes(minutes));
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="h"></param>
+		/// <param name="hours"></param>
 		/// <returns></returns>
-		public ZoneTime AddClockHours(double h) => AddClock(TimeSpan.FromHours(h));
+		public ZoneTime AddClockHours(double hours) => AddClock(TimeSpan.FromHours(hours));
 
 		/// <summary>
 		/// TODO
