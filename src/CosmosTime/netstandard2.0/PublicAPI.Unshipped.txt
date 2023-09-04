@@ -192,6 +192,7 @@ static CosmosTime.IsoWeek.operator >(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w
 static CosmosTime.IsoWeek.operator >=(CosmosTime.IsoWeek w1, CosmosTime.IsoWeek w2) -> bool
 static CosmosTime.OffsetTime.FromLocalDateTime(System.DateTime localTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
+static CosmosTime.OffsetTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.FromUtcDateTime(System.DateTime utcTime, System.TimeSpan offset) -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.LocalNow.get -> CosmosTime.OffsetTime
 static CosmosTime.OffsetTime.Now(System.TimeZoneInfo tz) -> CosmosTime.OffsetTime
@@ -227,7 +228,7 @@ static CosmosTime.TimeZone.IanaTimeZoneTool.Generate(string timeZoneMapFileToWri
 static CosmosTime.TimeZone.TimeZoneExtensions.HasIanaId(this System.TimeZoneInfo tz) -> bool
 static CosmosTime.TimeZone.TimeZoneExtensions.IsUtc(this System.TimeZoneInfo tz) -> bool
 static CosmosTime.UtcTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.UtcTime
-static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan offset) -> CosmosTime.UtcTime
+static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeSpan utcOffset) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.Now.get -> CosmosTime.UtcTime
@@ -246,7 +247,8 @@ static CosmosTime.UtcTime.ParseCosmosDb(string utc) -> CosmosTime.UtcTime
 static CosmosTime.UtcTime.TryParse(string str, out CosmosTime.UtcTime utc) -> bool
 static CosmosTime.UtcTime.TryParse(string str, out CosmosTime.UtcTime utc, System.Func<System.DateTimeOffset, System.TimeSpan> getOffsetIfNone) -> bool
 static CosmosTime.ZoneTime.FromLocalDateTime(System.DateTime localTime) -> CosmosTime.ZoneTime
-static CosmosTime.ZoneTime.FromUnspecifiedDateTime(System.DateTime unspecTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.ZoneTime.FromUnspecifiedDateTime(System.DateTime unspecifiedTime, System.TimeZoneInfo tz, System.TimeSpan offset) -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.FromUtcDateTime(System.DateTime utcTime) -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.LocalNow.get -> CosmosTime.ZoneTime
 static CosmosTime.ZoneTime.Now(System.TimeZoneInfo tz) -> CosmosTime.ZoneTime

@@ -34,7 +34,6 @@ namespace CosmosTime
 
 		/// <summary>
 		/// DateTime must be Kind.Utc, else will throw
-		/// TODO: why not allow Local?? Does now.
 		/// </summary>
 		public static ZoneTime FromUtcDateTime(DateTime utcTime)
 		{
@@ -56,23 +55,32 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="unspecTime"></param>
+		/// <param name="unspecifiedTime"></param>
 		/// <param name="tz"></param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException"></exception>
-		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecTime, TimeZoneInfo tz)
+		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var offset = tz.GetUtcOffset(unspecTime);
-			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecTime, offset), offset), tz);
+			var offset = tz.GetUtcOffset(unspecifiedTime);
+			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset), tz);
 		}
 
-
-		//public static ZoneTime FromAnyDateTime(DateTime anyTime, TimeZoneInfo tz)
-		//{
-		//	return new ZoneTime(new OffsetTime(UtcTime.FromAnyDateTime(anyTime, tz), tz.GetUtcOffset(anyTime)), tz);
-		//}
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="unspecifiedTime"></param>
+		/// <param name="tz"></param>
+		/// <param name="offset"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz, TimeSpan offset)
+		{
+			if (tz == null)
+				throw new ArgumentNullException(nameof(tz));
+			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset), tz);
+		}
 
 		/// <summary>
 		/// Ticks in Clock time
@@ -230,7 +238,7 @@ namespace CosmosTime
 
 
 		/// <summary>
-		/// Can specift offset here to choose correct offset in case of ambigous time.
+		/// Can specify offset here to choose correct offset in case of ambigous time.
 		/// 
 		/// TODO: could have had a callback...so only need to specify offset if ambigous?
 		/// </summary>

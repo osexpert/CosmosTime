@@ -56,7 +56,7 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// TODO
+		/// DateTime must be DateTimeKind.Utc, else will throw
 		/// </summary>
 		/// <param name="utcTime"></param>
 		/// <param name="offset"></param>
@@ -67,9 +67,9 @@ namespace CosmosTime
 			ot.Init(UtcTime.FromUtcDateTime(utcTime), offset);
 			return ot;
 		}
-		
+
 		/// <summary>
-		/// TODO
+		/// DateTime must be DateTimeKind.Local, else will throw
 		/// </summary>
 		/// <param name="localTime"></param>
 		/// <param name="offset"></param>
@@ -82,7 +82,7 @@ namespace CosmosTime
 		}
 
 		/// <summary>
-		/// TODO
+		/// DateTime must be DateTimeKind.Unspecified, else will throw
 		/// </summary>
 		/// <param name="unspecifiedTime"></param>
 		/// <param name="offset"></param>
@@ -93,6 +93,21 @@ namespace CosmosTime
 			ot.Init(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset);
 			return ot;
 		}
+
+		/// <summary>
+		/// DateTime must be DateTimeKind.Unspecified, else will throw
+		/// </summary>
+		/// <param name="unspecifiedTime"></param>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		public static OffsetTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
+		{
+			var ot = new OffsetTime();
+			var offset = tz.GetUtcOffset(unspecifiedTime);
+			ot.Init(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, tz), offset);
+			return ot;
+		}
+
 
 		/// <summary>
 		/// TODO
