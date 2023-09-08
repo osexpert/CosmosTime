@@ -11,15 +11,18 @@
 
     <PackageReference Include="Portable.System.DateTimeOnly" Version="7.0.1" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
+	  <!--  	  
 	  <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  -->
   </ItemGroup>
 	
+<!--
 	<ItemGroup>
 		<AdditionalFiles Include="$(TargetFramework)\PublicAPI.Shipped.txt" />
 		<AdditionalFiles Include="$(TargetFramework)\PublicAPI.Unshipped.txt" />
 	</ItemGroup>
-
+-->
 </Project>

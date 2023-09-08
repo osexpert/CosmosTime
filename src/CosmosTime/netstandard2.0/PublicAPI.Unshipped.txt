@@ -167,8 +167,6 @@ static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.OffsetTime dt) ->
 static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.UtcTime dt) -> CosmosTime.IsoWeek
 static CosmosTime.CosmosTimeExtensions.GetWeek(this CosmosTime.ZoneTime dt) -> CosmosTime.IsoWeek
 static CosmosTime.CosmosTimeExtensions.GetWeek(this System.DateTime dt) -> CosmosTime.IsoWeek
-static CosmosTime.CosmosTimeExtensions.HasIanaId(this System.TimeZoneInfo tz) -> bool
-static CosmosTime.CosmosTimeExtensions.IsUtc(this System.TimeZoneInfo tz) -> bool
 static CosmosTime.CosmosTimeExtensions.ToClockTime(this CosmosTime.ZoneTime zoned) -> CosmosTime.ClockTime
 static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.DateOnly dateOnly) -> string
 static CosmosTime.CosmosTimeExtensions.ToIsoString(this System.TimeOnly timeOnly) -> string
@@ -176,10 +174,12 @@ static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this CosmosTime.UtcTime utc,
 static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this System.DateTimeOffset dto) -> CosmosTime.OffsetTime
 static CosmosTime.CosmosTimeExtensions.ToOffsetTime(this System.DateTimeOffset? dto) -> CosmosTime.OffsetTime?
 static CosmosTime.CosmosTimeExtensions.ToUtcDateTime(this CosmosTime.UtcTime? utc) -> System.DateTime?
+static CosmosTime.CosmosTimeExtensions.ToUtcTime(this CosmosTime.ZoneTime zoned) -> CosmosTime.UtcTime
 static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.ClockTime ct, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
 static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.ClockTime ct, System.TimeZoneInfo tz, System.TimeSpan offset) -> CosmosTime.ZoneTime
 static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.OffsetTime offsetTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
 static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.UtcTime utcTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
+static CosmosTime.CosmosTimeExtensions.ToZoneTime(this CosmosTime.ZoneTime zoneTime, System.TimeZoneInfo tz) -> CosmosTime.ZoneTime
 static CosmosTime.IsoWeek.GetWeek(System.DateTime dt) -> CosmosTime.IsoWeek
 static CosmosTime.IsoWeek.GetWeeksInRangeIterator(System.DateTime from, System.DateTime to) -> System.Collections.Generic.IEnumerable<CosmosTime.IsoWeek>
 static CosmosTime.IsoWeek.GetWeeksInYear(int year) -> int

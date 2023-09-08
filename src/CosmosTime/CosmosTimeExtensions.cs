@@ -34,14 +34,25 @@ namespace CosmosTime
 		}
 
 		/// <summary>
+		/// Convert to time in another zone via Utc.
+		/// </summary>
+		/// <param name="zoneTime"></param>
+		/// <param name="tz"></param>
+		/// <returns></returns>
+		public static ZoneTime ToZoneTime(this ZoneTime zoneTime, TimeZoneInfo tz)
+		{
+			return new ZoneTime(zoneTime.ToUtcTime(), tz);
+		}
+
+		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="utc"></param>
+		/// <param name="utcTime"></param>
 		/// <param name="offset"></param>
 		/// <returns></returns>
-		public static OffsetTime ToOffsetTime(this UtcTime utc, TimeSpan offset)
+		public static OffsetTime ToOffsetTime(this UtcTime utcTime, TimeSpan offset)
 		{
-			return new OffsetTime(utc, offset);
+			return new OffsetTime(utcTime, offset);
 		}
 #if false
 		/// <summary>
@@ -65,34 +76,45 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="zoned"></param>
+		/// <param name="zoneTime"></param>
 		/// <returns></returns>
-		public static ClockTime ToClockTime(this ZoneTime zoned)
+		public static ClockTime ToClockTime(this ZoneTime zoneTime)
 		{
-			return new ClockTime(zoned.Ticks);
+			return new ClockTime(zoneTime.Ticks);
 		}
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="ct"></param>
+		/// <param name="zoneTime"></param>
+		/// <returns></returns>
+		public static UtcTime ToUtcTime(this ZoneTime zoneTime)
+		{
+			return zoneTime.OffsetTime.UtcTime;
+		}
+
+
+		/// <summary>
+		/// TODO
+		/// </summary>
+		/// <param name="clockTime"></param>
 		/// <param name="tz"></param>
 		/// <returns></returns>
-		public static ZoneTime ToZoneTime(this ClockTime ct, TimeZoneInfo tz)
+		public static ZoneTime ToZoneTime(this ClockTime clockTime, TimeZoneInfo tz)
 		{
-			return new ZoneTime(ct, tz);
+			return new ZoneTime(clockTime, tz);
 		}
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="ct"></param>
+		/// <param name="clockTime"></param>
 		/// <param name="tz"></param>
 		/// <param name="offset"></param>
 		/// <returns></returns>
-		public static ZoneTime ToZoneTime(this ClockTime ct, TimeZoneInfo tz, TimeSpan offset)
+		public static ZoneTime ToZoneTime(this ClockTime clockTime, TimeZoneInfo tz, TimeSpan offset)
 		{
-			return new ZoneTime(ct, tz, offset);
+			return new ZoneTime(clockTime, tz, offset);
 		}
 
 		//public static UtcZoneTime ToUtcZoneTime(this ClockTime ct, TimeZoneInfo tz, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
@@ -121,29 +143,29 @@ namespace CosmosTime
 			return new OffsetTime(UtcTime.FromUtcDateTime(dto.UtcDateTime), dto.Offset);
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="dto"></param>
-		/// <returns></returns>
-		public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
-		{
-			if (dto == null)
-				return null;
-			return dto.Value.ToOffsetTime();
-		}
+		// <summary>
+		// TODO
+		// </summary>
+		// <param name="dto"></param>
+		// <returns></returns>
+		//public static OffsetTime? ToOffsetTime(this DateTimeOffset? dto)
+		//{
+		//	if (dto == null)
+		//		return null;
+		//	return dto.Value.ToOffsetTime();
+		//}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="utc"></param>
-		/// <returns></returns>
-		public static DateTime? ToUtcDateTime(this UtcTime? utc)
-		{
-			if (utc == null)
-				return null;
-			return utc.Value.UtcDateTime;
-		}
+		// <summary>
+		// TODO
+		// </summary>
+		// <param name="utc"></param>
+		// <returns></returns>
+		//public static DateTime? ToUtcDateTime(this UtcTime? utc)
+		//{
+		//	if (utc == null)
+		//		return null;
+		//	return utc.Value.UtcDateTime;
+		//}
 
 		/// <summary>
 		/// TODO
@@ -158,31 +180,31 @@ namespace CosmosTime
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="dt"></param>
+		/// <param name="utcTime"></param>
 		/// <returns></returns>
-		public static IsoWeek GetWeek(this UtcTime dt)
+		public static IsoWeek GetWeek(this UtcTime utcTime)
 		{
-			return IsoWeek.GetWeek(dt.UtcDateTime);
+			return IsoWeek.GetWeek(utcTime.UtcDateTime);
 		}
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="dt"></param>
+		/// <param name="offsetTime"></param>
 		/// <returns></returns>
-		public static IsoWeek GetWeek(this OffsetTime dt)
+		public static IsoWeek GetWeek(this OffsetTime offsetTime)
 		{
-			return IsoWeek.GetWeek(dt.ClockDateTime);
+			return IsoWeek.GetWeek(offsetTime.ClockDateTime);
 		}
 
 		/// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="dt"></param>
+		/// <param name="zoneTime"></param>
 		/// <returns></returns>
-		public static IsoWeek GetWeek(this ZoneTime dt)
+		public static IsoWeek GetWeek(this ZoneTime zoneTime)
 		{
-			return IsoWeek.GetWeek(dt.OffsetTime.ClockDateTime);
+			return IsoWeek.GetWeek(zoneTime.OffsetTime.ClockDateTime);
 		}
 
 		/// <summary>
