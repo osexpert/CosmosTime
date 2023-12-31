@@ -41,7 +41,7 @@ For this reason, CosmosTime does not have any types named DateTime, only Time.
 
 Compared to NodaTime:
 NodaTime implement all things from scratch, CosmosTime try to wrap\reuse the .NET types as much as possible and build on existing DateTime, DateTimeOffset, TimeZoneInfo, TimeOnly, DateOnly etc.
-Using Portable.System.DateTimeOnly to enable DateOnly Date and TomeOnly TomeOfDay, even if netstandard 2.0.
+Using Portable.System.DateTimeOnly to enable DateOnly Date and TimeOnly TimeOfDay, even if netstandard 2.0.
 Try to prevent problem like NodaTime's ZonedDateTime, where +- operators, Plus, Minus etc. manupulate the Utc-time, creating problems with the Clock time. In CosmosTime's ZoneTime you must choose explicit if you want to manipulate the Utc or the Clock time.
 CosmosTime's ZoneTime implement IComparable (comparing the Utc component), while NodaTime ZonedDateTime does not implement IComparable (allthou it originally did and then worked the same way, comparing the Instant).
 
