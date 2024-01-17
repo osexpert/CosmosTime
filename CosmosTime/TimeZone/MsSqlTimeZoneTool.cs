@@ -1,5 +1,14 @@
 ﻿// this seems pointless. it is simply a map between TimeZoneInfo.Id and TimeZoneInfo.DisplayName
+// Yes, this will suffice:
 #if false
+using System;
+
+foreach (var tz in TimeZoneInfo.GetSystemTimeZones())
+{
+    string s = $"when @tz = '{tz.DisplayName.Replace("'", "''")}' then '{tz.Id.Replace("'", "''")}'";
+    Console.WriteLine(s);
+}
+
 using System;
 using System.Collections.Generic;
 using System.IO;
