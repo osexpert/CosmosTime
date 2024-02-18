@@ -834,7 +834,25 @@ namespace CosmosTime.UnitTests
 			Assert.Equal("2020-01-02T03:04:05", p1.ToString());
 		}
 
-		[Fact]
+        [Fact]
+        public void ClockTime_ParseMiscFormats_RequireOffsetNone()
+        {
+			Assert.Throws<FormatException>(() =>
+			{
+				var p1 = ClockTime.Parse("2020-01-02T03:04:05Z", true);
+			});
+
+			Assert.Throws<FormatException>(() =>
+			{
+				var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00", true);
+			});
+
+            var p3 = ClockTime.Parse("2020-01-02T03:04:05", true);
+
+            Assert.Equal("2020-01-02T03:04:05", p3.ToString());
+        }
+
+        [Fact]
 		public void UTcTime_DateAndTimeOnly()
 		{
 			var t = new UtcTime(2020, 4, 6, 7, 8, 42);

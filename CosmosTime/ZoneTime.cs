@@ -262,17 +262,31 @@ namespace CosmosTime
 			Init(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dt, offset), offset), tz);
 		}
 
-
 		/// <summary>
-		/// Supported directly:
-		/// <para>{time}Z[{tz}] -> {time}-00:00</para>
-		/// <para>{time}+|-{offset}[{tz}]" -> {time}[{tz}]</para>
-		/// <para>{time}[{tz}] -> {time}[{tz}]</para>
-		/// 
-		/// TODO: can support more by supplying callbacks
-		/// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
+		/// TODO
 		/// </summary>
-		public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
+		/// <param name="time"></param>
+		/// <param name="chooseOffsetIfAmbigous"></param>
+		/// <returns></returns>
+		public static ZoneTime Parse(string time, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
+        {
+			if (TryParse(time, out var zt, chooseOffsetIfAmbigous))
+				return zt;
+			else
+				throw new FormatException();
+		}
+
+
+        /// <summary>
+        /// Supported directly:
+        /// <para>{time}Z[{tz}] -> {time}-00:00</para>
+        /// <para>{time}+|-{offset}[{tz}]" -> {time}[{tz}]</para>
+        /// <para>{time}[{tz}] -> {time}[{tz}]</para>
+        /// 
+        /// TODO: can support more by supplying callbacks
+        /// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
+        /// </summary>
+        public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
 		{
 			zoned = default;
 

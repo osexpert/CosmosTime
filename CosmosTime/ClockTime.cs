@@ -319,34 +319,39 @@ namespace CosmosTime
 		/// <returns></returns>
 		public override string ToString() => _clock_time.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture);
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="str"></param>
-		/// <param name="clockTime"></param>
-		/// <returns></returns>
-		public static bool TryParse(string str, out ClockTime clockTime)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="clockTime"></param>
+        /// <param name="disallowOffset">If true, require that offset is absent. If false (default), offset (if any) is silently ignored.</param>
+        /// <returns></returns>
+        public static bool TryParse(string str, out ClockTime clockTime, bool disallowOffset = false)
 		{
 			clockTime = default;
 
-			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var tzk))
+			if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind))
 			{
-				clockTime = ToClockTime(dto.DateTime);
-				return true;
+                if (!disallowOffset || offsetKind == OffsetKind.None)
+				{
+					clockTime = ToClockTime(dto.DateTime);
+					return true;
+				}
 			}
 
 			return false;
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="str"></param>
-		/// <returns></returns>
-		/// <exception cref="FormatException"></exception>
-		public static ClockTime Parse(string str)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="disallowOffset">If true, require that offset is absent. If false (default), offset (if any) is silently ignored.</param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        public static ClockTime Parse(string str, bool disallowOffset = false)
 		{
-			if (TryParse(str, out var ct))
+			if (TryParse(str, out var ct, disallowOffset))
 				return ct;
 			else
 				throw new FormatException();
