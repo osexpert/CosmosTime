@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -175,7 +176,8 @@ namespace CosmosTime
 			Init(time, tz);
 		}
 
-		private void Init(OffsetTime offsetTime, TimeZoneInfo tz)
+        [MemberNotNull(nameof(_tz))]
+        private void Init(OffsetTime offsetTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
@@ -268,7 +270,7 @@ namespace CosmosTime
 		/// <param name="time"></param>
 		/// <param name="chooseOffsetIfAmbigous"></param>
 		/// <returns></returns>
-		public static ZoneTime Parse(string time, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
+		public static ZoneTime Parse(string time, Func<TimeSpan[], TimeSpan>? chooseOffsetIfAmbigous = null)
         {
 			if (TryParse(time, out var zt, chooseOffsetIfAmbigous))
 				return zt;
@@ -286,7 +288,7 @@ namespace CosmosTime
         /// TODO: can support more by supplying callbacks
         /// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
         /// </summary>
-        public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous = null)
+        public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan>? chooseOffsetIfAmbigous = null)
 		{
 			zoned = default;
 

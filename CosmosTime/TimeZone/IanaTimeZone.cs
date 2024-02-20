@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -18,7 +19,7 @@ namespace CosmosTime.TimeZone
 	public static class IanaTimeZone
 	{
 		//static readonly bool _tziSeemsToHaveIana;
-		static readonly Lazy<Func<TimeZoneInfo, bool>> _hasIanaId = new(() =>
+		static readonly Lazy<Func<TimeZoneInfo, bool>?> _hasIanaId = new(() =>
 		{
 			var prop = typeof(TimeZoneInfo).GetProperty("HasIanaId");
 			if (prop != null)
@@ -53,7 +54,7 @@ namespace CosmosTime.TimeZone
 		// https://github.com/dotnet/runtime/issues/19794
 		// https://github.com/dotnet/corert/blob/c6af4cfc8b625851b91823d9be746c4f7abdc667/src/System.Private.CoreLib/shared/System/TimeZoneInfo.Unix.cs#L160
 		// I believe this is basically a problem with the conversion from the internal rules to the publicly-available rules which loses some “hidden” bits of information. But basically it means that when I create my standardized adjustment rule, I need to provide some extra information. That’s annoying in terms of specifying yet more data in the text file, but it’s doable.
-		static readonly Lazy<Func<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>> _getRulesRaw = new(() =>
+		static readonly Lazy<Func<TimeZoneInfo, TimeZoneInfo.AdjustmentRule[]>?> _getRulesRaw = new(() =>
 		{
 			try
 			{
@@ -853,7 +854,7 @@ namespace CosmosTime.TimeZone
 		/// <param name="tz"></param>
 		/// <param name="ianaId"></param>
 		/// <returns></returns>
-		public static bool TryGetIanaId(TimeZoneInfo tz, out string ianaId)
+		public static bool TryGetIanaId(TimeZoneInfo tz, [NotNullWhen(returnValue: true)] out string? ianaId)
 		{
 			if (tz.HasIanaId())
 			{
@@ -884,7 +885,7 @@ namespace CosmosTime.TimeZone
 		/// <param name="ianaId_or_windowsId"></param>
 		/// <param name="ianaId"></param>
 		/// <returns></returns>
-		public static bool TryGetIanaId(string ianaId_or_windowsId, out string ianaId)
+		public static bool TryGetIanaId(string ianaId_or_windowsId, [NotNullWhen(returnValue: true)] out string? ianaId)
 		{
 			ianaId = null;
 

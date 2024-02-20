@@ -68,7 +68,7 @@ namespace CosmosTime.TimeZone
 					continue;
 				var alias = aliasA.Value;
 
-				string main = null;
+				string? main = null;
 				foreach (var alia in alias.Split(' '))
 				{
 					if (IanaToWindows.TryGetValue(alia, out var lol))

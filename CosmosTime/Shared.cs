@@ -31,7 +31,7 @@ namespace CosmosTime
 		//	return (true, null);
 		//}
 
-		internal static (bool Ok, string Msg) ValidateOffset(TimeZoneInfo tz, DateTime zonedDateTime, TimeSpan offset)
+		internal static (bool Ok, string? Msg) ValidateOffset(TimeZoneInfo tz, DateTime zonedDateTime, TimeSpan offset)
 		{
 			// zonedDateTime should never be Local kind
 			// zonedDateTime should be Kind Utc if tz is Utc

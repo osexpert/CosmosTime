@@ -697,9 +697,9 @@ namespace CosmosTime.UnitTests
 		}
 
 #if NET6_0_OR_GREATER
-		const bool Net6 = true;
+		bool Net6 => true;
 #else
-		const bool Net6 = false;
+		bool Net6 => false;
 #endif
 
 
