@@ -429,7 +429,6 @@ namespace CosmosTime
 		public ZoneTime AddUtc(TimeSpan t)
 		{
 			var adj = _offset_time.UtcTime + t;
-			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			return adj.ToZoneTime(_tz);
 		}
 		
@@ -441,7 +440,6 @@ namespace CosmosTime
 		public ZoneTime AddClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime + t;
-			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
 			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
@@ -453,7 +451,6 @@ namespace CosmosTime
 		public ZoneTime SubtractUtc(TimeSpan t)
 		{
 			var adj = _offset_time.UtcTime - t;
-			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
 			return adj.ToZoneTime(_tz);
 		}
 
@@ -465,7 +462,6 @@ namespace CosmosTime
 		public ZoneTime SubtractClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime - t;
-			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
 			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
@@ -476,9 +472,6 @@ namespace CosmosTime
 		/// <returns></returns>
 		public TimeSpan SubtractUtc(ZoneTime t)
 		{
-			//var adj = _offset_time.UtcTime - t;
-			//return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
-			//return adj.ToZoneTime(_tz);
 			return _offset_time - t._offset_time;
 		}
 		
@@ -489,60 +482,8 @@ namespace CosmosTime
 		/// <returns></returns>
 		public TimeSpan SubtractClock(ZoneTime t)
 		{
-			//var adj = _offset_time.ClockDateTime - t;
-			//return new ZoneTime(new OffsetTime(adj.to, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
-			//return adj.ToZoneTime(_tz);
 			return _offset_time.ClockDateTime - t._offset_time.ClockDateTime;
 		}
-
-		//public static ZoneTime operator +(ZoneTime d, TimeSpan t)
-		//{
-		//	var adj = d._offset_time.UtcTime + t;
-		//	return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
-		//}
-		//public static ZoneTime operator -(ZoneTime d, TimeSpan t)
-		//{
-		//	var adj = d._offset_time.UtcTime - t;
-		//	return new ZoneTime(new OffsetTime(adj, d._tz.GetUtcOffset(adj.UtcDateTime)), d._tz);
-		//}
-
-#if false
-		private ZoneTime Adjust(TimeSpan adjustment, bool add)
-		{
-			if (add)
-			{
-				var adj = this._offset_time.UtcTime + adjustment;
-				return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
-			}
-			else
-			{
-				var adj = this._offset_time.UtcTime - adjustment;
-				return new ZoneTime(new OffsetTime(adj, _tz.GetUtcOffset(adj.UtcDateTime)), _tz);
-			}
-
-			// WHAT use could this have???
-#if false
-			var offsetBefore = _offset_time.Offset;
-			var newOffsetTime = add ? _offset_time + adjustment : _offset_time - adjustment;
-			var offsets = Shared.GetUtcOffsets(_tz, newOffsetTime.IsoDateTime);
-			var offsetAfter = add ? offsets.First() : offsets.Last();
-			var offsetDiff = offsetAfter - offsetBefore;
-
-			if (offsetDiff != TimeSpan.Zero)
-			{
-				var utcTime = (newOffsetTime.IsoDateTime + offsetDiff).ToUtcTime(_tz, offsetAfter);
-				return new ZonedTime(new OffsetTime(utcTime, offsetAfter), _tz);
-			}
-			else
-			{
-				return new ZonedTime(newOffsetTime, _tz);
-			}
-#endif
-		}
-
-#endif
-
-		//public static TimeSpan operator -(ZoneTime a, ZoneTime b) => a._offset_time - b._offset_time;
 
 		// Equality and ordering is always in Utc
 

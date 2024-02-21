@@ -2,10 +2,6 @@
 on ZonedTime,
 have Adjust-methods (or Advance) that can move us 1 day ahead (serokell_tztime_test, adding 24h move 2 days ahead).
 
-If we could have some way to advance 1 day ahead...
-ZonedTime.AddLocalDays
-ZonedTime.AddLocalDays
-
 Date
 DatePart
 DateOnly
