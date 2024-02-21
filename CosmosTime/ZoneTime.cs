@@ -33,39 +33,45 @@ namespace CosmosTime
 		/// </summary>
 		public TimeZoneInfo Zone => _tz;
 
-		/// <summary>
-		/// DateTime must be Kind.Utc, else will throw
-		/// </summary>
-		public static ZoneTime FromUtcDateTime(DateTime utcTime)
+        /// <summary>
+        /// DateTime must be Kind.Utc, else will throw
+        /// 
+		/// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
+        /// </summary>
+        public static ZoneTime FromUtcDateTime(DateTime utcTime)
 		{
 			TimeZoneInfo tz = TimeZoneInfo.Utc;
-			return new ZoneTime(new OffsetTime(UtcTime.FromUtcDateTime(utcTime), tz.GetUtcOffset(utcTime)), tz);
-		}
+            return new ZoneTime(OffsetTime.FromUtcDateTime(utcTime, tz.GetUtcOffset(utcTime)), tz);
+        }
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="localTime"></param>
-		/// <returns></returns>
-		public static ZoneTime FromLocalDateTime(DateTime localTime)
+        /// <summary>
+        /// TODO
+		/// 
+        /// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
+        /// </summary>
+        /// <param name="localTime"></param>
+        /// <returns></returns>
+        public static ZoneTime FromLocalDateTime(DateTime localTime)
 		{
-			TimeZoneInfo tz = TimeZoneInfo.Local;
-			return new ZoneTime(new OffsetTime(UtcTime.FromLocalDateTime(localTime), tz.GetUtcOffset(localTime)), tz);
+            TimeZoneInfo tz = TimeZoneInfo.Local;
+			return new ZoneTime(OffsetTime.FromLocalDateTime(localTime, tz.GetUtcOffset(localTime)), tz);
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="unspecifiedTime"></param>
-		/// <param name="tz"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
+        /// <summary>
+        /// TODO
+        /// 
+        /// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
+        /// </summary>
+        /// <param name="unspecifiedTime"></param>
+        /// <param name="tz"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static ZoneTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			var offset = tz.GetUtcOffset(unspecifiedTime);
-			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset), tz);
+
+			return FromUnspecifiedDateTime(unspecifiedTime, tz, tz.GetUtcOffset(unspecifiedTime));
 		}
 
 		/// <summary>
@@ -78,9 +84,7 @@ namespace CosmosTime
 		/// <exception cref="ArgumentNullException"></exception>
 		public static ZoneTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz, TimeSpan offset)
 		{
-			if (tz == null)
-				throw new ArgumentNullException(nameof(tz));
-			return new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, offset), offset), tz);
+			return new ZoneTime(OffsetTime.FromUnspecifiedDateTime(unspecifiedTime, offset), tz);
 		}
 
 		/// <summary>
@@ -115,14 +119,18 @@ namespace CosmosTime
 		{
 		}
 
-		/// <summary>
-		/// year, month, day, etc. in Zone time
-		/// </summary>
-		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz)
+        /// <summary>
+        /// year, month, day, etc. in Zone time
+        /// 
+        /// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
+        /// </summary>
+        public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz)
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
-			var offset = tz.GetUtcOffset(dt);
-			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
+            if (tz == null)
+                throw new ArgumentNullException(nameof(tz));
+
+            var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
+			Init(OffsetTime.FromUnspecifiedDateTime(dt, tz.GetUtcOffset(dt)), tz);
 		}
 
 		/// <summary>
@@ -149,29 +157,49 @@ namespace CosmosTime
 		/// </summary>
 		public ZoneTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz, TimeSpan offset)
 		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
-			Init(UtcTime.FromUnspecifiedDateTime(dt, offset).ToOffsetTime(offset), tz);
+			if (tz == null)
+				throw new ArgumentNullException(nameof(tz));
+
+            var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
+			Init(OffsetTime.FromUnspecifiedDateTime(dt, offset), tz);
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="time"></param>
-		/// <param name="tz"></param>
-		/// <exception cref="ArgumentNullException"></exception>
-		public ZoneTime(UtcTime time, TimeZoneInfo tz)
+        /// <summary>
+        /// Offset is calculated from the time zone.
+        /// Uses default offset (standard time offset) in case of ambigous time.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="tz"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public ZoneTime(UtcTime time, TimeZoneInfo tz)
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
-			Init(time.ToOffsetTime(tz.GetUtcOffset(time.UtcDateTime)), tz);
+
+			Init(new OffsetTime(time, tz.GetUtcOffset(time.UtcDateTime)), tz);
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="time"></param>
-		/// <param name="tz"></param>
-		public ZoneTime(OffsetTime time, TimeZoneInfo tz)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="tz"></param>
+        /// <param name="offset"></param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public ZoneTime(UtcTime time, TimeZoneInfo tz, TimeSpan offset)
+        {
+			if (tz == null)
+				throw new ArgumentNullException(nameof(tz));
+
+            Init(time.ToOffsetTime(offset), tz);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="tz"></param>
+        public ZoneTime(OffsetTime time, TimeZoneInfo tz)
 		{
 			Init(time, tz);
 		}
@@ -246,33 +274,31 @@ namespace CosmosTime
 		/// </summary>
 		public ZoneTime(ClockTime clockTime, TimeZoneInfo tz, TimeSpan offset) : this()
 		{
-			if (tz == null)
-				throw new ArgumentNullException(nameof(tz));
 			var dt = clockTime.ClockDateTime;
-			Init(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dt, offset), offset), tz);
+			Init(OffsetTime.FromUnspecifiedDateTime(dt, offset), tz);
 		}
 
 		/// <summary>
-		/// Uses default offset (standard time offset) in case of ambigous time.
+		/// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
 		/// </summary>
 		public ZoneTime(ClockTime clockTime, TimeZoneInfo tz) : this()
 		{
 			if (tz == null)
 				throw new ArgumentNullException(nameof(tz));
+
 			var dt = clockTime.ClockDateTime;
 			var offset = tz.GetUtcOffset(dt);
-			Init(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dt, offset), offset), tz);
+			Init(OffsetTime.FromUnspecifiedDateTime(dt, offset), tz);
 		}
 
 		/// <summary>
 		/// TODO
 		/// </summary>
 		/// <param name="time"></param>
-		/// <param name="chooseOffsetIfAmbigous"></param>
 		/// <returns></returns>
-		public static ZoneTime Parse(string time, Func<TimeSpan[], TimeSpan>? chooseOffsetIfAmbigous = null)
+		public static ZoneTime Parse(string time)
         {
-			if (TryParse(time, out var zt, chooseOffsetIfAmbigous))
+			if (TryParse(time, out var zt))
 				return zt;
 			else
 				throw new FormatException();
@@ -287,8 +313,10 @@ namespace CosmosTime
         /// 
         /// TODO: can support more by supplying callbacks
         /// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
+		/// 
+		/// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
         /// </summary>
-        public static bool TryParse(string time, out ZoneTime zoned, Func<TimeSpan[], TimeSpan>? chooseOffsetIfAmbigous = null)
+        public static bool TryParse(string time, out ZoneTime zoned)
 		{
 			zoned = default;
 
@@ -313,22 +341,14 @@ namespace CosmosTime
 
 			if (offsetKind == OffsetKind.None)
 			{
-				TimeSpan offset;
-				if (chooseOffsetIfAmbigous == null)
-				{
-					// use default tz offset
-					offset = tz.GetUtcOffset(dto);
-				}
-				else
-				{
-					offset = tz.GetUtcOffset(dto, chooseOffsetIfAmbigous);
-				}
 
-				// TODO: ctor also validate offset. Optimize?
-				// TODO: ctor also validate iana. Optimize?
+                // TODO: ctor also validate offset. Optimize?
+                // TODO: ctor also validate iana. Optimize?
+
+                TimeSpan offset = tz.GetUtcOffset(dto);
 
 
-				zoned = new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dto.DateTime, offset), offset), tz);
+                zoned = new ZoneTime(OffsetTime.FromUnspecifiedDateTime(dto.DateTime, offset), tz);
 			}
 			else
 			{
@@ -337,7 +357,7 @@ namespace CosmosTime
 
 				// TODO: ctor also validate offset. Optimize?
 				// TODO: ctor also validate iana. Optimize?
-				zoned = new ZoneTime(new OffsetTime(UtcTime.FromUnspecifiedDateTime(dto.DateTime, dto.Offset), dto.Offset), tz);
+				zoned = new ZoneTime(OffsetTime.FromUnspecifiedDateTime(dto.DateTime, dto.Offset), tz);
 			}
 
 			return true;
@@ -429,8 +449,9 @@ namespace CosmosTime
 		public ZoneTime AddUtc(TimeSpan t)
 		{
 			var adj = _offset_time.UtcTime + t;
-			return adj.ToZoneTime(_tz);
-		}
+            // offset may change, so must recalculate offset
+            return adj.ToZoneTime(_tz);
+        }
 		
 		/// <summary>
 		/// TODO
@@ -440,6 +461,7 @@ namespace CosmosTime
 		public ZoneTime AddClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime + t;
+			// offset may change, so must recalculate offset
 			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
@@ -450,19 +472,21 @@ namespace CosmosTime
 		/// <returns></returns>
 		public ZoneTime SubtractUtc(TimeSpan t)
 		{
-			var adj = _offset_time.UtcTime - t;
-			return adj.ToZoneTime(_tz);
-		}
+            var adj = _offset_time.UtcTime - t;
+            // offset may change, so must recalculate offset
+            return adj.ToZoneTime(_tz);
+        }
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="t"></param>
-		/// <returns></returns>
-		public ZoneTime SubtractClock(TimeSpan t)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public ZoneTime SubtractClock(TimeSpan t)
 		{
 			var adj = _offset_time.ClockDateTime - t;
-			return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
+            // offset may change, so must recalculate offset
+            return ZoneTime.FromUnspecifiedDateTime(adj, _tz);
 		}
 
 		/// <summary>

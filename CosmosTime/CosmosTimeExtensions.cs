@@ -207,53 +207,53 @@ namespace CosmosTime
 			return IsoWeek.GetWeek(zoneTime.OffsetTime.ClockDateTime);
 		}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="tz"></param>
-		/// <param name="dt"></param>
-		/// <param name="chooseOffsetIfAmbigous"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTime dt, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
-		{
-			if (chooseOffsetIfAmbigous == null)
-				throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
+		// <summary>
+		// TODO
+		// </summary>
+		// <param name="tz"></param>
+		// <param name="dt"></param>
+		// <param name="chooseOffsetIfAmbigous"></param>
+		// <returns></returns>
+		// <exception cref="ArgumentNullException"></exception>
+		//public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTime dt, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
+		//{
+		//	if (chooseOffsetIfAmbigous == null)
+		//		throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
 
-			if (tz.IsAmbiguousTime(dt))
-			{
-				var offsets = tz.GetAmbiguousTimeOffsets(dt);
-				return chooseOffsetIfAmbigous(offsets);
-			}
-			else
-			{
-				return tz.GetUtcOffset(dt);
-			}
-		}
+		//	if (tz.IsAmbiguousTime(dt))
+		//	{
+		//		var offsets = tz.GetAmbiguousTimeOffsets(dt);
+		//		return chooseOffsetIfAmbigous(offsets);
+		//	}
+		//	else
+		//	{
+		//		return tz.GetUtcOffset(dt);
+		//	}
+		//}
 
-		/// <summary>
-		/// TODO
-		/// </summary>
-		/// <param name="tz"></param>
-		/// <param name="dto"></param>
-		/// <param name="chooseOffsetIfAmbigous"></param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTimeOffset dto, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
-		{
-			if (chooseOffsetIfAmbigous == null)
-				throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
+		// <summary>
+		// TODO
+		// </summary>
+		// <param name="tz"></param>
+		// <param name="dto"></param>
+		// <param name="chooseOffsetIfAmbigous"></param>
+		// <returns></returns>
+		// <exception cref="ArgumentNullException"></exception>
+		//public static TimeSpan GetUtcOffset(this TimeZoneInfo tz, DateTimeOffset dto, Func<TimeSpan[], TimeSpan> chooseOffsetIfAmbigous)
+		//{
+		//	if (chooseOffsetIfAmbigous == null)
+		//		throw new ArgumentNullException(nameof(chooseOffsetIfAmbigous));
 
-			if (tz.IsAmbiguousTime(dto))
-			{
-				var offsets = tz.GetAmbiguousTimeOffsets(dto);
-				return chooseOffsetIfAmbigous(offsets);
-			}
-			else
-			{
-				return tz.GetUtcOffset(dto);
-			}
-		}
+		//	if (tz.IsAmbiguousTime(dto))
+		//	{
+		//		var offsets = tz.GetAmbiguousTimeOffsets(dto);
+		//		return chooseOffsetIfAmbigous(offsets);
+		//	}
+		//	else
+		//	{
+		//		return tz.GetUtcOffset(dto);
+		//	}
+		//}
 
 		/// <summary>
 		/// TODO

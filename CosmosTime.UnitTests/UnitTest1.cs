@@ -780,6 +780,7 @@ namespace CosmosTime.UnitTests
 
 		}
 
+#if false
 		[Fact]
 		public void Amobigious_Choose_offset()
 		{
@@ -807,6 +808,7 @@ namespace CosmosTime.UnitTests
 			//Assert.False(b2);
 			
 		}
+#endif
 
 		[Fact]
 		public void UtcTime_twoWaysToInitRaw()

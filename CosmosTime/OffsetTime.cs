@@ -68,13 +68,13 @@ namespace CosmosTime
 			return ot;
 		}
 
-		/// <summary>
-		/// DateTime must be DateTimeKind.Local, else will throw
-		/// </summary>
-		/// <param name="localTime"></param>
-		/// <param name="offset"></param>
-		/// <returns></returns>
-		public static OffsetTime FromLocalDateTime(DateTime localTime, TimeSpan offset)
+        /// <summary>
+        /// DateTime must be DateTimeKind.Local, else will throw
+        /// </summary>
+        /// <param name="localTime"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public static OffsetTime FromLocalDateTime(DateTime localTime, TimeSpan offset)
 		{
 			var ot = new OffsetTime();
 			ot.Init(UtcTime.FromLocalDateTime(localTime), offset);
@@ -94,19 +94,6 @@ namespace CosmosTime
 			return ot;
 		}
 
-		/// <summary>
-		/// DateTime must be DateTimeKind.Unspecified, else will throw
-		/// </summary>
-		/// <param name="unspecifiedTime"></param>
-		/// <param name="tz"></param>
-		/// <returns></returns>
-		public static OffsetTime FromUnspecifiedDateTime(DateTime unspecifiedTime, TimeZoneInfo tz)
-		{
-			var ot = new OffsetTime();
-			var offset = tz.GetUtcOffset(unspecifiedTime);
-			ot.Init(UtcTime.FromUnspecifiedDateTime(unspecifiedTime, tz), offset);
-			return ot;
-		}
 
 
 		/// <summary>
@@ -196,34 +183,6 @@ namespace CosmosTime
 			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
 		}
 
-		/// <summary>
-		/// year, month, day, etc. in Clock time
-		/// Will pick the offset from the tz
-		/// </summary>
-		public OffsetTime(int year, int month, int day, TimeZoneInfo tz)
-			: this(year, month, day, 0, 0, 0, 0, tz)
-		{
-		}
-
-		/// <summary>
-		/// year, month, day, etc. in Clock time
-		/// Will pick the offset from the tz
-		/// </summary>
-		public OffsetTime(int year, int month, int day, int hour, int minute, int second, TimeZoneInfo tz)
-			: this(year, month, day, hour, minute, second, 0, tz)
-		{
-		}
-
-		/// <summary>
-		/// year, month, day, etc. in Clock time
-		/// Will pick the offset from the tz
-		/// </summary>
-		public OffsetTime(int year, int month, int day, int hour, int minute, int second, int millisecond, TimeZoneInfo tz) 
-		{
-			var dt = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
-			var offset = tz.GetUtcOffset(dt);
-			Init(UtcTime.FromUnspecifiedDateTime(dt, offset), offset);
-		}
 
 
 		/// <summary>
