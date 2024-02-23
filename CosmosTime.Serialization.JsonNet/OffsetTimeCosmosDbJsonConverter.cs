@@ -1,61 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CosmosTime.Serialization.JsonNet
 {
-	/// <summary>
-	/// Format\parse composite format 
-	/// { 
-	///   "timeUtc": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
-	///   "offsetMinutes": -30
-	/// }
-	/// </summary>
-	public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
-	{
-		string _utcTimeName;
-		string _offsetMinutesName;
+    /// <summary>
+    /// Format\parse composite format 
+    /// { 
+    ///   "timeUtc": "yyyy-MM-ddTHH:mm:ss.fffffffZ", // fixed length utc
+    ///   "offsetMinutes": -30
+    /// }
+    /// </summary>
+    public class OffsetTimeCosmosDbJsonConverter : JsonConverter<OffsetTime>
+    {
+        string _timeUtcName;
+        string _offsetMinutesName;
 
         /// <summary>
 		/// TODO
 		/// </summary>
-		/// <param name="utcTimeName"></param>
+		/// <param name="timeUtcName"></param>
 		/// <param name="offsetMinutesName"></param>
-		public OffsetTimeCosmosDbJsonConverter(string utcTimeName = "timeUtc", string offsetMinutesName = "offsetMinutes")
+		public OffsetTimeCosmosDbJsonConverter(string timeUtcName = "timeUtc", string offsetMinutesName = "offsetMinutes")
         {
-			_utcTimeName = utcTimeName;
-			_offsetMinutesName = offsetMinutesName;
+            _timeUtcName = timeUtcName;
+            _offsetMinutesName = offsetMinutesName;
         }
 
         /// <inheritdoc/>
         public override OffsetTime ReadJson(JsonReader reader, Type objectType, OffsetTime existingValue, bool hasExistingValue, JsonSerializer serializer)
-		{
-			if (serializer.DateParseHandling != DateParseHandling.None)
-				throw new NotSupportedException("DateParseHandling.None required");
+        {
+            if (serializer.DateParseHandling != DateParseHandling.None)
+                throw new NotSupportedException("DateParseHandling.None required");
 
-			var obj = JObject.Load(reader);
-			return OffsetTime.ParseCosmosDb(obj[_utcTimeName].Value<string>(), TimeSpan.FromMinutes(obj[_offsetMinutesName].Value<short>()));
-		}
+            var obj = JObject.Load(reader);
 
-		/// <inheritdoc/>
-		public override void WriteJson(JsonWriter writer, OffsetTime value, JsonSerializer serializer)
-		{
-			if (serializer.DateParseHandling != DateParseHandling.None)
-				throw new NotSupportedException("DateParseHandling.None required");
+            string utcTime = obj[_timeUtcName]?.Value<string>() ?? throw new InvalidOperationException(_timeUtcName);
+            short offsetMinutes = obj[_offsetMinutesName]?.Value<short>() ?? throw new InvalidOperationException(_offsetMinutesName);
 
-			var rr = (OffsetTime)value;
+            return OffsetTime.ParseCosmosDb(utcTime, TimeSpan.FromMinutes(offsetMinutes));
+        }
 
-			writer.WriteStartObject();
+        /// <inheritdoc/>
+        public override void WriteJson(JsonWriter writer, OffsetTime ot, JsonSerializer serializer)
+        {
+            if (serializer.DateParseHandling != DateParseHandling.None)
+                throw new NotSupportedException("DateParseHandling.None required");
 
-			writer.WritePropertyName(_utcTimeName);
-			writer.WriteValue(rr.UtcTime.ToCosmosDb());
+            writer.WriteStartObject();
 
-			writer.WritePropertyName(_offsetMinutesName);
-			writer.WriteValue(Shared.GetWholeMinutes(rr.Offset));
+            writer.WritePropertyName(_timeUtcName);
+            writer.WriteValue(ot.UtcTime.ToCosmosDb());
 
-			writer.WriteEndObject();
-		}
-	}
+            writer.WritePropertyName(_offsetMinutesName);
+            writer.WriteValue(Shared.GetWholeMinutes(ot.Offset));
+
+            writer.WriteEndObject();
+        }
+    }
 }
