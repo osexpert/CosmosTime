@@ -338,65 +338,33 @@ namespace CosmosTime
         }
 
         /// <summary>
-        /// Only allows Iso formats {utc}Z or {local}[+-]{offset}
-        /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
-        public static UtcTime Parse(string str)
-        {
-            if (TryParse(str, out var ut))
-                return ut;
-            throw new FormatException("Format must be {utc}Z or {local}[+-]{offset}");
-        }
-
-        /// <summary>
-        /// TODO
+        /// Parse ISO formats:
+        /// "{time}Z"
+        /// "{time}±{offset}"
+        /// "{time}" (getOffsetIfNone must be handled)
         /// </summary>
         /// <param name="str"></param>
         /// <param name="getOffsetIfNone"></param>
         /// <returns></returns>
         /// <exception cref="FormatException"></exception>
-        public static UtcTime Parse(string str, Func<DateTimeOffset, TimeSpan> getOffsetIfNone)
+        public static UtcTime Parse(string str, Func<DateTimeOffset, TimeSpan>? getOffsetIfNone = null)
         {
             if (TryParse(str, out var ut, getOffsetIfNone))
                 return ut;
-            throw new FormatException("Format must be {utc}Z or {local}[+-]{offset}");
+            throw new FormatException();
         }
 
-
-
-
-        //public static bool TryParse(string str, out UtcTime utc)
-        //{
-        //    utc = default;
-
-        //    if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind) && offsetKind != OffsetKind.None)
-        //    {
-        //        utc = UtcTime.FromUtcDateTime(dto.UtcDateTime);
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
         /// <summary>
-        /// Parse any Iso time in utc or local[+-]offset. Example:
-        /// <para>2020-01-01Z</para>
-        /// <para>2020-01-01T12:12:12Z</para>
-        /// <para>2020-01-01T12:12:12.123Z</para>
-        /// <para>2020-01-01T12:12:12.123+00:30</para>
-        /// 
-        /// Time without zone can not be parsed. Example:
-        /// <para>2020-01-01T12:12:12.123</para>
+        /// Parse ISO formats:
+        /// "{time}Z"
+        /// "{time}±{offset}"
+        /// "{time}" (getOffsetIfNone must be handled)
         /// </summary>
         /// <param name="str"></param>
         /// <param name="utc"></param>
         /// <param name="getOffsetIfNone"></param>
         public static bool TryParse(string str, out UtcTime utc, Func<DateTimeOffset, TimeSpan>? getOffsetIfNone = null)
         {
-//            if (getOffsetIfNone == null)
-  //              throw new ArgumentNullException(nameof(getOffsetIfNone));
-
             utc = default;
 
             if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind))

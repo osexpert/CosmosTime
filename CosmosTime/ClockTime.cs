@@ -334,19 +334,22 @@ namespace CosmosTime
         public override string ToString() => _clock_time.ToString(Constants.VariableLengthMicrosIsoFormatWithoutZ, CultureInfo.InvariantCulture);
 
         /// <summary>
-        /// TODO
+        /// Parse ISO formats:
+        /// "{time}"
+        /// 
+        /// If you want to allow parsing times with offset, you can handle discardOffset.
         /// </summary>
         /// <param name="str"></param>
         /// <param name="clockTime"></param>
-        /// <param name="disallowOffset">If true, require that offset is absent. If false (default), offset (if any) is silently ignored.</param>
+        /// <param name="discardOffset"></param>
         /// <returns></returns>
-        public static bool TryParse(string str, out ClockTime clockTime, bool disallowOffset = false)
+        public static bool TryParse(string str, out ClockTime clockTime, Func<DateTimeOffset, OffsetKind, bool>? discardOffset = null)
         {
             clockTime = default;
 
             if (IsoTimeParser.TryParseAsIso(str, out DateTimeOffset dto, out var offsetKind))
             {
-                if (!disallowOffset || offsetKind == OffsetKind.None)
+                if (offsetKind == OffsetKind.None || (discardOffset != null && discardOffset(dto, offsetKind)))
                 {
                     clockTime = ToClockTime_FromUnspecified(dto.DateTime);
                     return true;
@@ -356,16 +359,17 @@ namespace CosmosTime
             return false;
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
+        /// Parse ISO formats:
+        /// "{time}"
+        /// 
+        /// If you want to allow parsing times with offset, you can handle discardOffset.
         /// <param name="str"></param>
-        /// <param name="disallowOffset">If true, require that offset is absent. If false (default), offset (if any) is silently ignored.</param>
+        /// <param name="discardOffset"></param>
         /// <returns></returns>
         /// <exception cref="FormatException"></exception>
-        public static ClockTime Parse(string str, bool disallowOffset = false)
+        public static ClockTime Parse(string str, Func<DateTimeOffset, OffsetKind, bool>? discardOffset = null)
         {
-            if (TryParse(str, out var ct, disallowOffset))
+            if (TryParse(str, out var ct, discardOffset))
                 return ct;
             else
                 throw new FormatException();

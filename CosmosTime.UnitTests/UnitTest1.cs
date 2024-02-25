@@ -12,6 +12,7 @@ using NodaTime;
 using CosmosTime.TimeZone;
 using FakeTimeZone;
 using NodaTime;
+using NodaTime.Text;
 
 namespace CosmosTime.UnitTests
 {
@@ -834,8 +835,8 @@ namespace CosmosTime.UnitTests
         [Fact]
         public void ClockTime_ParseMiscFormats()
         {
-            var p1 = ClockTime.Parse("2020-01-02T03:04:05Z");
-            var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00");
+            var p1 = ClockTime.Parse("2020-01-02T03:04:05Z", (_,_) => true);
+            var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00", (_, _) => true);
             var p3 = ClockTime.Parse("2020-01-02T03:04:05");
 
             Assert.Equal(p1, p2);
@@ -848,15 +849,15 @@ namespace CosmosTime.UnitTests
         {
             Assert.Throws<FormatException>(() =>
             {
-                var p1 = ClockTime.Parse("2020-01-02T03:04:05Z", true);
+                var p1 = ClockTime.Parse("2020-01-02T03:04:05Z");
             });
 
             Assert.Throws<FormatException>(() =>
             {
-                var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00", true);
+                var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00");
             });
 
-            var p3 = ClockTime.Parse("2020-01-02T03:04:05", true);
+            var p3 = ClockTime.Parse("2020-01-02T03:04:05");
 
             Assert.Equal("2020-01-02T03:04:05", p3.ToString());
         }
@@ -1042,6 +1043,21 @@ namespace CosmosTime.UnitTests
                 return IanaTimeZone.GetTimeZoneInfo("Europe/Paris");
             });
             Assert.Equal("2022-07-08T00:14:07+02:00[Europe/Paris]", t2.ToString());
+        }
+
+        [Fact]
+        public void ClockTime_ParseMiscFormats_disallow_offset()
+        {
+            Assert.Throws<FormatException>(() =>
+            {
+                var p1 = ClockTime.Parse("2020-01-02T03:04:05Z");
+            });
+            Assert.Throws<FormatException>(() =>
+            {
+                var p2 = ClockTime.Parse("2020-01-02T03:04:05+01:00");
+            });
+
+            
         }
     }
 }

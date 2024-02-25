@@ -289,7 +289,10 @@ namespace CosmosTime
         }
 
         /// <summary>
-        /// TODO
+        /// Parse ISO formats:
+        /// "{time}Z[{zone}]"
+        /// "{time}±{offset}[{zone}]"
+        /// "{time}[{zone}]" (getZoneIfNone must be handled)
         /// </summary>
         /// <param name="time"></param>
         /// <param name="getZoneIfNone"></param>
@@ -304,17 +307,10 @@ namespace CosmosTime
 
 
         /// <summary>
-        /// Supported directly:
-        /// <para>{time}Z[{tz}] -> {time}-00:00</para>
-        /// <para>{time}+|-{offset}[{tz}]" -> {time}[{tz}]</para>
-        /// <para>{time}[{tz}] -> {time}[{tz}]</para> // does this make sense?
-        /// 
-        /// TODO: can support more by supplying callbacks
-        /// TODO: what if we do not want to choose in chooseOffsetIfAmbigous? Now we need to throw? Could we return a touple (TimeSpan, bool)? Or TimeSpan? (nullable?)
-		/// 
-		/// Offset is calculated from the time zone. Uses default offset (standard time offset) in case of ambigous time.
-        /// 
-        /// TODO: offset and utc has the offset callback. but not here. inconsistent?
+        /// Parse ISO formats:
+        /// "{time}Z[{zone}]"
+        /// "{time}±{offset}[{zone}]"
+        /// "{time}[{zone}]" (getZoneIfNone must be handled)
         /// </summary>
         public static bool TryParse(string time, out ZoneTime zoneTime, Func<DateTimeOffset, OffsetKind, TimeZoneInfo>? getZoneIfNone = null)
         {
@@ -350,9 +346,6 @@ namespace CosmosTime
 
             if (offsetKind == OffsetKind.None)
             {
-                // TODO: ctor also validate offset. Optimize?
-                // TODO: ctor also validate iana. Optimize?
-
                 TimeSpan offset = tz.GetUtcOffset(dto);
                 zoneTime = new ZoneTime(OffsetTime.FromUnspecifiedDateTime(dto.DateTime, offset), tz);
             }
@@ -361,13 +354,11 @@ namespace CosmosTime
                 TimeSpan offset = tz.GetUtcOffset(dto);
                 zoneTime = new ZoneTime(OffsetTime.FromUtcDateTime(dto.UtcDateTime, offset), tz);
             }
-            else // +-
+            else
             {
                 if (!Shared.ValidateOffset(tz, dto.DateTime, dto.Offset).Ok)
                     return false;
 
-                // TODO: ctor also validate offset. Optimize?
-                // TODO: ctor also validate iana. Optimize?
                 zoneTime = new ZoneTime(OffsetTime.FromUnspecifiedDateTime(dto.DateTime, dto.Offset), tz);
             }
 
@@ -417,8 +408,8 @@ namespace CosmosTime
 
         /// <summary>
         /// Iso format: 
-        /// {time}+|-{offset}[{iana}]
-        /// {utc_time}Z[{iana}]
+        /// Utc: "{time}Z[{zone}]"
+        /// Not utc: "{time}±{offset}[{zone}]"
         /// Examples:
         /// 2020-01-20T04:05:06.007+01:00[Europe/Berlin]
         /// 2020-01-20T04:05:06.007Z[Etc/UTC]

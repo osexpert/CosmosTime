@@ -183,45 +183,25 @@ namespace CosmosTime
 
         /// <summary>
         /// Parse ISO formats:
-        /// {time}Z
-        /// {time}+|-{offset}
+        /// "{time}Z"
+        /// "{time}±{offset}"
+        /// "{time}" (getOffsetIfNone must be handled)
         /// </summary>
-        public static OffsetTime Parse(string str)
+        public static OffsetTime Parse(string str, Func<DateTimeOffset, TimeSpan>? getOffsetIfNone = null)
         {
-            if (TryParse(str, out var ut))
+            if (TryParse(str, out var ut, getOffsetIfNone))
                 return ut;
             throw new FormatException();
         }
 
-        // <summary>
-        // Parse ISO formats:
-        // "{time}Z"
-        // "{time}{offset}"
-        // </summary>
-        //public static bool TryParse(string utcOffsetString, out OffsetTime uo)
-        //{
-        //    uo = default;
-
-        //    if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var offsetKind) && offsetKind != OffsetKind.None)
-        //    {
-        //        uo = dto.ToOffsetTime();
-        //        return true;
-        //    }
-
-        //    return false;
-        //}
-
         /// <summary>
         /// Parse ISO formats:
         /// "{time}Z"
-        /// "{time}{offset}"
-        /// "{time}" (getOffsetIfNone will be called)
+        /// "{time}±{offset}"
+        /// "{time}" (getOffsetIfNone must be handled)
         /// </summary>
         public static bool TryParse(string utcOffsetString, out OffsetTime uo, Func<DateTimeOffset, TimeSpan>? getOffsetIfNone = null)
         {
-//            if (getOffsetIfNone == null)
-  //              throw new ArgumentNullException(nameof(getOffsetIfNone));
-
             uo = default;
 
             if (IsoTimeParser.TryParseAsIso(utcOffsetString, out DateTimeOffset dto, out var offsetKind))
@@ -297,7 +277,9 @@ namespace CosmosTime
 
         /// <summary>
         /// Iso format.
-        /// {local}+|-{offset}
+        /// Utc: "{time}Z"
+        /// Not utc: "{time}±{offset}"
+        /// Time is variable length (milliseconds)
         /// </summary>
         /// <returns></returns>
         public override string ToString() => ToString(false);

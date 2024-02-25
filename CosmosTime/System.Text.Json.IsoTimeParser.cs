@@ -65,7 +65,18 @@ namespace CosmosTime
         /// <param name="offsetKind"></param>
         /// <returns></returns>
         public static bool TryParseAsIso(string source, out DateTimeOffset value, out OffsetKind offsetKind)
-            => TryParseAsIso(source.Select(c => (byte)c).ToArray(), out value, out offsetKind);
+        { 
+            var sourceBytes = source.Where(c => c <= byte.MaxValue).Select(c => (byte)c).ToArray();
+            if (source.Length > sourceBytes.Length)
+            {
+                // source had some non-ascii chars, so it can't be a valid time
+                value = default;
+                offsetKind = default;
+                return false;
+            }
+
+            return TryParseAsIso(sourceBytes, out value, out offsetKind);
+        }
 
         // <summary>
         // Parse the given UTF-8 <paramref name="source"/> as extended ISO 8601 format.
@@ -194,6 +205,9 @@ namespace CosmosTime
             parseData = default;
 
             // too short datetime
+            if (source.Length < 10)
+                return false;
+
             Debug.Assert(source.Length >= 10);
 
             // Parse the calendar date

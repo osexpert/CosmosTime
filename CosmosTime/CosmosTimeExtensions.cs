@@ -137,7 +137,7 @@ namespace CosmosTime
         /// <returns></returns>
         public static OffsetTime ToOffsetTime(this DateTimeOffset dto)
         {
-            return new OffsetTime(UtcTime.FromUtcDateTime(dto.UtcDateTime), dto.Offset);
+            return OffsetTime.FromUtcDateTime(dto.UtcDateTime, dto.Offset);
         }
 
         // <summary>
