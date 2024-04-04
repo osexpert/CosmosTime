@@ -117,7 +117,7 @@ namespace CosmosTime
         /// </summary>
         public long Ticks => ClockDateTime_KindUnspecified.Ticks;
 
-        //		public long UtcTicks => _utc.Ticks;
+
 
         /// <summary>
         /// clock time's TimeOfDay
@@ -136,13 +136,6 @@ namespace CosmosTime
         /// <returns></returns>
         public OffsetTime AddTicks(long ticks) => new OffsetTime(Ticks + ticks, Offset);
 
-        // <summary>
-        // The specified time is clock time (not utc)
-        // </summary>
-        //public UtcOffsetTime(ClockTime ct, Func<TimeSpan[], TimeSpan> choseOffsetIfAmbigious)
-        //{
-        //	throw new NotImplementedException();
-        //}
 
 
         /// <summary>
@@ -228,20 +221,6 @@ namespace CosmosTime
         }
 
 
-        // <summary>
-        //
-        // </summary>
-        //public UtcOffsetTime(DateTimeOffset dto)
-        //{
-        //	// what about dto.ToUniversalTime? versus  dto.UtcDateTime ???
-        //	//dto.ToUniversalTime sets offset to 0. But they are still equal!!
-        //	// Yes, but so are WE. We only compare _utc too.
-
-        //	//_dto = dto;
-        //	_utc = dto.UtcDateTime.ToUtcTime();
-        //	// TODO: create some tests to make sure this roundtrips
-        //	_offsetMinutes = Shared.GetWholeMinutes(dto.Offset);
-        //}
 
         /// <summary>
         /// offsetMinutes: utc+offsetMinutes=local
@@ -258,11 +237,8 @@ namespace CosmosTime
             _utc = utc;
         }
 
-        //private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
 
-        // name: OffsettedUtcDateTime, OffsetDateTime, OffsettedUtcDateTime, UtcOffsetDateTime, AdjustedDateTime, BaseDateTime, IsoDateTime
-
-        internal DateTime ClockDateTime_KindUnspecified => _utc.UtcDateTime.AddMinutes(_offsetMinutes).SpecifyKind(DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);
+        internal DateTime ClockDateTime_KindUnspecified => _utc.UtcDateTime.AddMinutes(_offsetMinutes).SpecifyKind(DateTimeKind.Unspecified);
 
         /// <summary>
         /// UtcTime + Offset = Clock Time
@@ -453,5 +429,20 @@ namespace CosmosTime
         /// <returns></returns>
         public static bool operator >=(OffsetTime t1, OffsetTime t2) => t1._utc >= t2._utc;
 
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public IsoWeek Week => IsoWeek.GetWeek(this.ClockDateTime);
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
+        public ZoneTime ToZoneTime(TimeZoneInfo tz)
+        {
+            return new ZoneTime(this, tz);
+        }
     }
 }

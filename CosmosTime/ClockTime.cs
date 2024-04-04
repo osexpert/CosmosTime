@@ -33,7 +33,6 @@ namespace CosmosTime
         /// </summary>
         public DateTime ClockDateTime => _clock_time;
 
-        //public UtcTime ToUtcTime() => _clock_time.ToUtcTime();
 
 
         /// <summary>
@@ -83,12 +82,6 @@ namespace CosmosTime
         /// </summary>
         public DateOnly Date => DateOnly.FromDateTime(_clock_time);
 
-        //public static ClockTime Truncate(ClockTime ct, TimeSpan timeSpan)
-        //{
-        //	if (timeSpan == TimeSpan.Zero) return ct; // Or could throw an ArgumentException
-        //	if (ct == ClockTime.MinValue || ct == ClockTime.MaxValue) return ct; // do not modify "guard" values
-        //	return ct.AddTicks(-(ct.Ticks % timeSpan.Ticks));
-        //}
 
         /// <summary>
         /// TODO
@@ -99,10 +92,6 @@ namespace CosmosTime
 
         private static ClockTime ToClockTime_MakeUnspecified(DateTime t) => ToClockTime_FromUnspecified(t.SpecifyKind(DateTimeKind.Unspecified));
 
-        //public ClockTime(ZoneTime zoned)
-        //{
-        //	_clock_time = zoned.OffsetTime.ClockDateTime;
-        //}
 
 
         private static ClockTime ToClockTime_FromUnspecified(DateTime unspecifiedTime)
@@ -157,19 +146,7 @@ namespace CosmosTime
             _clock_time = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Unspecified);
         }
 
-        // <summary>
-        // TODO
-        // Hmm...maybe we should not allow this?
-        // Maybe instead ClockTime.FromAnyTime(...)
-        // to make it clearer...we do nto require unspesified time.
-        // OR...only provide ClockTime.FromUnspecifiedTime(...)??
-        // 
-        // </summary>
-        // <param name="anyTime"></param>
-        //public ClockTime(DateTime anyTime)
-        //{
-        //    _clock_time = DateTime.SpecifyKind(anyTime, DateTimeKind.Unspecified);
-        //}
+
 
         /// <summary>
         /// Pick the clock\time component from the DateTime, ignoring the DateTimeKind.
@@ -190,20 +167,7 @@ namespace CosmosTime
             _clock_time = new DateTime(ticks, DateTimeKind.Unspecified);
         }
 
-        //public ClockTime Min(ClockTime other)
-        //{
-        //	if (this._clock_time < other._clock_time)
-        //		return this;
-        //	else
-        //		return other;
-        //}
-        //public ClockTime Max(ClockTime other)
-        //{
-        //	if (this._clock_time > other._clock_time)
-        //		return this;
-        //	else
-        //		return other;
-        //}
+
 
         /// <summary>
         /// TODO
@@ -373,6 +337,28 @@ namespace CosmosTime
                 return ct;
             else
                 throw new FormatException();
+        }
+
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
+        public ZoneTime ToZoneTime(TimeZoneInfo tz)
+        {
+            return new ZoneTime(this, tz);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public ZoneTime ToZoneTime(TimeZoneInfo tz, TimeSpan offset)
+        {
+            return new ZoneTime(this, tz, offset);
         }
     }
 

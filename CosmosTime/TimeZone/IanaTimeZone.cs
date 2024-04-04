@@ -1045,6 +1045,7 @@ namespace CosmosTime.TimeZone
         {
             // Comparing agains TimeZoneInfo.Utc is no longer reliable...
             // List from Win10, NET7 where DisplayName == "(UTC) Coordinated Universal Time"
+            // https://github.com/dotnet/runtime/issues/90046#issuecomment-1666220066
             return tz == TimeZoneInfo.Utc || tz.StandardName == "Coordinated Universal Time" || tz.StandardName == "UTC";
             //				(/*HasIanaId(tz) &&*/ IsUtc(tz.Id));
         }
@@ -1053,6 +1054,21 @@ namespace CosmosTime.TimeZone
         {
             // Comparing agains TimeZoneInfo.Utc is no longer reliable...
             // List from Win10, NET7 where StandardName == "Coordinated Universal Time" || "UTC"
+
+            //List<string> tzu = new();
+            //foreach (var ii in IanaTimeZone.GetIanaIds())
+            //{
+            //    try
+            //    {
+            //        var tz = TimeZoneInfo.FindSystemTimeZoneById(ii);
+            //        if (tz.StandardName == "Coordinated Universal Time" || tz.StandardName == "UTC" || tz == TimeZoneInfo.Utc)
+            //            tzu.Add(tz.Id);
+            //    }
+            //    catch { }
+            //}
+
+            // TODO: should this have been case insensitive?
+            // NO. The code above will get 0 matches with ii.ToLower() and 6 matches with ii.ToUpper(). So they are case sensitive.
             return ianaId switch
             {
                 "Etc/GMT" => true,

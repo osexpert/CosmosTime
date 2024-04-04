@@ -58,15 +58,6 @@ namespace CosmosTime
             return _utc.ToString(Constants.FixedLengthIsoFormatWithZ, CultureInfo.InvariantCulture);
         }
 
-        // <summary>
-        // Invariant culture
-        // </summary>
-        // <param name="format"></param>
-        // <returns></returns>
-        //public string ToString(string format)
-        //{
-        //	return _utc.ToString(format, CultureInfo.InvariantCulture);
-        //}
 
         /// <summary>
         /// Iso format with variable length milliseconds in utc (Z)
@@ -145,9 +136,6 @@ namespace CosmosTime
         /// </summary>
         public long Ticks => _utc.Ticks;
 
-        //	public ZonedTime ToLocalZoneTime() => new ZonedTime(this, TimeZoneInfo.Local);
-
-        //public ZonedTime ToUtcZoneTime(TimeZoneInfo tz) => new ZonedTime(this, tz);
 
         /// <summary>
         /// year, month, day, etc. is time in Utc
@@ -173,20 +161,7 @@ namespace CosmosTime
             _utc = new DateTime(year, month, day, hour, minute, second, millisecond, DateTimeKind.Utc);
         }
 
-        //public UtcTime Min(UtcTime other)
-        //{
-        //	if (this._utc < other._utc)
-        //		return this;
-        //	else
-        //		return other;
-        //}
-        //public UtcTime Max(UtcTime other)
-        //{
-        //	if (this._utc > other._utc)
-        //		return this;
-        //	else
-        //		return other;
-        //}
+        
 
         /// <summary>
         /// TODO
@@ -388,6 +363,30 @@ namespace CosmosTime
             return false;
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public IsoWeek Week => IsoWeek.GetWeek(this.UtcDateTime);
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public OffsetTime ToOffsetTime(TimeSpan offset)
+        {
+            return new OffsetTime(this, offset);
+        }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
+        public ZoneTime ToZoneTime(TimeZoneInfo tz)
+        {
+            return new ZoneTime(this, tz);
+        }
 
     }
 

@@ -382,11 +382,6 @@ namespace CosmosTime
         }
 
 
-        //		public static readonly UtcOffsetZoneTime MinValue = DateTimeOffset.MinValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MinValue, 0);
-        //	public static readonly UtcOffsetZoneTime MaxValue = DateTimeOffset.MaxValue.ToUtcOffsetTime();// new OffsetTime(UtcTime.MaxValue, 0); // yes, offset should be 0 just as DateTimeOffset does
-
-        //		public UtcTime UtcTime => _utc;
-
 
 
         /// <summary>
@@ -403,8 +398,6 @@ namespace CosmosTime
         public override bool Equals(object obj) => obj is ZoneTime other && Equals(other);
 
 
-        //private DateTime ClockDateTime_KindUtc => _utc.UtcDateTime.AddMinutes(_offsetMins);// _utc.AddMinutes(_offsetMins);
-        //		private DateTime ClockDateTime_KindUnspecified => DateTime.SpecifyKind(_offset_time.UtcTime.UtcDateTime.AddMinutes(_offset_time.OffsetMinutes), DateTimeKind.Unspecified);// _utc.AddMinutes(_offsetMins);
 
         /// <summary>
         /// Iso format: 
@@ -660,39 +653,40 @@ namespace CosmosTime
 
 
 
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public ClockTime ToClockTime()
+        {
+            return new ClockTime(this.Ticks);
+        }
 
-        // <summary>
-        // Not sure if having these it a good design. Possibly should require converting to ClockTime, performing operations there, then converting back...
-        // ClockTime would wrap a DateTime kind unspeficied.
-        // maybe could manipulate via using?
-        // 
-        // using (var ct = zoned.AdjustClockTime())
-        // {
-        //		
-        //		
-        // }
-        // </summary>
-        // <param name="h"></param>
-        // <returns></returns>
-        //public ZonedTime AddClockHours(double h) => AddClock(TimeSpan.FromHours(h));
-
-
-        //public ZonedTime AddClockDays(double days) => AddClock(TimeSpan.FromDays(days));
-
-        ///// <summary>
-        ///// Could it be a mode?
-        ///// </summary>
-        //private ZonedTime AddClock(TimeSpan t)
-        //{
-        //	var adj = _offset_time.ClockDateTime + t;
-        //	return adj.ToUtcZoneTime(_tz);
-        //}
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <returns></returns>
+        public UtcTime ToUtcTime()
+        {
+            return this.OffsetTime.UtcTime;
+        }
 
 
-        //public ZonedTime AdjustClockTime(Func<ClockTime, ClockTime> ct)
-        //{
-        //	ct()
-        //}
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public IsoWeek Week => IsoWeek.GetWeek(this.OffsetTime.ClockDateTime);
+
+
+        /// <summary>
+        /// Convert to time in another zone via Utc.
+        /// </summary>
+        /// <param name="tz"></param>
+        /// <returns></returns>
+        public ZoneTime ToZoneTime(TimeZoneInfo tz)
+        {
+            return new ZoneTime(this.ToUtcTime(), tz);
+        }
     }
 
 }

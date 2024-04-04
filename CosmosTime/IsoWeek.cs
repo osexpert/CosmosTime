@@ -262,5 +262,46 @@ namespace CosmosTime
         {
             return w1.CompareTo(w2) >= 0;
         }
+
+        /// <summary>
+        /// Parse iso format "{year}-W{weekNumber}" (8 chars fixed length)
+        /// Example: "2020-W02"
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="week"></param>
+        /// <returns></returns>
+        public bool TryParse(string str, out IsoWeek week)
+        {
+            if (str.Length == 8 && str[4] == '-' && str[5] == 'W')
+            {
+                if (int.TryParse(str.Substring(0, 4), out var year) && int.TryParse(str.Substring(6, 2), out var number))
+                {
+                    if (year >= ISOWeek.MinYear && year <= ISOWeek.MaxYear && number >= 1 && number <= GetWeeksInYear(year))
+                    {
+                        week = new IsoWeek { Year = year, Number = number };
+                        return true;
+                    }
+                }
+            }
+
+            week = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Parse iso format "{year}-W{weekNumber}" (8 chars fixed length)
+        /// Example: "2020-W02"
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        /// <exception cref="FormatException"></exception>
+        public IsoWeek Parse(string str)
+        {
+            if (TryParse(str, out var week))
+                return week;
+
+            throw new FormatException();
+        }
+
     }
 }
