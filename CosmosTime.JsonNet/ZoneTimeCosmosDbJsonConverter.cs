@@ -3,7 +3,7 @@ using CosmosTime.TimeZone;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CosmosTime.Serialization.JsonNet
+namespace CosmosTime.JsonNet
 {
     /// <summary>
     /// Format\parse composite format 

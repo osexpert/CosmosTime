@@ -14,11 +14,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.UnitTests", "Cos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Serialization.JsonNet", "CosmosTime.Serialization.JsonNet\CosmosTime.Serialization.JsonNet.csproj", "{5C21C3D9-5D77-495B-BAF2-E1DB93B38868}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.JsonNet", "CosmosTime.JsonNet\CosmosTime.JsonNet.csproj", "{5C21C3D9-5D77-495B-BAF2-E1DB93B38868}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Serialization.SystemTextJson", "CosmosTime.Serialization.SystemTextJson\CosmosTime.Serialization.SystemTextJson.csproj", "{52921178-5AFC-4847-8744-669E96BC8143}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Json", "CosmosTime.Json\CosmosTime.Json.csproj", "{52921178-5AFC-4847-8744-669E96BC8143}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Serialization.Dapper", "CosmosTime.Serialization.Dapper\CosmosTime.Serialization.Dapper.csproj", "{B6232C12-A268-4283-ABBD-CE7A145909EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Dapper", "CosmosTime.Dapper\CosmosTime.Dapper.csproj", "{B6232C12-A268-4283-ABBD-CE7A145909EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test7", "test7\test7.csproj", "{27352170-7F31-405E-A97F-620BCBEE5B3C}"
 EndProject

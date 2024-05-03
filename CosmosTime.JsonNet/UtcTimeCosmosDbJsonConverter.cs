@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace CosmosTime.Serialization.JsonNet
+namespace CosmosTime.JsonNet
 {
     /// <summary>
     /// Format\parse fixed length utc "yyyy-MM-ddTHH:mm:ss.fffffffZ"
