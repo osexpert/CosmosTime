@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime", "CosmosTime\CosmosTime.csproj", "{65A52FCC-FC11-4B65-8D4E-DA48710D4F59}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.UnitTests", "CosmosTime.UnitTests\CosmosTime.UnitTests.csproj", "{7441AFFF-CCF4-4696-A796-CB5E5841AC2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmosTime.Tests", "CosmosTime.Tests\CosmosTime.Tests.csproj", "{7441AFFF-CCF4-4696-A796-CB5E5841AC2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{618D13AD-58A2-4EE9-A043-8B9B2DDD69CA}"
 EndProject

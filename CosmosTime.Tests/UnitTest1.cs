@@ -1,21 +1,10 @@
-﻿/* Unmerged change from project 'CosmosTime.UnitTests (net4.8)'
-Before:
-using System.Globalization;
-using System.Security.Cryptography;
-using System.Xml.Linq;
-After:
-using CosmosTime.TimeZone;
-using FakeTimeZone;
-using NodaTime;
-*/
-
-using CosmosTime.TimeZone;
+﻿using CosmosTime.TimeZone;
 using FakeTimeZone;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NodaTime;
 using NodaTime.Text;
 
-namespace CosmosTime.UnitTests
+namespace CosmosTime.Tests
 {
     [TestClass]
     public class UnitTest1
