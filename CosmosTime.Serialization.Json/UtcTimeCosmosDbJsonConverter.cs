@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace CosmosTime.Json
+namespace CosmosTime.Serialization.Json
 {
 
     /// <summary>

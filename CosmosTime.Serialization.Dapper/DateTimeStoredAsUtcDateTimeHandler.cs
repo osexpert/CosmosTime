@@ -2,7 +2,7 @@
 using System.Data;
 using Dapper;
 
-namespace CosmosTime.Dapper
+namespace CosmosTime.Serialization.Dapper
 {
     /// <summary>
     /// How to use: add to top of Program.cs:

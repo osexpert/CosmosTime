@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CosmosTime.JsonNet
+namespace CosmosTime.Serialization.JsonNet
 {
     /// <summary>
     /// Format\parse composite format 
